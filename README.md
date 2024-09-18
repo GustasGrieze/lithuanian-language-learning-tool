@@ -77,7 +77,7 @@ Example of a punctuation task, where users will need to place the correct punctu
 
 1. Clone the repository to your local machine:
     ```bash
-    git clone https://github.com/yourusername/Lithuanian-Language-Learning-Tool.git
+    git clone https://github.com/GustasGrieze/lithuanian-language-learning-tool
     ```
 2. Run the application locally:
     ```bash
