@@ -46,7 +46,7 @@ Database:
 
 The following diagram illustrates the user flow in the Lithuanian Language Learning Tool:
 
-![Language Learning Tool Diagram](./diagram.png)
+![Language Learning Tool Diagram](./assets/diagram.png)
 
 1. Users start by registering or logging into the system.
 2. After logging in, they can select the type of task they want to complete, such as grammar exercises or punctuation correction.
@@ -61,17 +61,17 @@ Here are some images showing different parts of the application:
 ### Intro Page
 The main page where users can choose the type of tasks (Grammar or Punctuation):
 
-![Intro Page](./intropage.png)
+![Intro Page](./assets/intropage.png)
 
 ### Grammar Task
 Example of how a grammar task will appear for users:
 
-![Grammar Task](./grammar.png)
+![Grammar Task](./assets/grammar.png)
 
 ### Punctuation Task
 Example of a punctuation task, where users will need to place the correct punctuation marks:
 
-![Punctuation Task](./punctuation.png)
+![Punctuation Task](./assets/punctuation.png)
 
 ## Installation
 
