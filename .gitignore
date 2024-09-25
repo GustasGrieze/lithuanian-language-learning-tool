@@ -1,0 +1,51 @@
+# Ignore build output directories
+bin/
+obj/
+
+# Ignore Visual Studio temporary files, build results, and
+# user-specific files
+.vs/
+.vscode/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Rider-specific folders
+.idea/
+
+# Ignore logs
+*.log
+
+# Ignore compiled output
+*.dll
+*.exe
+*.so
+*.dylib
+*.lib
+
+# Ignore packages
+*.nupkg
+*.snupkg
+
+# Ignore other files and directories created by Visual Studio
+*.dbmdl
+*.dbproj.schemaview
+*.pdb
+*.cache
+*.pidb
+*.ide
+*.sln.ide
+*_i.c
+*_p.c
+*.ilk
+*.meta
+*.obj
+*.tmp
+*.csproj.user
+*.csproj.nuget.dgspec.json
+*.csproj.nuget.g.props
+*.csproj.nuget.g.targets
+
+# Ignore NuGet packages directory
+packages/
