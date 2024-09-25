@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewData["Title"] = "PunctuationTask";
+}
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skyrybos užduotys</title>
+    <link rel="stylesheet" href="~/css/site.css">
+</head>
+<body>
+    <h1>Skyrybos užduotys</h1>
+    <form method="post" asp-action="SubmitPunctuationTask">
+        <div class="container">
+            <label>
+                Vilnius
+                <span>
+                    <select id="spelling" name="spelling">
+                        <option value="comma">,</option>
+                        <option value="colon">:</option>
+                        <option value="space"> </option>
+                    </select>
+                    Lietuvos sostinė
+                    <select id="spelling" name="spelling">
+                        <option value="comma">,</option>
+                        <option value="colon">:</option>
+                        <option value="space"> </option>
+                    </select>
+                    yra vienas seniausių Europos miestų
+                    <select id="spelling" name="spelling">
+                        <option value="comma">,</option>
+                        <option value="colon">:</option>
+                        <option value="space"> </option>
+                    </select>
+                </span>
+            </label>
+        </div>
+        <button type="submit" class="button">Pateikti atsakymus</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,109 @@
+/*html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}*/
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4ede8; /* Light background */
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #C9ADA7;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin-top: 50px;
+}
+
+.card {
+    background-color: #ffffff; /* White background for the card */
+    padding: 40px;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.2em;
+    color: #4e5d78; /* Dark blue/gray text color */
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.button {
+    background-color: #4e5d78; /* Dark blue/gray background */
+    color: #fff;
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    transition: background-color 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow */
+}
+
+    .button:hover {
+        background-color: #3c4a62; /* Slightly darker on hover */
+    }
+
+p {
+    text-align: center;
+    font-size: 1.1em;
+    color: #4e5d78; /* Dark blue/gray text */
+}
+
+.task {
+    margin: 20px 0;
+    font-size: 1.2em;
+    line-height: 1.8;
+    background-color: #d2b5ab; /* Soft brownish/pink color (as in the task section background) */
+    padding: 20px;
+    border-radius: 10px;
+}
+
+input[type="checkbox"] {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+button {
+    background-color: #4e5d78; /* Dark blue/gray background */
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    display: block;
+    margin: 20px auto;
+    transition: background-color 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow */
+}
+
+    button:hover {
+        background-color: #3c4a62; /* Slightly darker on hover */
+    }
