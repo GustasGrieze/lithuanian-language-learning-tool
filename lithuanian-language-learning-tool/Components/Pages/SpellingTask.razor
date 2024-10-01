@@ -1,0 +1,33 @@
+﻿@page "/spellingtask"
+
+<h1>Rašybos užduotys</h1>
+<EditForm Model="@spellingTaskModel" OnValidSubmit="SubmitSpellingTask">
+    <div class="container">
+        <label>
+            Lietuva yra graž
+            <span>
+                <select @bind="spellingTaskModel.SelectedLetter">
+                    <option value="a">a</option>
+                    <option value="b">b</option>
+                    <option value="c">c</option>
+                </select>
+            </span> šalis su turtinga istorija ir kultūra...
+        </label>
+    </div>
+    <button type="submit" class="button">Pateikti atsakymus</button>
+</EditForm>
+
+@code {
+    private SpellingTaskModel spellingTaskModel = new SpellingTaskModel();
+
+    private void SubmitSpellingTask()
+    {
+        // Handle form submission
+        Console.WriteLine($"Selected Letter: {spellingTaskModel.SelectedLetter}");
+    }
+
+    public class SpellingTaskModel
+    {
+        public string SelectedLetter { get; set; } = "";
+    }
+}

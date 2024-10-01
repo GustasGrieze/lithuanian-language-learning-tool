@@ -1,0 +1,47 @@
+﻿@page "/punctuationtask"
+
+<h1>Skyrybos užduotys</h1>
+<EditForm Model="@punctuationTaskModel" OnValidSubmit="SubmitPunctuationTask">
+    <div class="container">
+        <label>
+            Vilnius
+            <span>
+                <select @bind="punctuationTaskModel.FirstSelection">
+                    <option value=",">,</option>
+                    <option value=":">:</option>
+                    <option value=" "> </option>
+                </select>
+                Lietuvos sostinė
+                <select @bind="punctuationTaskModel.SecondSelection">
+                    <option value=",">,</option>
+                    <option value=":">:</option>
+                    <option value=" "> </option>
+                </select>
+                yra vienas seniausių Europos miestų
+                <select @bind="punctuationTaskModel.ThirdSelection">
+                    <option value=",">,</option>
+                    <option value=":">:</option>
+                    <option value=" "> </option>
+                </select>
+            </span>
+        </label>
+    </div>
+    <button type="submit" class="button">Pateikti atsakymus</button>
+</EditForm>
+
+@code {
+    private PunctuationTaskModel punctuationTaskModel = new PunctuationTaskModel();
+
+    private void SubmitPunctuationTask()
+    {
+        // Handle form submission
+        Console.WriteLine($"Selections: {punctuationTaskModel.FirstSelection}, {punctuationTaskModel.SecondSelection}, {punctuationTaskModel.ThirdSelection}");
+    }
+
+    public class PunctuationTaskModel
+    {
+        public string FirstSelection { get; set; } = "";
+        public string SecondSelection { get; set; } = "";
+        public string ThirdSelection { get; set; } = "";
+    }
+}
