@@ -1,33 +1,78 @@
-﻿@page "/spellingtask"
+﻿// SpellingTask.razor
+@page "/spellingtask"
+<h1>Lietuvių Rašybos Užduotys</h1>
 
-<h1>Rašybos užduotys</h1>
-<EditForm Model="@spellingTaskModel" OnValidSubmit="SubmitSpellingTask">
-    <div class="container">
-        <label>
-            Lietuva yra graž
-            <span>
-                <select @bind="spellingTaskModel.SelectedLetter">
-                    <option value="a">a</option>
-                    <option value="b">b</option>
-                    <option value="c">c</option>
-                </select>
-            </span> šalis su turtinga istorija ir kultūra...
-        </label>
+@if (currentQuestionIndex < questions.Count)
+{
+    <div class="task-box">
+        <p>@questions[currentQuestionIndex].Sentence</p>
     </div>
-    <button type="submit" class="button">Pateikti atsakymus</button>
-</EditForm>
-
-@code {
-    private SpellingTaskModel spellingTaskModel = new SpellingTaskModel();
-
-    private void SubmitSpellingTask()
+    <div class="options">
+        @foreach (var option in questions[currentQuestionIndex].Options)
+        {
+            <button class="option" @onclick="() => CheckAnswer(option)">@option</button>
+        }
+    </div>
+    @if (showFeedback)
     {
-        // Handle form submission
-        Console.WriteLine($"Selected Letter: {spellingTaskModel.SelectedLetter}");
+        <div class="feedback @(isCorrect ? "correct" : "incorrect")">
+            @feedbackMessage
+        </div>
     }
-
-    public class SpellingTaskModel
+    @if (showNextButton)
     {
-        public string SelectedLetter { get; set; } = "";
+        <button class="next-button" @onclick="NextQuestion">Kitas klausimas</button>
     }
 }
+else
+{
+    <h2>Užduotys baigtos!</h2>
+}
+
+@code {
+    private List<SpellingQuestion> questions = new List<SpellingQuestion>
+    {
+        new SpellingQuestion
+        {
+            Sentence = "Vilnius yra Liet_vos sostinė.",
+            Options = new List<string> { "u", "ū", "o", "uo" },
+            CorrectAnswer = "u"
+        },
+        new SpellingQuestion
+        {
+            Sentence = "Lietuvoje yra daug gra_ių ežerų.",
+            Options = new List<string> { "ž", "š", "s", "z" },
+            CorrectAnswer = "ž"
+        },
+        new SpellingQuestion
+        {
+            Sentence = "Kaunas yra antras pag_l dydį Lietuvos miestas.",
+            Options = new List<string> { "a", "ą", "e", "ę" },
+            CorrectAnswer = "a"
+        }
+    };
+
+    private int currentQuestionIndex = 0;
+    private bool showFeedback = false;
+    private bool showNextButton = false;
+    private bool isCorrect = false;
+    private string feedbackMessage = "";
+
+    private void CheckAnswer(string selectedAnswer)
+    {
+        showFeedback = true;
+        showNextButton = true;
+        isCorrect = selectedAnswer == questions[currentQuestionIndex].CorrectAnswer;
+        feedbackMessage = isCorrect 
+            ? "Teisingai!" 
+            : $"Neteisingai. Teisingas atsakymas: {questions[currentQuestionIndex].CorrectAnswer}";
+    }
+
+    private void NextQuestion()
+    {
+        currentQuestionIndex++;
+        showFeedback = false;
+        showNextButton = false;
+    }
+}
+
