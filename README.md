@@ -37,7 +37,7 @@ Backend:
 
 Frontend:
 - **HTML/CSS/JavaScript**
-- **Possibly using a UI library like React or Blazor**
+- **Blazor**
 
 Database:
 - To be determined, but possibly SQL-based to store user data, performance metrics, and Lithuanian language books for reference.
