@@ -1,47 +1,141 @@
 ﻿@page "/punctuationtask"
 
-<h1>Skyrybos užduotys</h1>
-<EditForm Model="@punctuationTaskModel" OnValidSubmit="SubmitPunctuationTask">
-    <div class="container">
-        <label>
-            Vilnius
-            <span>
-                <select @bind="punctuationTaskModel.FirstSelection">
-                    <option value=",">,</option>
-                    <option value=":">:</option>
-                    <option value=" "> </option>
-                </select>
-                Lietuvos sostinė
-                <select @bind="punctuationTaskModel.SecondSelection">
-                    <option value=",">,</option>
-                    <option value=":">:</option>
-                    <option value=" "> </option>
-                </select>
-                yra vienas seniausių Europos miestų
-                <select @bind="punctuationTaskModel.ThirdSelection">
-                    <option value=",">,</option>
-                    <option value=":">:</option>
-                    <option value=" "> </option>
-                </select>
-            </span>
-        </label>
-    </div>
-    <button type="submit" class="button">Pateikti atsakymus</button>
-</EditForm>
+<div class="container">
+    @if (!showSummary)
+    {
+        <h1>Skyrybos Užduotis</h1>
+
+        <div class="task-box" style="height: 300px;">
+            <textarea @bind="userText" class="edit-textarea"></textarea>
+        </div>
+
+        @if (isCorrect)
+        {
+            <button class="next-button" @onclick="NextTask">Kita užduotis</button>
+        }
+        else
+        {
+            <button class="next-button" @onclick="CheckPunctuation">Pateikti</button>
+            <button class="next-button" @onclick="SkipTask">Praleisti</button>
+        }
+
+        <div class="feedback">
+            @if (feedbackMessage != null)
+            {
+                <p class="@feedbackClass">@feedbackMessage</p>
+            }
+        </div>
+    }
+    else
+    {
+        <h1>Užduoties apžvalga</h1>
+        <p>Atlikai visas užduotis</p>
+        <p>Teisingi atsakymai: @correctAnswersCount / @tasks.Count</p>
+        
+        <!-- "Bandyti dar kartą" button to restart the tasks -->
+        <button class="next-button" @onclick="RestartTasks">Bandyti dar kartą</button>
+    }
+</div>
 
 @code {
-    private PunctuationTaskModel punctuationTaskModel = new PunctuationTaskModel();
-
-    private void SubmitPunctuationTask()
+    // List of tasks
+    private List<string> tasks = new List<string>
     {
-        // Handle form submission
-        Console.WriteLine($"Selections: {punctuationTaskModel.FirstSelection}, {punctuationTaskModel.SecondSelection}, {punctuationTaskModel.ThirdSelection}");
+        "Vilnius Lietuvos sostinė yra vienas seniausių Europos miestų...",
+        "Petriukas surado piniginę kuri neturėjo jokių pinigų.",
+        "Išeidamas sutikau labai malonų žmogų kuris turėjo žaizdą ant veido."
+    };
+
+    // Correct versions of the tasks
+    private List<string> correctTasks = new List<string>
+    {
+        "Vilnius, Lietuvos sostinė, yra vienas seniausių Europos miestų...",
+        "Petriukas surado piniginę, kuri neturėjo jokių pinigų.",
+        "Išeidamas sutikau labai malonų žmogų, kuris turėjo žaizdą ant veido."
+    };
+
+    private int currentTaskIndex = 0;
+    private string userText;
+    private string feedbackMessage;
+    private string feedbackClass = "";
+    private bool isCorrect = false;
+    private int correctAnswersCount = 0;
+    private bool showSummary = false;
+
+    // Initialize the first task
+    protected override void OnInitialized()
+    {
+        userText = tasks[currentTaskIndex];
     }
 
-    public class PunctuationTaskModel
+    // Method to check user punctuation
+    private void CheckPunctuation()
     {
-        public string FirstSelection { get; set; } = "";
-        public string SecondSelection { get; set; } = "";
-        public string ThirdSelection { get; set; } = "";
+        string userPunctuation = ExtractPunctuation(userText);
+        string correctPunctuation = ExtractPunctuation(correctTasks[currentTaskIndex]);
+
+        if (userPunctuation == correctPunctuation)
+        {
+            feedbackMessage = "Puiku! Visi skyrybos ženklai teisingi.";
+            feedbackClass = "correct";
+            isCorrect = true;
+            correctAnswersCount++;
+        }
+        else
+        {
+            feedbackMessage = "Neteisingai! Bandykite dar kartą.";
+            feedbackClass = "incorrect";
+            isCorrect = false;
+        }
+    }
+
+    // Move to the next task
+    private void NextTask()
+    {
+        if (currentTaskIndex < tasks.Count - 1)
+        {
+            currentTaskIndex++;
+            userText = tasks[currentTaskIndex];
+            feedbackMessage = null;
+            isCorrect = false;
+        }
+        else
+        {
+            showSummary = true; // Show summary when all tasks are completed
+        }
+    }
+
+    // Skip the current task
+    private void SkipTask()
+    {
+        if (currentTaskIndex < tasks.Count - 1)
+        {
+            currentTaskIndex++;
+            userText = tasks[currentTaskIndex];
+            feedbackMessage = null;
+            isCorrect = false;
+        }
+        else
+        {
+            showSummary = true; // Show summary when all tasks are completed
+        }
+    }
+
+    // Restart tasks from the beginning
+    private void RestartTasks()
+    {
+        currentTaskIndex = 0;
+        correctAnswersCount = 0;
+        userText = tasks[currentTaskIndex];
+        feedbackMessage = null;
+        isCorrect = false;
+        showSummary = false;
+    }
+
+    // Helper method to extract punctuation marks from the text
+    private string ExtractPunctuation(string text)
+    {
+        var punctuationMarks = new List<char> { '.', ',', ';', ':', '!', '?' };
+        return new string(text.Where(c => punctuationMarks.Contains(c)).ToArray());
     }
 }
