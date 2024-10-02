@@ -10,7 +10,8 @@
     <div class="options">
         @foreach (var option in questions[currentQuestionIndex].Options)
         {
-            <button class="option" @onclick="() => CheckAnswer(option)">@option</button>
+            <!--Button only checks answer once, pressed again returns null (does nothing).-->
+            <button class="option" @onclick="showFeedback ? null : () => CheckAnswer(option)">@option</button>
         }
     </div>
     @if (showFeedback)
@@ -27,6 +28,9 @@
 else
 {
     <h2>Užduotys baigtos!</h2>
+    <div>
+        Teisingai atsakyta @(correctTotal) iš @(questions.Count).
+    </div>
 }
 
 @code {
@@ -57,6 +61,7 @@ else
     private bool showNextButton = false;
     private bool isCorrect = false;
     private string feedbackMessage = "";
+    private int correctTotal = 0;
 
     private void CheckAnswer(string selectedAnswer)
     {
@@ -66,6 +71,9 @@ else
         feedbackMessage = isCorrect 
             ? "Teisingai!" 
             : $"Neteisingai. Teisingas atsakymas: {questions[currentQuestionIndex].CorrectAnswer}";
+        correctTotal = isCorrect
+            ? correctTotal + 1
+            : correctTotal;
     }
 
     private void NextQuestion()
