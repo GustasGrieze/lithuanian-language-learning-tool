@@ -4,9 +4,16 @@
 
 @if (currentQuestionIndex < questions.Count)
 {
+    <!--TO DO:
+        * Progress bar
+        * Timer
+        * Scoring
+        * UI
+    -->
     <div class="task-box">
         <p>@questions[currentQuestionIndex].Sentence</p>
     </div>
+
     <div class="options">
         @foreach (var option in questions[currentQuestionIndex].Options)
         {
@@ -14,6 +21,7 @@
             <button class="option" @onclick="showFeedback ? null : () => CheckAnswer(option)">@option</button>
         }
     </div>
+
     @if (showFeedback)
     {
         <div class="feedback @(isCorrect ? "correct" : "incorrect")">
@@ -29,7 +37,7 @@ else
 {
     <h2>Užduotys baigtos!</h2>
     <div>
-        Teisingai atsakyta @(correctTotal) iš @(questions.Count).
+        <p>Teisingai atsakyta @(correctTotal) iš @(questions.Count).</p>
     </div>
 }
 
