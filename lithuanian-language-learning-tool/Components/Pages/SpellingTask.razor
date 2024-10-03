@@ -35,9 +35,13 @@
 }
 else
 {
-    <h2>Užduotys baigtos!</h2>
-    <div>
-        <p>Teisingai atsakyta @(correctTotal) iš @(tasks.Count).</p>
+    <div class="container">
+        <h1>Užduoties apžvalga</h1>
+        <p>Atlikai visas užduotis</p>
+        <p>Teisingi atsakymai: @correctTotal / @tasks.Count</p>
+
+        <!-- "Bandyti dar kartą" button to restart the tasks -->
+        <button class="next-button" @onclick="RestartTasks">Bandyti dar kartą</button>
     </div>
 }
 
@@ -76,8 +80,8 @@ else
         showFeedback = true;
         showNextButton = true;
         isCorrect = selectedAnswer == tasks[currentTaskIndex].CorrectAnswer;
-        feedbackMessage = isCorrect 
-            ? "Teisingai!" 
+        feedbackMessage = isCorrect
+            ? "Teisingai!"
             : $"Neteisingai. Teisingas atsakymas: {tasks[currentTaskIndex].CorrectAnswer}";
         correctTotal = isCorrect
             ? correctTotal + 1
@@ -89,6 +93,17 @@ else
         currentTaskIndex++;
         showFeedback = false;
         showNextButton = false;
+    }
+
+    // Restart tasks from the beginning
+    private void RestartTasks()
+    {
+        currentTaskIndex = 0;
+        showFeedback = false;
+        showNextButton = false;
+        isCorrect = false;
+        feedbackMessage = "";
+        correctTotal = 0;
     }
 }
 
