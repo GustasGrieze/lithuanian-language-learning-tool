@@ -17,7 +17,6 @@
     <div class="options">
         @foreach (var option in tasks[currentTaskIndex].Options)
         {
-            <!--Button only checks answer once, pressed again returns null (does nothing).-->
             <button class="option" @onclick="showFeedback ? null : () => CheckAnswer(option)">@option</button>
         }
     </div>
@@ -40,7 +39,6 @@ else
         <p>Atlikai visas užduotis</p>
         <p>Teisingi atsakymai: @correctTotal / @tasks.Count</p>
 
-        <!-- "Bandyti dar kartą" button to restart the tasks -->
         <button class="next-button" @onclick="RestartTasks">Bandyti dar kartą</button>
     </div>
 }
@@ -95,7 +93,6 @@ else
         showNextButton = false;
     }
 
-    // Restart tasks from the beginning
     private void RestartTasks()
     {
         currentTaskIndex = 0;

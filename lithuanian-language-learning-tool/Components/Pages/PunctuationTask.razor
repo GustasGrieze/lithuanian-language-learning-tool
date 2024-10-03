@@ -32,7 +32,6 @@
         <p>Atlikai visas užduotis</p>
         <p>Teisingi atsakymai: @correctAnswersCount / @tasks.Count</p>
         
-        <!-- "Bandyti dar kartą" button to restart the tasks -->
         <button class="next-button" @onclick="RestartTasks">Bandyti dar kartą</button>
     }
 </div>
@@ -72,11 +71,9 @@
     // Initialize the first task
     protected override void OnInitialized()
     {
-        //userText = tasks[currentTaskIndex];
         userText = tasks[currentTaskIndex].Sentence;
     }
 
-    // Method to check user punctuation
     private void CheckPunctuation()
     {
 
@@ -99,7 +96,6 @@
         }
     }
 
-    // Move to the next task
     private void NextTask()
     {
         if (currentTaskIndex < tasks.Count - 1)
@@ -111,11 +107,10 @@
         }
         else
         {
-            showSummary = true; // Show summary when all tasks are completed
+            showSummary = true;
         }
     }
 
-    // Skip the current task
     private void SkipTask()
     {
         if (currentTaskIndex < tasks.Count - 1)
@@ -127,11 +122,10 @@
         }
         else
         {
-            showSummary = true; // Show summary when all tasks are completed
+            showSummary = true;
         }
     }
 
-    // Restart tasks from the beginning
     private void RestartTasks()
     {
         currentTaskIndex = 0;
@@ -142,7 +136,6 @@
         showSummary = false;
     }
 
-    // Helper method to extract punctuation marks from the text
     private string ExtractPunctuation(string text)
     {
         var punctuationMarks = tasks[currentTaskIndex].Options;
