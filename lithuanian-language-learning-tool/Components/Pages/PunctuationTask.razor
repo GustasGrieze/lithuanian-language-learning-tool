@@ -30,7 +30,7 @@
     {
         <h1>Užduoties apžvalga</h1>
         <p>Atlikai visas užduotis</p>
-        <p>Teisingi atsakymai: @correctAnswersCount / @questions.Count</p>
+        <p>Teisingi atsakymai: @correctAnswersCount / @tasks.Count</p>
         
         <!-- "Bandyti dar kartą" button to restart the tasks -->
         <button class="next-button" @onclick="RestartTasks">Bandyti dar kartą</button>
@@ -39,21 +39,21 @@
 
 @code {
 
-    private List<SpellingQuestion> questions = new List<SpellingQuestion>
+    private List<global::Task> tasks = new List<global::Task>
     {
-        new SpellingQuestion
+        new global::Task
         {
             Sentence = "Vilnius Lietuvos sostinė yra vienas seniausių Europos miestų...",
             Options = new List<string> {".", ",", ";", ":", "!", "?"},
             CorrectAnswer = "Vilnius, Lietuvos sostinė, yra vienas seniausių Europos miestų..."
         },
-        new SpellingQuestion
+        new global::Task
         {
             Sentence = "Petriukas surado piniginę kuri neturėjo jokių pinigų.",
             Options = new List<string> {".", ",", ";", ":", "!", "?"},
             CorrectAnswer = "Petriukas surado piniginę, kuri neturėjo jokių pinigų."
         },
-        new SpellingQuestion
+        new global::Task
         {
             Sentence = "Išeidamas sutikau labai malonų žmogų kuris turėjo žaizdą ant veido.",
             Options = new List<string> {".", ",", ";", ":", "!", "?"},
@@ -73,7 +73,7 @@
     protected override void OnInitialized()
     {
         //userText = tasks[currentTaskIndex];
-        userText = questions[currentTaskIndex].Sentence;
+        userText = tasks[currentTaskIndex].Sentence;
     }
 
     // Method to check user punctuation
@@ -82,7 +82,7 @@
 
 
         string userPunctuation = ExtractPunctuation(userText);
-        string correctPunctuation = ExtractPunctuation(questions[currentTaskIndex].CorrectAnswer);
+        string correctPunctuation = ExtractPunctuation(tasks[currentTaskIndex].CorrectAnswer);
 
         if (userPunctuation == correctPunctuation)
         {
@@ -102,10 +102,10 @@
     // Move to the next task
     private void NextTask()
     {
-        if (currentTaskIndex < questions.Count - 1)
+        if (currentTaskIndex < tasks.Count - 1)
         {
             currentTaskIndex++;
-            userText = questions[currentTaskIndex].Sentence;
+            userText = tasks[currentTaskIndex].Sentence;
             feedbackMessage = null;
             isCorrect = false;
         }
@@ -118,10 +118,10 @@
     // Skip the current task
     private void SkipTask()
     {
-        if (currentTaskIndex < questions.Count - 1)
+        if (currentTaskIndex < tasks.Count - 1)
         {
             currentTaskIndex++;
-            userText = questions[currentTaskIndex].Sentence;
+            userText = tasks[currentTaskIndex].Sentence;
             feedbackMessage = null;
             isCorrect = false;
         }
@@ -136,7 +136,7 @@
     {
         currentTaskIndex = 0;
         correctAnswersCount = 0;
-        userText = questions[currentTaskIndex].Sentence;
+        userText = tasks[currentTaskIndex].Sentence;
         feedbackMessage = null;
         isCorrect = false;
         showSummary = false;
@@ -145,7 +145,7 @@
     // Helper method to extract punctuation marks from the text
     private string ExtractPunctuation(string text)
     {
-        var punctuationMarks = questions[currentTaskIndex].Options;
+        var punctuationMarks = tasks[currentTaskIndex].Options;
         return new string(text.Where(c => punctuationMarks.Contains(c.ToString())).ToArray());
     }
 }

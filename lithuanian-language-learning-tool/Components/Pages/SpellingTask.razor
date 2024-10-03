@@ -2,7 +2,7 @@
 @page "/spellingtask"
 <h1>Lietuvių Rašybos Užduotys</h1>
 
-@if (currentQuestionIndex < questions.Count)
+@if (currentTaskIndex < tasks.Count)
 {
     <!--TO DO:
         * Progress bar
@@ -11,11 +11,11 @@
         * UI
     -->
     <div class="task-box">
-        <p>@questions[currentQuestionIndex].Sentence</p>
+        <p>@tasks[currentTaskIndex].Sentence</p>
     </div>
 
     <div class="options">
-        @foreach (var option in questions[currentQuestionIndex].Options)
+        @foreach (var option in tasks[currentTaskIndex].Options)
         {
             <!--Button only checks answer once, pressed again returns null (does nothing).-->
             <button class="option" @onclick="showFeedback ? null : () => CheckAnswer(option)">@option</button>
@@ -30,33 +30,33 @@
     }
     @if (showNextButton)
     {
-        <button class="next-button" @onclick="NextQuestion">Kitas klausimas</button>
+        <button class="next-button" @onclick="NextTask">Kita užduotis</button>
     }
 }
 else
 {
     <h2>Užduotys baigtos!</h2>
     <div>
-        <p>Teisingai atsakyta @(correctTotal) iš @(questions.Count).</p>
+        <p>Teisingai atsakyta @(correctTotal) iš @(tasks.Count).</p>
     </div>
 }
 
 @code {
-    private List<SpellingQuestion> questions = new List<SpellingQuestion>
+    private List<global::Task> tasks = new List<global::Task>
     {
-        new SpellingQuestion
+        new global::Task
         {
             Sentence = "Vilnius yra Liet_vos sostinė.",
             Options = new List<string> { "u", "ū", "o", "uo" },
             CorrectAnswer = "u"
         },
-        new SpellingQuestion
+        new global::Task
         {
             Sentence = "Lietuvoje yra daug gra_ių ežerų.",
             Options = new List<string> { "ž", "š", "s", "z" },
             CorrectAnswer = "ž"
         },
-        new SpellingQuestion
+        new global::Task
         {
             Sentence = "Kaunas yra antras pag_l dydį Lietuvos miestas.",
             Options = new List<string> { "a", "ą", "e", "ę" },
@@ -64,7 +64,7 @@ else
         }
     };
 
-    private int currentQuestionIndex = 0;
+    private int currentTaskIndex = 0;
     private bool showFeedback = false;
     private bool showNextButton = false;
     private bool isCorrect = false;
@@ -75,18 +75,18 @@ else
     {
         showFeedback = true;
         showNextButton = true;
-        isCorrect = selectedAnswer == questions[currentQuestionIndex].CorrectAnswer;
+        isCorrect = selectedAnswer == tasks[currentTaskIndex].CorrectAnswer;
         feedbackMessage = isCorrect 
             ? "Teisingai!" 
-            : $"Neteisingai. Teisingas atsakymas: {questions[currentQuestionIndex].CorrectAnswer}";
+            : $"Neteisingai. Teisingas atsakymas: {tasks[currentTaskIndex].CorrectAnswer}";
         correctTotal = isCorrect
             ? correctTotal + 1
             : correctTotal;
     }
 
-    private void NextQuestion()
+    private void NextTask()
     {
-        currentQuestionIndex++;
+        currentTaskIndex++;
         showFeedback = false;
         showNextButton = false;
     }
