@@ -1,15 +1,10 @@
-﻿<!--// SpellingTask.razor-->
-@page "/spellingtask"
+﻿@page "/spellingtask"
+@inherits SpellingTaskBase
+
 <h1>Lietuvių Rašybos Užduotys</h1>
 
 @if (currentTaskIndex < tasks.Count)
 {
-    <!--TO DO:
-        * Progress bar
-        * Timer
-        * Scoring
-        * UI
-    -->
     <div class="task-box">
         <p>@tasks[currentTaskIndex].Sentence</p>
     </div>
@@ -36,71 +31,8 @@ else
 {
     <div class="container">
         <h1>Užduoties apžvalga</h1>
-        <p>Atlikai visas užduotis</p>
         <p>Teisingi atsakymai: @correctTotal / @tasks.Count</p>
 
         <button class="next-button" @onclick="RestartTasks">Bandyti dar kartą</button>
     </div>
 }
-
-@code {
-    private List<global::Task> tasks = new List<global::Task>
-    {
-        new global::Task
-        {
-            Sentence = "Vilnius yra Liet_vos sostinė.",
-            Options = new List<string> { "u", "ū", "o", "uo" },
-            CorrectAnswer = "u"
-        },
-        new global::Task
-        {
-            Sentence = "Lietuvoje yra daug gra_ių ežerų.",
-            Options = new List<string> { "ž", "š", "s", "z" },
-            CorrectAnswer = "ž"
-        },
-        new global::Task
-        {
-            Sentence = "Kaunas yra antras pag_l dydį Lietuvos miestas.",
-            Options = new List<string> { "a", "ą", "e", "ę" },
-            CorrectAnswer = "a"
-        }
-    };
-
-    private int currentTaskIndex = 0;
-    private bool showFeedback = false;
-    private bool showNextButton = false;
-    private bool isCorrect = false;
-    private string feedbackMessage = "";
-    private int correctTotal = 0;
-
-    private void CheckAnswer(string selectedAnswer)
-    {
-        showFeedback = true;
-        showNextButton = true;
-        isCorrect = selectedAnswer == tasks[currentTaskIndex].CorrectAnswer;
-        feedbackMessage = isCorrect
-            ? "Teisingai!"
-            : $"Neteisingai. Teisingas atsakymas: {tasks[currentTaskIndex].CorrectAnswer}";
-        correctTotal = isCorrect
-            ? correctTotal + 1
-            : correctTotal;
-    }
-
-    private void NextTask()
-    {
-        currentTaskIndex++;
-        showFeedback = false;
-        showNextButton = false;
-    }
-
-    private void RestartTasks()
-    {
-        currentTaskIndex = 0;
-        showFeedback = false;
-        showNextButton = false;
-        isCorrect = false;
-        feedbackMessage = "";
-        correctTotal = 0;
-    }
-}
-
