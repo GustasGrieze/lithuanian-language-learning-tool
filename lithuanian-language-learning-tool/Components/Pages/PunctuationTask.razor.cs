@@ -42,10 +42,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
         protected void CheckPunctuation()
         {
-            string userPunctuation = ExtractPunctuation(userText);
-            string correctPunctuation = ExtractPunctuation(tasks[currentTaskIndex].CorrectAnswer);
-
-            if (userPunctuation == correctPunctuation)
+            if (ComparePunctuationWithOriginal(userText, tasks[currentTaskIndex].CorrectAnswer))
             {
                 feedbackMessage = "Puiku! Visi skyrybos ženklai teisingi.";
                 feedbackClass = "correct";
@@ -58,6 +55,26 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 feedbackClass = "incorrect";
                 isCorrect = false;
             }
+        }
+
+        protected bool ComparePunctuationWithOriginal(string userText, string correctText)
+        {
+            if (userText.Length != correctText.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < correctText.Length; i++)
+            {
+                if (char.IsPunctuation(correctText[i]))
+                {
+                    if (userText[i] != correctText[i])
+                    {
+                        return false; 
+                    }
+                }
+            }
+            return true;
         }
 
         protected void NextTask()
@@ -98,12 +115,6 @@ namespace lithuanian_language_learning_tool.Components.Pages
             feedbackMessage = null;
             isCorrect = false;
             showSummary = false;
-        }
-
-        protected string ExtractPunctuation(string text)
-        {
-            var punctuationMarks = tasks[currentTaskIndex].Options;
-            return new string(text.Where(c => punctuationMarks.Contains(c.ToString())).ToArray());
         }
     }
 }
