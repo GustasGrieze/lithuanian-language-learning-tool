@@ -47,6 +47,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
         protected List<bool> taskStatus = new List<bool>();
         protected string explanationMessage = "";
+        protected string correctAnswer = "";
 
         protected override void OnInitialized()
         {
@@ -123,23 +124,21 @@ namespace lithuanian_language_learning_tool.Components.Pages
             showSummary = false;
         }
 
-        // Navigating back to a specific task and displaying the explanation
-            protected void GoToTask(int taskIndex)
+        protected void GoToTask(int taskIndex)
+        {
+            if (taskIndex >= 0 && taskIndex < tasks.Count)
             {
-                // Ensure that the index is within the valid range of tasks
-                if (taskIndex >= 0 && taskIndex < tasks.Count)
-                {
-                    currentTaskIndex = taskIndex;
-                    userText = tasks[currentTaskIndex].Sentence;  // Load the sentence for the selected task
-                    feedbackMessage = null;  // Clear any old feedback messages
-                    explanationMessage = $"Paaiškinimas: {tasks[currentTaskIndex].Explanation}";  // Provide the explanation
-                    showSummary = false;  // Hide the summary screen and return to the task
-                }
-                else
-                {
-                    // If the index is out of range, log an error message or handle it
-                    feedbackMessage = "Invalid task index.";
-                }
+                currentTaskIndex = taskIndex;
+                userText = tasks[currentTaskIndex].Sentence;  
+                feedbackMessage = null;  
+                correctAnswer = $"Teisingas atsakymas: {tasks[currentTaskIndex].CorrectAnswer}";
+                explanationMessage = $"Paaiškinimas: {tasks[currentTaskIndex].Explanation}"; 
+                showSummary = false;  
             }
+            else
+            {
+                feedbackMessage = "Invalid task index.";
+            }
+        }
     }
 }

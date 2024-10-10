@@ -3,7 +3,7 @@
 
 <h1>Lietuvių Rašybos Užduotys</h1>
 
-@if (currentTaskIndex < tasks.Count)
+@if (!showSummary)
 {
     <div class="task-box">
         <p>@tasks[currentTaskIndex].Sentence</p>
@@ -16,14 +16,18 @@
         }
     </div>
 
-    @if (showFeedback)
+    @if (!string.IsNullOrEmpty(explanationMessage))
+    {
+        <p>@correctAnswer</p>
+        <p>@explanationMessage</p>
+        <button class="next-button" @onclick="() => showSummary = true">Grįžti į apžvalgą</button>
+    }
+    else if (showFeedback)
     {
         <div class="feedback @(isCorrect ? "correct" : "incorrect")">
             @feedbackMessage
         </div>
-    }
-    @if (showNextButton)
-    {
+
         <button class="next-button" @onclick="NextTask">Kita užduotis</button>
     }
 }
@@ -36,7 +40,8 @@ else
         <div class="summary-button-container">
             @for (int i = 0; i < tasks.Count; i++)
             {
-                <button class="summary-button @(taskStatus[i] ? "green" : "red")">
+                var index = i;
+                <button class="summary-button @(taskStatus[i] ? "green" : "red")" @onclick="() => GoToTask(index)">
                     @(i + 1)
                 </button>
             }
