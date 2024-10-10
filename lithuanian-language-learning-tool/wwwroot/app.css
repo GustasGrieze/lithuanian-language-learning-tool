@@ -160,3 +160,13 @@ input[type="checkbox"] {
     margin: 0 auto;
     text-align: center;
 }
+
+.score-label {
+    color: var(--color-tone-1);
+    font-family: sans-serif;
+    display: flex;
+    justify-content: right;
+    align-items: right;
+    flex-grow: 1;
+    overflow: hidden;
+}

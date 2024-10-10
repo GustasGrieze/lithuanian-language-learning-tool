@@ -5,6 +5,10 @@
 
 @if (currentTaskIndex < tasks.Count)
 {
+    <div class="score-label">
+        <h2>Taškai: @score</h2>
+    </div>
+    
     <Timer @ref="timer" SecondsToRun="10" TimerOut="TimerOut"/>
 
     <div class="task-box">
@@ -34,6 +38,7 @@ else
     <div class="container">
         <h1>Užduoties apžvalga</h1>
         <p>Teisingi atsakymai: @correctTotal / @tasks.Count</p>
+        <p>Surinkta taškų: @score</p>
 
         <button class="next-button" @onclick="RestartTasks">Bandyti dar kartą</button>
     </div>

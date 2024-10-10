@@ -33,6 +33,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected bool isCorrect = false;
         protected string feedbackMessage = "";
         protected int correctTotal = 0;
+        protected int score = 0;
 
         protected void CheckAnswer(string selectedAnswer)
         {
@@ -43,6 +44,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 ? "Teisingai!"
                 : $"Neteisingai. Teisingas atsakymas: {tasks[currentTaskIndex].CorrectAnswer}";
             correctTotal = isCorrect ? correctTotal + 1 : correctTotal;
+            score = isCorrect ? score + (100) : score; // simple scoring system - needs improvement (time based score)
         }
 
         protected void NextTask()
@@ -60,9 +62,11 @@ namespace lithuanian_language_learning_tool.Components.Pages
             isCorrect = false;
             feedbackMessage = "";
             correctTotal = 0;
-        }
+            score = 0;
 
-        protected void TimerOut()
+    }
+
+    protected void TimerOut()
         {
             currentTaskIndex = tasks.Count;
         }

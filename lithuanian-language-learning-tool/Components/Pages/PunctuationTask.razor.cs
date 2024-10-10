@@ -36,7 +36,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected bool isCorrect = false;
         protected int correctAnswersCount = 0;
         protected bool showSummary = false;
-
+        protected int score = 0;
         protected override void OnInitialized()
         {
             userText = tasks[currentTaskIndex].Sentence;
@@ -53,6 +53,8 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 feedbackClass = "correct";
                 isCorrect = true;
                 correctAnswersCount++;
+                score = isCorrect ? score + (100) : score; // simple scoring system - needs improvement (time based score, punctuation marks count)
+
             }
             else
             {
