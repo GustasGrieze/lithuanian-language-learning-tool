@@ -1,0 +1,20 @@
+﻿<div class="clock">
+    <h1>@Time</h1>
+</div>
+<div class="progress-bar" style="transition: width @(SecondsToRun)s linear, background-color @(SecondsToRun)s linear;
+                                  width: @(progressWidth)%;
+                                  background-color: @(progressColor);">
+</div>
+
+@code {
+    private int progressWidth = 100;
+    private string progressColor = "rgb(0,255,0)";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1);
+        progressWidth = 0;
+        progressColor = "rgb(255,0,0)";
+        StateHasChanged();
+    }
+}

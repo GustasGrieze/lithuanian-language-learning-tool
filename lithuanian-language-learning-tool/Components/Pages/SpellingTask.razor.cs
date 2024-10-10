@@ -4,6 +4,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
 {
     public class SpellingTaskBase : ComponentBase
     {
+        protected Timer timer = new Timer();
         protected List<global::Task> tasks = new List<global::Task>
         {
             new global::Task
@@ -59,6 +60,11 @@ namespace lithuanian_language_learning_tool.Components.Pages
             isCorrect = false;
             feedbackMessage = "";
             correctTotal = 0;
+        }
+
+        protected void TimerOut()
+        {
+            currentTaskIndex = tasks.Count;
         }
     }
 }

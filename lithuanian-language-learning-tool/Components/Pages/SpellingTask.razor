@@ -5,6 +5,8 @@
 
 @if (currentTaskIndex < tasks.Count)
 {
+    <Timer @ref="timer" SecondsToRun="10" TimerOut="TimerOut"/>
+
     <div class="task-box">
         <p>@tasks[currentTaskIndex].Sentence</p>
     </div>
