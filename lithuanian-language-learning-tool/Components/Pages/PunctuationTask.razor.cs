@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Components;
 using System.Linq;
+using lithuanian_language_learning_tool.Components;
 
 namespace lithuanian_language_learning_tool.Components.Pages
 {
     public class PunctuationTaskBase : ComponentBase
     {
+        protected Timer timer = new Timer();
         protected List<global::Task> tasks = new List<global::Task>
         {
             new global::Task
@@ -104,6 +106,11 @@ namespace lithuanian_language_learning_tool.Components.Pages
         {
             var punctuationMarks = tasks[currentTaskIndex].Options;
             return new string(text.Where(c => punctuationMarks.Contains(c.ToString())).ToArray());
+        }
+
+        protected void TimerOut()
+        {
+            showSummary = true;
         }
     }
 }

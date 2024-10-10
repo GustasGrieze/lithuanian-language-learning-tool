@@ -1,10 +1,12 @@
 ﻿@page "/punctuationtask"
 @inherits PunctuationTaskBase
 
-<div class="container">
+
     @if (!showSummary)
     {
         <h1>Skyrybos Užduotis</h1>
+
+        <Timer @ref="timer" SecondsToRun="10" TimerOut="TimerOut"/>
 
         <div class="task-box" style="height: 300px;">
             <textarea @bind="userText" class="edit-textarea"></textarea>
@@ -29,10 +31,12 @@
     }
     else
     {
-        <h1>Užduoties apžvalga</h1>
-        <p>Atlikai visas užduotis</p>
-        <p>Teisingi atsakymai: @correctAnswersCount / @tasks.Count</p>
+        <div class="container">
+            <h1>Užduoties apžvalga</h1>
+            <p>Atlikai visas užduotis</p>
+            <p>Teisingi atsakymai: @correctAnswersCount / @tasks.Count</p>
         
-        <button class="next-button" @onclick="RestartTasks">Bandyti dar kartą</button>
+            <button class="next-button" @onclick="RestartTasks">Bandyti dar kartą</button>
+        </div>
     }
-</div>
+
