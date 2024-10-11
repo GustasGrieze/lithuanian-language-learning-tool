@@ -4,28 +4,26 @@ namespace lithuanian_language_learning_tool.Components.Pages
 {
     public class SpellingTaskBase : ComponentBase
     {
+        protected Timer timer = new Timer();
         protected List<global::Task> tasks = new List<global::Task>
-{
+        {
             new global::Task
             {
                 Sentence = "Vilnius yra Liet_vos sostinė.",
                 Options = new List<string> { "u", "ū", "o", "uo" },
-                CorrectAnswer = "u",
-                Explanation = "Žodyje 'Lietuvos', raidė 'u' yra tinkama, nes tai yra kilmininko forma žodžio 'Lietuva'. Lietuvoje raidė 'ū' naudojama ilguose skiemenyse, tačiau šiame kontekste trumpasis 'u' yra taisyklingas."
+                CorrectAnswer = "u"
             },
             new global::Task
             {
                 Sentence = "Lietuvoje yra daug gra_ių ežerų.",
                 Options = new List<string> { "ž", "š", "s", "z" },
-                CorrectAnswer = "ž",
-                Explanation = "Žodis 'gražių' reikalauja minkštosios 'ž', nes tai būdvardžio forma, susijusi su žodžiu 'gražus'."
+                CorrectAnswer = "ž"
             },
             new global::Task
             {
                 Sentence = "Kaunas yra antras pag_l dydį Lietuvos miestas.",
                 Options = new List<string> { "a", "ą", "e", "ę" },
-                CorrectAnswer = "a",
-                Explanation = "Žodis 'pagal' naudojamas kaip prielinksnis, ir šiame kontekste reikia raidės 'a'. Lietuvių kalboje kaip 'ą' ir 'ę' yra ilgesnės balsių formos, naudojamos kitais atvejais, bet ne 6iame prielinksnyje."
+                CorrectAnswer = "a"
             }
         };
 
@@ -35,9 +33,9 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected bool isCorrect = false;
         protected string feedbackMessage = "";
         protected int correctTotal = 0;
-
         protected List<bool> taskStatus = new List<bool>();
-        protected string explanationMessage = "";
+        protected int score = 0;
+		protected string explanationMessage = "";
         protected string correctAnswer = "";
         protected  string userText = "";
         protected bool showSummary = false;
@@ -61,6 +59,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 : $"Neteisingai. Teisingas atsakymas: {tasks[currentTaskIndex].CorrectAnswer}";
             correctTotal = isCorrect ? correctTotal + 1 : correctTotal;
             taskStatus[currentTaskIndex] = isCorrect;
+            score = isCorrect ? score + (100) : score; // simple scoring system - needs improvement (time based score)
         }
 
         protected void NextTask()
@@ -76,12 +75,10 @@ namespace lithuanian_language_learning_tool.Components.Pages
             {
                 showSummary = true;
             }
-            
         }
 
         protected void RestartTasks()
         {
-
             currentTaskIndex = 0;
             showFeedback = false;
             showNextButton = false;
@@ -100,9 +97,10 @@ namespace lithuanian_language_learning_tool.Components.Pages
             feedbackMessage = null;
             isCorrect = false;
             showSummary = false;
+            score = 0;
         }
-
-        protected void GoToTask(int taskIndex)
+		
+		protected void GoToTask(int taskIndex)
         {
             if (taskIndex >= 0 && taskIndex < tasks.Count)
             {
@@ -117,6 +115,11 @@ namespace lithuanian_language_learning_tool.Components.Pages
             {
                 feedbackMessage = "Invalid task index.";
             }
+        }
+         
+        protected void TimerOut()
+        {
+            currentTaskIndex = tasks.Count;
         }
     }
 }

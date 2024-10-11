@@ -5,6 +5,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
 {
     public class PunctuationTaskBase : ComponentBase
     {
+        protected Timer timer = new Timer();
         protected List<global::Task> tasks = new List<global::Task>
         {
             new global::Task
@@ -44,10 +45,11 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected bool isCorrect = false;
         protected int correctAnswersCount = 0;
         protected bool showSummary = false;
+        protected int score = 0;
 
         protected List<bool> taskStatus = new List<bool>();
         protected string explanationMessage = "";
-        protected string correctAnswer = "";
+		protected string correctAnswer = "";
 
         protected override void OnInitialized()
         {
@@ -64,6 +66,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 isCorrect = true;
                 correctAnswersCount++;
                 taskStatus[currentTaskIndex] = true;
+                score = isCorrect ? score + (100) : score; // simple scoring system - needs improvement (time based score, punctuation marks count)
             }
             else
             {
@@ -122,6 +125,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
             feedbackMessage = null;
             isCorrect = false;
             showSummary = false;
+            score = 0;
         }
 
         protected void GoToTask(int taskIndex)
@@ -139,6 +143,11 @@ namespace lithuanian_language_learning_tool.Components.Pages
             {
                 feedbackMessage = "Invalid task index.";
             }
+        }
+            
+        protected void TimerOut()
+        {
+            showSummary = true;
         }
     }
 }
