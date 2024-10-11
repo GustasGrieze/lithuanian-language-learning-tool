@@ -161,6 +161,7 @@ input[type="checkbox"] {
     text-align: center;
 }
 
+
 .score-label {
     color: var(--color-tone-1);
     font-family: sans-serif;
@@ -169,4 +170,34 @@ input[type="checkbox"] {
     align-items: right;
     flex-grow: 1;
     overflow: hidden;
+}
+
+.summary-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.summary-button {
+    font-size: 1.4em;
+    padding: 15px 25px;
+    margin: 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.summary-button.green {
+    background-color: var(--correct-color);
+    color: white;
+}
+
+.summary-button.red {
+    background-color: var(--incorrect-color);
+    color: white;
+}
+
+.summary-button:hover {
+    opacity: 0.9;
 }
