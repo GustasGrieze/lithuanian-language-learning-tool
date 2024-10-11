@@ -161,6 +161,17 @@ input[type="checkbox"] {
     text-align: center;
 }
 
+
+.score-label {
+    color: var(--color-tone-1);
+    font-family: sans-serif;
+    display: flex;
+    justify-content: right;
+    align-items: right;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
 .summary-button-container {
     display: flex;
     justify-content: center;

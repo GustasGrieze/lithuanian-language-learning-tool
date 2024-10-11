@@ -4,6 +4,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
 {
     public class SpellingTaskBase : ComponentBase
     {
+        protected Timer timer = new Timer();
         protected List<global::Task> tasks = new List<global::Task>
         {
             new global::Task
@@ -33,6 +34,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected string feedbackMessage = "";
         protected int correctTotal = 0;
         protected List<bool> taskStatus = new List<bool>();
+        protected int score = 0;
 
         protected override void OnInitialized()
         {
@@ -53,6 +55,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 : $"Neteisingai. Teisingas atsakymas: {tasks[currentTaskIndex].CorrectAnswer}";
             correctTotal = isCorrect ? correctTotal + 1 : correctTotal;
             taskStatus[currentTaskIndex] = isCorrect;
+            score = isCorrect ? score + (100) : score; // simple scoring system - needs improvement (time based score)
         }
 
         protected void NextTask()
@@ -70,6 +73,12 @@ namespace lithuanian_language_learning_tool.Components.Pages
             isCorrect = false;
             feedbackMessage = "";
             correctTotal = 0;
+            score = 0;
+        }
+         
+        protected void TimerOut()
+        {
+            currentTaskIndex = tasks.Count;
         }
     }
 }
