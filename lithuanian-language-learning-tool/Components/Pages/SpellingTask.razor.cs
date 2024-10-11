@@ -35,6 +35,10 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected int correctTotal = 0;
         protected List<bool> taskStatus = new List<bool>();
         protected int score = 0;
+		protected string explanationMessage = "";
+        protected string correctAnswer = "";
+        protected  string userText = "";
+        protected bool showSummary = false;
 
         protected override void OnInitialized()
         {
@@ -60,9 +64,17 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
         protected void NextTask()
         {
-            currentTaskIndex++;
-            showFeedback = false;
-            showNextButton = false;
+            if (currentTaskIndex < tasks.Count - 1)
+            {
+                currentTaskIndex++;
+                userText = tasks[currentTaskIndex].Sentence;
+                showFeedback = false;
+                showNextButton = false;
+            }
+            else
+            {
+                showSummary = true;
+            }
         }
 
         protected void RestartTasks()
@@ -73,7 +85,36 @@ namespace lithuanian_language_learning_tool.Components.Pages
             isCorrect = false;
             feedbackMessage = "";
             correctTotal = 0;
+
+            explanationMessage = "";
+            correctAnswer = "";
+            userText = "";
+            showSummary = false;
+
+            currentTaskIndex = 0;
+            correctTotal = 0;
+            userText = tasks[currentTaskIndex].Sentence;
+            feedbackMessage = null;
+            isCorrect = false;
+            showSummary = false;
             score = 0;
+        }
+		
+		protected void GoToTask(int taskIndex)
+        {
+            if (taskIndex >= 0 && taskIndex < tasks.Count)
+            {
+                currentTaskIndex = taskIndex;
+                userText = tasks[currentTaskIndex].Sentence;  
+                feedbackMessage = null;  
+                correctAnswer = $"Teisingas atsakymas: {tasks[currentTaskIndex].CorrectAnswer}";
+                explanationMessage = $"Paaiškinimas: {tasks[currentTaskIndex].Explanation}";  
+                showSummary = false;  
+            }
+            else
+            {
+                feedbackMessage = "Invalid task index.";
+            }
         }
          
         protected void TimerOut()
