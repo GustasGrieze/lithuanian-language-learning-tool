@@ -119,7 +119,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
          
         protected void TimerOut()
         {
-            currentTaskIndex = tasks.Count;
+            showSummary = true;
         }
     }
 }
