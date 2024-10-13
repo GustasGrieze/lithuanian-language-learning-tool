@@ -1,54 +1,95 @@
 ﻿@page "/punctuationtask"
 @inherits PunctuationTaskBase
+@inject IJSRuntime JS
 
+@if (!showSummary)    
+{
 
-    @if (!showSummary)
-    {
-        <h1>Skyrybos Užduotis</h1>
+    <h1>Skyrybos Užduotis</h1>
+   
 
-        <div class="score-label">
-            <h2>Taškai: @score</h2>
-        </div>
+    <div class="score-label">
+        <h2>Taškai: @score</h2>
+    </div>
 
-        <Timer @ref="timer" SecondsToRun="20" TimerOut="TimerOut"/>
+    <Timer @ref="timer" SecondsToRun="20" TimerOut="TimerOut" />
 
-        <div class="task-box" style="height: 300px;">
-            <textarea @bind="userText" class="edit-textarea"></textarea>
-        </div>
-        <!-- Explanation for revisited task -->
-        @if (!string.IsNullOrEmpty(explanationMessage))
+    /*<div class="sentence-container">
+        @for (int i = 0; i <= userTextChars.Count; i++)
         {
-            <p>@correctAnswer</p>
-            <p>@explanationMessage</p>
-            <button class="next-button" @onclick="() => showSummary = true">Grįžti į apžvalgą</button>
+            <span class="char-span @(gapPosition == i ? "gap" : "")"
+                  @key="i"
+                  @onDragOver="(e) => OnDragOver(e, i)"
+                  @onDrop="(e) => OnDrop(e, i)"
+                  @onDragLeave="(e) => OnDragLeave(e, i)">
+                @if (i < userTextChars.Count)
+                {
+                    @userTextChars[i]
+                }
+            </span>
         }
+    </div>*/
 
-        @if (isCorrect)
+     
+    <div class="drop-zone">
+        @for (int i = 0; i < userText.Length; i++)
         {
-            <button class="next-button" @onclick="NextTask">Kita užduotis</button>
+            <span class="letter" id="letter-@i">@userText[i]</span>
         }
-        else
-        {
-            <button class="next-button" @onclick="CheckPunctuation">Pateikti</button>
-            <button class="next-button" @onclick="SkipTask">Praleisti</button>
-        }
+    </div>
 
-        <div class="feedback">
-            @if (feedbackMessage != null)
+    /*@onDragStart="(e) => OnDragStart(e, mark)"*/
+   
+
+    <div class="task-box" style="height: 300px;">
+        <textarea @bind="userText" class="edit-textarea"></textarea>
+    </div>
+
+    <div>
+        <h4>Skyrybos Ženklai (Punctuation Marks):</h4>
+        <div class="drag-container">
+            @foreach (var mark in tasks[currentTaskIndex].Options)
             {
-                <p class="@feedbackClass">@feedbackMessage</p>
+                <div class="draggable"
+                     draggable="true" 
+                data-mark ="@mark">
+                    
+                    @mark
+                </div>
             }
         </div>
+    </div>
 
-        
+    @if (!string.IsNullOrEmpty(explanationMessage))
+    {
+        <p>@correctAnswer</p>
+        <p>@explanationMessage</p>
+        <button class="next-button" @onclick="() => showSummary = true">Grįžti į apžvalgą</button>
+    }
+
+    @if (isCorrect)
+    {
+        <button class="next-button" @onclick="NextTask">Kita užduotis</button>
     }
     else
     {
-      <div class="container">
+        <button class="next-button" @onclick="CheckPunctuation">Pateikti</button>
+        <button class="next-button" @onclick="SkipTask">Praleisti</button>
+    }
+
+    <div class="feedback">
+        @if (feedbackMessage != null)
+        {
+            <p class="@feedbackClass">@feedbackMessage</p>
+        }
+    </div>
+}
+else
+{
+    <div class="container">
         <h1>Užduoties apžvalga</h1>
         <p>Teisingi atsakymai: @correctAnswersCount / @tasks.Count</p>
 
-        <!-- Display buttons for each task -->
         <div class="summary-button-container">
             @for (int i = 0; i < tasks.Count; i++)
             {
@@ -60,6 +101,5 @@
         </div>
 
         <button class="next-button" @onclick="RestartTasks">Bandyti dar kartą</button>
-      </div>
-    }
-
+    </div>
+}

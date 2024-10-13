@@ -1,10 +1,16 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using System.Linq;
+using Microsoft.JSInterop;
 
 namespace lithuanian_language_learning_tool.Components.Pages
 {
-    public class PunctuationTaskBase : ComponentBase
+    public class PunctuationTaskBase: ComponentBase
     {
+        [Inject]
+        protected IJSRuntime JS { get; set; }
+    
+
         protected Timer timer = new Timer();
         protected List<global::Task> tasks = new List<global::Task>
         {
@@ -50,11 +56,17 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected List<bool> taskStatus = new List<bool>();
         protected string explanationMessage = "";
 		protected string correctAnswer = "";
+        protected List<string> userTextChars;
+        protected string? draggedPunctuation;
+        protected int gapPosition = -1;
+
+
 
         protected override void OnInitialized()
         {
             userText = tasks[currentTaskIndex].Sentence;
             taskStatus = Enumerable.Repeat(false, tasks.Count).ToList();
+            userTextChars = userText.Select(c => c.ToString()).ToList();
         }
 
         protected void CheckPunctuation()
@@ -149,5 +161,74 @@ namespace lithuanian_language_learning_tool.Components.Pages
         {
             showSummary = true;
         }
+
+        protected override async System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await JS.InvokeVoidAsync("dragAndDrop", ".draggable");
+                await JS.InvokeVoidAsync("dropzoneHandler.initDraggable", "#draggable", "#dropzone");
+            }
+
+        }
+        //-----
+        private DotNetObjectReference<PunctuationTaskBase> objRef;
+
+        /*protected override async System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                objRef = DotNetObjectReference.Create(this);
+            }
+            await JS.InvokeVoidAsync("initializeDragAndDrop", objRef);
+        }*/
+
+        [JSInvokable]
+        public void InsertPunctuation(int index, string punctuation)
+        {
+            userText = userText.Insert(index, punctuation);
+            StateHasChanged();
+        }
+
+        public void Dispose()
+        {
+            objRef?.Dispose();
+        }
+
+        /*
+        protected void OnDragStart(DragEventArgs e, string punctuation)
+        {
+            draggedPunctuation = punctuation;
+            e.DataTransfer.EffectAllowed = "move";
+            //e.DataTransfer.SetData("text", punctuation);
+        }
+
+        protected void OnDragOver(DragEventArgs e, int position)
+        {
+            //e.PreventDefault();
+            gapPosition = position;
+            StateHasChanged();
+        }
+
+        protected void OnDragLeave(DragEventArgs e, int position)
+        {
+            gapPosition = -1;
+            StateHasChanged();
+        }
+
+        protected void OnDrop(DragEventArgs e, int position)
+        {
+            //e.PreventDefault();
+            if (!string.IsNullOrEmpty(draggedPunctuation))
+            {
+                userTextChars.Insert(position, draggedPunctuation);
+                userText = string.Concat(userTextChars);
+                draggedPunctuation = null;
+                gapPosition = -1;
+                StateHasChanged();
+            }
+        }
+        */
+
     }
 }

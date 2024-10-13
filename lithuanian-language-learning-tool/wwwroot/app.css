@@ -201,3 +201,59 @@ input[type="checkbox"] {
 .summary-button:hover {
     opacity: 0.9;
 }
+
+.drag-container {
+    display: flex;
+    gap: 10px;
+}
+
+.draggable {
+    padding: 10px;
+    background-color: lightblue;
+    cursor: move;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.drop-zone {
+    width: 200px;
+    height: 100px;
+    border: 2px dashed lightgray;
+    padding: 10px;
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: gray;
+}
+
+    .drop-zone:hover {
+        border-color: blue;
+    }
+
+/* Add to your main stylesheet */
+
+/*.draggable {
+    touch-action: none;
+    user-select: none;
+    position: relative;
+}
+
+.dropzone {
+    position: relative;
+    background-color: #f9f9f9;
+}*/
+
+.drop-active {
+    background-color: lightgreen;
+}
+
+
+.sentence {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.letter {
+    display: inline-block;
+    transition: margin-left 0.2s;
+}
