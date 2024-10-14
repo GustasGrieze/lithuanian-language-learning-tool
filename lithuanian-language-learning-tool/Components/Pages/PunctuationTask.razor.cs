@@ -51,6 +51,8 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected string explanationMessage = "";
 		protected string correctAnswer = "";
 
+        protected bool reviewMode = false;
+
         protected override void OnInitialized()
         {
             userText = tasks[currentTaskIndex].Sentence;
@@ -135,13 +137,15 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 currentTaskIndex = taskIndex;
                 userText = tasks[currentTaskIndex].Sentence;  
                 feedbackMessage = null;  
-                correctAnswer = $"Teisingas atsakymas: {tasks[currentTaskIndex].CorrectAnswer}";
-                explanationMessage = $"Paaiškinimas: {tasks[currentTaskIndex].Explanation}"; 
-                showSummary = false;  
+                correctAnswer = tasks[currentTaskIndex].CorrectAnswer;
+                explanationMessage = tasks[currentTaskIndex].Explanation; 
+                showSummary = false;
+                reviewMode = true;
             }
             else
             {
                 feedbackMessage = "Invalid task index.";
+
             }
         }
             

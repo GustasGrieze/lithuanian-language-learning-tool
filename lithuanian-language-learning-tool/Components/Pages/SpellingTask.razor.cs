@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using System.Runtime.Intrinsics.X86;
 
 namespace lithuanian_language_learning_tool.Components.Pages
 {
@@ -11,20 +12,24 @@ namespace lithuanian_language_learning_tool.Components.Pages
             {
                 Sentence = "Vilnius yra Liet_vos sostinė.",
                 Options = new List<string> { "u", "ū", "o", "uo" },
-                CorrectAnswer = "u"
+                CorrectAnswer = "u",
+                Explanation = "Teisingas atsakymas yra 'u', nes žodyje 'Lietuvos' rašoma trumpa balsė 'u'. Šis žodis yra kilmininko forma, reiškianti 'Lietuva'."
             },
             new global::Task
             {
                 Sentence = "Lietuvoje yra daug gra_ių ežerų.",
                 Options = new List<string> { "ž", "š", "s", "z" },
-                CorrectAnswer = "ž"
+                CorrectAnswer = "ž",
+                Explanation = "Teisingas atsakymas yra 'ž', nes 'gražių' kyla iš gražus."
             },
             new global::Task
             {
                 Sentence = "Kaunas yra antras pag_l dydį Lietuvos miestas.",
                 Options = new List<string> { "a", "ą", "e", "ę" },
-                CorrectAnswer = "a"
+                CorrectAnswer = "a",
+                Explanation = "Teisingas atsakymas yra 'a', nes 'pagal' yra tinkama prielinksnio forma."
             }
+
         };
 
         protected int currentTaskIndex = 0;
@@ -39,6 +44,8 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected string correctAnswer = "";
         protected  string userText = "";
         protected bool showSummary = false;
+
+        protected bool reviewMode = false;
 
         protected override void OnInitialized()
         {
@@ -91,13 +98,9 @@ namespace lithuanian_language_learning_tool.Components.Pages
             userText = "";
             showSummary = false;
 
-            currentTaskIndex = 0;
-            correctTotal = 0;
             userText = tasks[currentTaskIndex].Sentence;
-            feedbackMessage = null;
-            isCorrect = false;
-            showSummary = false;
             score = 0;
+            reviewMode = false;
         }
 		
 		protected void GoToTask(int taskIndex)
@@ -107,9 +110,10 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 currentTaskIndex = taskIndex;
                 userText = tasks[currentTaskIndex].Sentence;  
                 feedbackMessage = null;  
-                correctAnswer = $"Teisingas atsakymas: {tasks[currentTaskIndex].CorrectAnswer}";
-                explanationMessage = $"Paaiškinimas: {tasks[currentTaskIndex].Explanation}";  
-                showSummary = false;  
+                correctAnswer = tasks[currentTaskIndex].CorrectAnswer;
+                explanationMessage = tasks[currentTaskIndex].Explanation;  
+                showSummary = false; 
+                reviewMode=true;
             }
             else
             {
