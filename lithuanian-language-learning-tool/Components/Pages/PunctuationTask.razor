@@ -83,7 +83,7 @@
             <div class="summary-button-container">
                 @for (int i = 0; i < tasks.Count; i++)
                 {
-                    var index = i;
+                    int index = i;
                     <button class="summary-button @(taskStatus[i] ? "green" : "red")" @onclick="() => GoToTask(index)">
                         @(i + 1)
                     </button>
@@ -92,7 +92,7 @@
 
 
             </div>
-            <button class="next-button" @onclick="RestartTasks">Bandyti dar kartą</button>
+            <button class="next-button" @onclick="StartExercise">Bandyti dar kartą</button>
         }
     }
 

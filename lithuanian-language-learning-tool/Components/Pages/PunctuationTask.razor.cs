@@ -126,7 +126,6 @@ namespace lithuanian_language_learning_tool.Components.Pages
         {
             currentTaskIndex = 0;
             correctAnswersCount = 0;
-            userText = tasks[currentTaskIndex].Sentence;
             feedbackMessage = null;
             isCorrect = false;
             showSummary = false;
@@ -171,6 +170,9 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected void StartExercise()
         {
             startExercise = true;
+            userText = tasks[currentTaskIndex].Sentence;
+            taskStatus = Enumerable.Repeat(false, tasks.Count).ToList();
+
             RestartTasks();
         }
         private List<global::Task> ParseUploadedTasks(string fileContent)
