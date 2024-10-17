@@ -1,0 +1,49 @@
+<h3>Do you want to upload custom tasks or use default tasks?</h3>
+
+<button class="btn btn-primary" @onclick="ShowUpload">Upload Custom Tasks</button>
+<button class="btn btn-secondary" @onclick="StartWithDefaultTasks">Use Default Tasks</button>
+
+@if (showUpload)
+{
+    <InputFile OnChange="HandleFileSelected" />
+}
+
+@code {
+    [Parameter] public EventCallback<string> OnTaskUploaded { get; set; } // Notify parent when tasks are uploaded
+    [Parameter] public EventCallback OnUseDefaultTasks { get; set; }      // Notify parent to use default tasks
+
+    private bool showUpload = false;
+    private string fileName;
+
+    private void ShowUpload()
+    {
+        showUpload = true;
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+
+        try
+        {
+            var file = e.File;
+            fileName = file.Name;
+            Console.WriteLine("Handle");
+            var stream = file.OpenReadStream();
+            using var reader = new StreamReader(stream);
+            var fileContent = await reader.ReadToEndAsync();
+
+            await OnTaskUploaded.InvokeAsync(fileContent);
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message + ex.ToString());
+            
+        }
+        
+    }
+
+    private async Task StartWithDefaultTasks()
+    {
+        await OnUseDefaultTasks.InvokeAsync(null);
+    }
+}

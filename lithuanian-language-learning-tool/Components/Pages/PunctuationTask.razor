@@ -1,95 +1,100 @@
 ﻿@page "/punctuationtask"
 @inherits PunctuationTaskBase
 
-
-    @if (!showSummary)
+    @if(!startExercise)
     {
-        <h1>Skyrybos Užduotis</h1>
-        
-        @if (!reviewMode)
-        {
-
-            <div class="score-label">
-                <h2>Taškai: @score</h2>
-            </div>
-
-            <Timer @ref="timer" SecondsToRun="20" TimerOut="TimerOut" />
-
-            <div class="task-box" style="height: 300px;">
-                <textarea @bind="userText" class="edit-textarea"></textarea>
-            </div>
-        }
-   
-
-
-        <!-- Explanation for revisited task -->
-        @if (reviewMode)
-        {
-            <div class="task-box" style="height: 300px;">
-                <textarea readonly @bind="userText" class="edit-textarea"></textarea>
-            </div>
-
-            <div class="answer-section">
-            <h4>Teisingas atsakymas</h4>
-                <p class="explanation-message">@correctAnswer</p>
-            </div>
-            <div class="answer-section">
-            <h4>Paaiškinimas</h4>
-            <p class="explanation-message">@explanationMessage</p>
-            </div>
-        <button class="next-button" @onclick="() => showSummary = true">Grįžti į apžvalgą</button>
-        }
-        else if (isCorrect)
-        {
-            <button class="next-button" @onclick="NextTask">Kita užduotis</button>
-        }
-        else
-        {
-            <button class="next-button" @onclick="CheckPunctuation">Pateikti</button>
-            <button class="next-button" @onclick="SkipTask">Praleisti</button>
-        }
-
-        <div class="feedback">
-            @if (feedbackMessage != null)
-            {
-                <p class="@feedbackClass">@feedbackMessage</p>
-            }
-        </div>
-
-        
+        <TaskUploadPrompt OnTaskUploaded="LoadCustomTasks" OnUseDefaultTasks="StartWithDefaultTasks" />
     }
     else
     {
-    <h1 class="overview-title">Užduoties apžvalga</h1>
-    <div class="container">
-
-        <div class="container-bright-long">
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="correct-answers">
-                    Teisingi atsakymai<br />
-                    @correctAnswersCount / @tasks.Count
-                </p>
-                <p class="correct-answers">Surinkta Taškų<br /> @score</p>
-            </div>
-        </div>
-
-
-
-
-
-        <!-- Display buttons for each task -->
-        <div class="summary-button-container">
-            @for (int i = 0; i < tasks.Count; i++)
+        @if (!showSummary)
+        {
+            <h1>Skyrybos Užduotis</h1>
+        
+            @if (!reviewMode)
             {
-                var index = i;
-                <button class="summary-button @(taskStatus[i] ? "green" : "red")" @onclick="() => GoToTask(index)">
-                    @(i + 1)
-                </button>
+
+                <div class="score-label">
+                    <h2>Taškai: @score</h2>
+                </div>
+
+                <Timer @ref="timer" SecondsToRun="20" TimerOut="TimerOut" />
+
+                <div class="task-box" style="height: 300px;">
+                    <textarea @bind="userText" class="edit-textarea"></textarea>
+                </div>
             }
-        </div>
+   
 
 
-    </div>
-        <button class="next-button" @onclick="RestartTasks">Bandyti dar kartą</button>
+            <!-- Explanation for revisited task -->
+            @if (reviewMode)
+            {
+                <div class="task-box" style="height: 300px;">
+                    <textarea readonly @bind="userText" class="edit-textarea"></textarea>
+                </div>
+
+                <div class="answer-section">
+                <h4>Teisingas atsakymas</h4>
+                    <p class="explanation-message">@correctAnswer</p>
+                </div>
+                <div class="answer-section">
+                <h4>Paaiškinimas</h4>
+                <p class="explanation-message">@explanationMessage</p>
+                </div>
+            <button class="next-button" @onclick="() => showSummary = true">Grįžti į apžvalgą</button>
+            }
+            else if (isCorrect)
+            {
+                <button class="next-button" @onclick="NextTask">Kita užduotis</button>
+            }
+            else
+            {
+                <button class="next-button" @onclick="CheckPunctuation">Pateikti</button>
+                <button class="next-button" @onclick="SkipTask">Praleisti</button>
+            }
+
+            <div class="feedback">
+                @if (feedbackMessage != null)
+                {
+                    <p class="@feedbackClass">@feedbackMessage</p>
+                }
+            </div>
+
+        
+        }
+        else
+        {
+        <h1 class="overview-title">Užduoties apžvalga</h1>
+        <div class="container">
+
+            <div class="container-bright-long">
+                <div class="d-flex justify-content-between align-items-center">
+                    <p class="correct-answers">
+                        Teisingi atsakymai<br />
+                        @correctAnswersCount / @tasks.Count
+                    </p>
+                    <p class="correct-answers">Surinkta Taškų<br /> @score</p>
+                </div>
+            </div>
+
+
+
+            <div class="summary-button-container">
+                @for (int i = 0; i < tasks.Count; i++)
+                {
+                    var index = i;
+                    <button class="summary-button @(taskStatus[i] ? "green" : "red")" @onclick="() => GoToTask(index)">
+                        @(i + 1)
+                    </button>
+                }
+            </div>
+
+
+            </div>
+            <button class="next-button" @onclick="RestartTasks">Bandyti dar kartą</button>
+        }
     }
+
+    
 

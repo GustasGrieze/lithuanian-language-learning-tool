@@ -46,6 +46,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected bool showSummary = false;
 
         protected bool reviewMode = false;
+        protected bool startExercise = false;
 
         protected override void OnInitialized()
         {
