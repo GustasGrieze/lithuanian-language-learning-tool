@@ -1,0 +1,10 @@
+﻿@inject NavigationManager NavigationManager
+
+<button class="btn btn-primary" @onclick="SignInWithGoogle">Sign in with Google</button>
+
+@code {
+    private void SignInWithGoogle()
+    {
+        NavigationManager.NavigateTo("login", true);
+    }
+}
