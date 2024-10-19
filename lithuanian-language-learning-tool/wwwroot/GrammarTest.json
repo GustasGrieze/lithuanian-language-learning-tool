@@ -1,0 +1,50 @@
+[
+    {
+        "Sentence": "Rudenį lapai krenta nuo med_ų.",
+        "Options": ["ž", "š", "s", "ži"],
+        "CorrectAnswer": "ži",
+        "Explanation": "Teisingas atsakymas yra 'ži', nes dž dvigarsis ir praleista i raidė."
+    },
+    {
+        "Sentence": "Saulė teka rytais iš r_tų.",
+        "Options": ["y", "i", "ė", "į"],
+        "CorrectAnswer": "y",
+        "Explanation": "Teisingas atsakymas yra 'y', nes 'rytų', nes tariamas ilgai."
+    },
+    {
+        "Sentence": "Mano šuo labai mėgsta _aisti su kamuoliu.",
+        "Options": ["ž", "š", "žė", "s"],
+        "CorrectAnswer": "ž",
+        "Explanation": "Teisingas atsakymas yra 'ž', nes žodis 'žaisti' rašomas su 'ž', pagal žodį žaidžia."
+    },
+    {
+        "Sentence": "Žiemą temperatūra dažnai nukrenta ž_miau nulio.",
+        "Options": ["ie", "e", "ę", "ė"],
+        "CorrectAnswer": "e",
+        "Explanation": "Teisingas atsakymas yra 'e', nes nėra taisyklės, kuri nurodytų kitaip."
+    },
+    {
+        "Sentence": "Ruduo yra lietingas met_ laikas.",
+        "Options": ["ų", "u", "ū", "o"],
+        "CorrectAnswer": "m",
+        "Explanation": "Teisingas atsakymas yra 'ų', nes 'metų' yra kilmininko forma."
+    },
+    {
+        "Sentence": "Lietuva švenčia nepriklausom_bės dieną.",
+        "Options": ["i", "y", "į", "ie"],
+        "CorrectAnswer": "y",
+        "Explanation": "Teisingas atsakymas yra 'y', nes žodis 'nepriklausomybės' rašomas su 'y'."
+    },
+    {
+        "Sentence": "Miške auga daug gr_bų ir uogų.",
+        "Options": ["y", "ie", "i", "e"],
+        "CorrectAnswer": "y",
+        "Explanation": "Teisingas atsakymas yra 'y', nes 'grybų' yra y ilgoji"
+    },
+    {
+        "Sentence": "Vasara yra mano mėgstam_ias metų laikas.",
+        "Options": ["u", "eu", "au", "iau"],
+        "CorrectAnswer": "iau",
+        "Explanation": "Teisingas atsakymas yra 'iau', nes 'mėgstamiausias' yra su dvibalsiu au , eu lietuvių kalboje beveik nevartotinas."
+    }
+]
