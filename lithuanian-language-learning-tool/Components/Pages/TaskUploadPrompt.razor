@@ -9,8 +9,8 @@
 }
 
 @code {
-    [Parameter] public EventCallback<string> OnTaskUploaded { get; set; } // Notify parent when tasks are uploaded
-    [Parameter] public EventCallback OnUseDefaultTasks { get; set; }      // Notify parent to use default tasks
+    [Parameter] public EventCallback<string> OnTaskUploaded { get; set; }
+    [Parameter] public EventCallback OnUseDefaultTasks { get; set; }      
 
     private bool showUpload = false;
     private string fileName;

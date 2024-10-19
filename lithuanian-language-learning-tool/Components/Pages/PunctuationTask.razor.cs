@@ -163,7 +163,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
         protected void StartWithDefaultTasks()
         {
-            // Logic to handle starting with default tasks
+            // Maybe implement custom Logic to handle starting with default tasks
             StartExercise();
         }
 
