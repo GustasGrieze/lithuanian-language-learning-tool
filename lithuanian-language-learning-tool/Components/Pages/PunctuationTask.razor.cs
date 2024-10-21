@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Components;
+using System.Text.Json;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace lithuanian_language_learning_tool.Components.Pages
@@ -52,6 +54,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
 		protected string correctAnswer = "";
 
         protected bool reviewMode = false;
+        protected bool startExercise = false;
 
         protected override void OnInitialized()
         {
@@ -123,7 +126,6 @@ namespace lithuanian_language_learning_tool.Components.Pages
         {
             currentTaskIndex = 0;
             correctAnswersCount = 0;
-            userText = tasks[currentTaskIndex].Sentence;
             feedbackMessage = null;
             isCorrect = false;
             showSummary = false;
@@ -152,6 +154,78 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected void TimerOut()
         {
             showSummary = true;
+        }
+        protected void LoadCustomTasks(string fileContent)
+        {
+            tasks = ParseUploadedTasks(fileContent);
+            StartExercise();
+        }
+
+        protected void StartWithDefaultTasks()
+        {
+            // Maybe implement custom Logic to handle starting with default tasks
+            StartExercise();
+        }
+
+        protected void StartExercise()
+        {
+            startExercise = true;
+            userText = tasks[currentTaskIndex].Sentence;
+            taskStatus = Enumerable.Repeat(false, tasks.Count).ToList();
+
+            RestartTasks();
+        }
+        private List<global::Task> ParseUploadedTasks(string fileContent)
+        {
+            try
+            {
+                List<global::Task> uploadedTasks = JsonSerializer.Deserialize<List<global::Task>>(fileContent);
+
+                if (uploadedTasks != null)
+                {
+                    return uploadedTasks;
+                }
+                else
+                {
+                    throw new Exception("Failed to parse tasks from the file.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+                StartWithDefaultTasks();
+                return new List<global::Task>
+                    {
+                        new global::Task
+                        {
+                            Sentence = "Vilnius Lietuvos sostinė yra vienas seniausių Europos miestų...",
+                            Options = new List<string> { ".", ",", ";", ":", "!", "?" },
+                            CorrectAnswer = "Vilnius, Lietuvos sostinė, yra vienas seniausių Europos miestų...",
+                            Explanation = "Kablelis naudojamas atskirti miestą ir aprašą."
+                        },
+                        new global::Task
+                        {
+                            Sentence = "Petriukas surado piniginę kuri neturėjo jokių pinigų.",
+                            Options = new List<string> { ".", ",", ";", ":", "!", "?" },
+                            CorrectAnswer = "Petriukas surado piniginę, kuri neturėjo jokių pinigų.",
+                            Explanation = "Kablelis čia būtinas prieš jungtuką „kuri“."
+                        },
+                        new global::Task
+                        {
+                            Sentence = "Išeidamas sutikau labai malonų žmogų kuris turėjo žaizdą ant veido.",
+                            Options = new List<string> { ".", ",", ";", ":", "!", "?" },
+                            CorrectAnswer = "Išeidamas sutikau labai malonų žmogų, kuris turėjo žaizdą ant veido.",
+                            Explanation = "Čia būtinas kablelis prieš jungtuką „kuris“."
+                        },
+                        new global::Task
+                        {
+                            Sentence = "Sakinys kalbinis vienetas sudarytas iš vieno ar daugiau žodžių.",
+                            Options = new List<string> { ".", ",", ";", ":", "!", "?" },
+                            CorrectAnswer = "Sakinys - kalbinis vienetas, sudarytas iš vieno ar daugiau žodžių.",
+                            Explanation = "Brūkšnys naudojamas pabrėžti sakinį apibūdinantį elementą."
+                        }
+                    };
+            }
         }
     }
 }

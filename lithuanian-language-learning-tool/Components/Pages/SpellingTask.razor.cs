@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using System.Runtime.Intrinsics.X86;
+using System.Text.Json;
 
 namespace lithuanian_language_learning_tool.Components.Pages
 {
@@ -46,6 +47,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected bool showSummary = false;
 
         protected bool reviewMode = false;
+        protected bool startExercise = false;
 
         protected override void OnInitialized()
         {
@@ -124,6 +126,72 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected void TimerOut()
         {
             showSummary = true;
+        }
+
+        protected void LoadCustomTasks(string fileContent)
+        {
+            tasks = ParseUploadedTasks(fileContent);
+            StartExercise();
+        }
+
+        protected void StartWithDefaultTasks()
+        {
+            // Maybe implement custom Logic to handle starting with default tasks
+            StartExercise();
+        }
+
+        protected void StartExercise()
+        {
+            startExercise = true;
+            userText = tasks[currentTaskIndex].Sentence;
+            taskStatus = Enumerable.Repeat(false, tasks.Count).ToList();
+
+            RestartTasks();
+        }
+        private List<global::Task> ParseUploadedTasks(string fileContent)
+        {
+            try
+            {
+                List<global::Task> uploadedTasks = JsonSerializer.Deserialize<List<global::Task>>(fileContent);
+
+                if (uploadedTasks != null)
+                {
+                    return uploadedTasks;
+                }
+                else
+                {
+                    throw new Exception("Failed to parse tasks from the file.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+                StartWithDefaultTasks();
+                return new List<global::Task>
+                    {
+                        new global::Task
+                        {
+                            Sentence = "Vilnius yra Liet_vos sostinė.",
+                            Options = new List<string> { "u", "ū", "o", "uo" },
+                            CorrectAnswer = "u",
+                            Explanation = "Teisingas atsakymas yra 'u', nes žodyje 'Lietuvos' rašoma trumpa balsė 'u'. Šis žodis yra kilmininko forma, reiškianti 'Lietuva'."
+                        },
+                        new global::Task
+                        {
+                            Sentence = "Lietuvoje yra daug gra_ių ežerų.",
+                            Options = new List<string> { "ž", "š", "s", "z" },
+                            CorrectAnswer = "ž",
+                            Explanation = "Teisingas atsakymas yra 'ž', nes 'gražių' kyla iš gražus."
+                        },
+                        new global::Task
+                        {
+                            Sentence = "Kaunas yra antras pag_l dydį Lietuvos miestas.",
+                            Options = new List<string> { "a", "ą", "e", "ę" },
+                            CorrectAnswer = "a",
+                            Explanation = "Teisingas atsakymas yra 'a', nes 'pagal' yra tinkama prielinksnio forma."
+                        }
+                    };
+            }
         }
     }
 }
