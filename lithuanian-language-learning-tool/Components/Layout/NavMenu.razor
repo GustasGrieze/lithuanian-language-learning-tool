@@ -1,13 +1,29 @@
-﻿<!-- Navigation Bar -->
+﻿@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+<!-- Navigation Bar -->
 <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
     <div class="container">
         <div class="d-flex w-100 justify-content-center">
             <NavLink class="navbar-brand" href="/">Lietuvių kalbos mokymosi įrankis</NavLink>
         </div>
-        <div class="d-flex w-50 justify-content-end">
-            <NavLink class="navbar-brand" href="/">Profile</NavLink>
-            <NavLink class="navbar-brand" href="/">Statistics</NavLink>
+        <div class="d-flex w-100 justify-content-end">
+            <CascadingAuthenticationState>
+                <AuthorizeView>
+                    <Authorized>
+                        <NavLink class="navbar-brand" href="/profile">Profile</NavLink>
+                        <NavLink class="navbar-brand" href="/">Statistics</NavLink>
+                        <span>Hello, @context.User.Identity.Name!</span>
+                        <button class="btn btn-link" @onclick="Logout">Logout</button>
+                    </Authorized>
+                    <NotAuthorized>
+                        <Login></Login>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </CascadingAuthenticationState>
         </div>
+
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -15,6 +31,15 @@
         </button>
         <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
         </div>
+
     </div>
 </nav>
 
+
+
+@code {
+    private void Logout()
+    {
+        NavigationManager.NavigateTo("logout", true);
+    }
+}

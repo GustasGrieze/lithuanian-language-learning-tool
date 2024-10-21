@@ -1,0 +1,18 @@
+﻿@page "/profile"
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+<h3>Profile</h3>
+<CascadingAuthenticationState>
+    <AuthorizeView>
+        <Authorized>
+            <p>@context.User.Identity.Name</p>
+        </Authorized>
+        <NotAuthorized>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+
+@code {
+
+}
