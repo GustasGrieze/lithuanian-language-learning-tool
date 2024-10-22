@@ -80,14 +80,13 @@ else
         
 
 
-            <!-- Display buttons for each task -->
-                @for (int i = 0; i < tasks.Count; i++)
-                {
-                    var index = i;
-                    <button class="summary-button @(taskStatus[i] ? "green" : "red")" @onclick="() => GoToTask(index)">
-                        @(i + 1)
-                    </button>
-                }
+            @for (int i = 0; i < tasks.Count; i++)
+            {
+                var index = i;
+                <button class="summary-button @(taskStatus[i] ? "green" : "red")" @onclick="() => GoToTask(index)">
+                    @(i + 1)
+                </button>
+            }
 
         
         </div>
