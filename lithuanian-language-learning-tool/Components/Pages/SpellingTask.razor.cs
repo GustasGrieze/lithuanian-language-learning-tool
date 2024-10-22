@@ -51,11 +51,8 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
         protected override void OnInitialized()
         {
-            taskStatus = new List<bool>(tasks.Count);
-            for (int i = 0; i < tasks.Count; i++)
-            {
-                taskStatus.Add(false);
-            }
+            taskStatus = Enumerable.Repeat(false, tasks.Count).ToList();
+
         }
 
         protected void CheckAnswer(string selectedAnswer)
