@@ -7,23 +7,23 @@ namespace lithuanian_language_learning_tool.Components.Pages
     public class SpellingTaskBase : ComponentBase
     {
         protected Timer timer = new Timer();
-        protected List<global::Task> tasks = new List<global::Task>
+        protected List<global::CustomTask> tasks = new List<global::CustomTask>
         {
-            new global::Task
+            new global::CustomTask
             {
                 Sentence = "Vilnius yra Liet_vos sostinė.",
                 Options = new List<string> { "u", "ū", "o", "uo" },
                 CorrectAnswer = "u",
                 Explanation = "Teisingas atsakymas yra 'u', nes žodyje 'Lietuvos' rašoma trumpa balsė 'u'. Šis žodis yra kilmininko forma, reiškianti 'Lietuva'."
             },
-            new global::Task
+            new global::CustomTask
             {
                 Sentence = "Lietuvoje yra daug gra_ių ežerų.",
                 Options = new List<string> { "ž", "š", "s", "z" },
                 CorrectAnswer = "ž",
                 Explanation = "Teisingas atsakymas yra 'ž', nes 'gražių' kyla iš gražus."
             },
-            new global::Task
+            new global::CustomTask
             {
                 Sentence = "Kaunas yra antras pag_l dydį Lietuvos miestas.",
                 Options = new List<string> { "a", "ą", "e", "ę" },
@@ -145,11 +145,11 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
             RestartTasks();
         }
-        private List<global::Task> ParseUploadedTasks(string fileContent)
+        private List<global::CustomTask> ParseUploadedTasks(string fileContent)
         {
             try
             {
-                List<global::Task> uploadedTasks = JsonSerializer.Deserialize<List<global::Task>>(fileContent);
+                List<global::CustomTask> uploadedTasks = JsonSerializer.Deserialize<List<CustomTask>>(fileContent);
 
                 if (uploadedTasks != null)
                 {
@@ -164,23 +164,23 @@ namespace lithuanian_language_learning_tool.Components.Pages
             {
                 Console.WriteLine(ex.StackTrace);
                 StartWithDefaultTasks();
-                return new List<global::Task>
+                return new List<global::CustomTask>
                     {
-                        new global::Task
+                        new global::CustomTask
                         {
                             Sentence = "Vilnius yra Liet_vos sostinė.",
                             Options = new List<string> { "u", "ū", "o", "uo" },
                             CorrectAnswer = "u",
                             Explanation = "Teisingas atsakymas yra 'u', nes žodyje 'Lietuvos' rašoma trumpa balsė 'u'. Šis žodis yra kilmininko forma, reiškianti 'Lietuva'."
                         },
-                        new global::Task
+                        new global::CustomTask
                         {
                             Sentence = "Lietuvoje yra daug gra_ių ežerų.",
                             Options = new List<string> { "ž", "š", "s", "z" },
                             CorrectAnswer = "ž",
                             Explanation = "Teisingas atsakymas yra 'ž', nes 'gražių' kyla iš gražus."
                         },
-                        new global::Task
+                        new global::CustomTask
                         {
                             Sentence = "Kaunas yra antras pag_l dydį Lietuvos miestas.",
                             Options = new List<string> { "a", "ą", "e", "ę" },

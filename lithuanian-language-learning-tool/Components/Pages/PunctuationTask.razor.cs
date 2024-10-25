@@ -8,30 +8,30 @@ namespace lithuanian_language_learning_tool.Components.Pages
     public class PunctuationTaskBase : ComponentBase
     {
         protected Timer timer = new Timer();
-        protected List<global::Task> tasks = new List<global::Task>
+        protected List<global::CustomTask> tasks = new List<global::CustomTask>
         {
-            new global::Task
+            new global::CustomTask
             {
                 Sentence = "Vilnius Lietuvos sostinė yra vienas seniausių Europos miestų...",
                 Options = new List<string> { ".", ",", ";", ":", "!", "?" },
                 CorrectAnswer = "Vilnius, Lietuvos sostinė, yra vienas seniausių Europos miestų...",
                 Explanation = "Kablelis naudojamas atskirti miestą ir aprašą."
             },
-            new global::Task
+            new global::CustomTask
             {
                 Sentence = "Petriukas surado piniginę kuri neturėjo jokių pinigų.",
                 Options = new List<string> { ".", ",", ";", ":", "!", "?" },
                 CorrectAnswer = "Petriukas surado piniginę, kuri neturėjo jokių pinigų.",
                 Explanation = "Kablelis čia būtinas prieš jungtuką „kuri“."
             },
-            new global::Task
+            new global::CustomTask
             {
                 Sentence = "Išeidamas sutikau labai malonų žmogų kuris turėjo žaizdą ant veido.",
                 Options = new List<string> { ".", ",", ";", ":", "!", "?" },
                 CorrectAnswer = "Išeidamas sutikau labai malonų žmogų, kuris turėjo žaizdą ant veido.",
                 Explanation = "Čia būtinas kablelis prieš jungtuką „kuris“."
             },
-            new global::Task
+            new global::CustomTask
             {
                 Sentence = "Sakinys kalbinis vienetas sudarytas iš vieno ar daugiau žodžių.",
                 Options = new List<string> { ".", ",", ";", ":", "!", "?" },
@@ -167,11 +167,11 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
             RestartTasks();
         }
-        private List<global::Task> ParseUploadedTasks(string fileContent)
+        private List<global::CustomTask> ParseUploadedTasks(string fileContent)
         {
             try
             {
-                List<global::Task> uploadedTasks = JsonSerializer.Deserialize<List<global::Task>>(fileContent);
+                List<global::CustomTask> uploadedTasks = JsonSerializer.Deserialize<List<global::CustomTask>>(fileContent);
 
                 if (uploadedTasks != null)
                 {
@@ -186,30 +186,30 @@ namespace lithuanian_language_learning_tool.Components.Pages
             {
                 Console.WriteLine(ex.StackTrace);
                 StartWithDefaultTasks();
-                return new List<global::Task>
+                return new List<global::CustomTask>
                     {
-                        new global::Task
+                        new global::CustomTask
                         {
                             Sentence = "Vilnius Lietuvos sostinė yra vienas seniausių Europos miestų...",
                             Options = new List<string> { ".", ",", ";", ":", "!", "?" },
                             CorrectAnswer = "Vilnius, Lietuvos sostinė, yra vienas seniausių Europos miestų...",
                             Explanation = "Kablelis naudojamas atskirti miestą ir aprašą."
                         },
-                        new global::Task
+                        new global::CustomTask
                         {
                             Sentence = "Petriukas surado piniginę kuri neturėjo jokių pinigų.",
                             Options = new List<string> { ".", ",", ";", ":", "!", "?" },
                             CorrectAnswer = "Petriukas surado piniginę, kuri neturėjo jokių pinigų.",
                             Explanation = "Kablelis čia būtinas prieš jungtuką „kuri“."
                         },
-                        new global::Task
+                        new global::CustomTask
                         {
                             Sentence = "Išeidamas sutikau labai malonų žmogų kuris turėjo žaizdą ant veido.",
                             Options = new List<string> { ".", ",", ";", ":", "!", "?" },
                             CorrectAnswer = "Išeidamas sutikau labai malonų žmogų, kuris turėjo žaizdą ant veido.",
                             Explanation = "Čia būtinas kablelis prieš jungtuką „kuris“."
                         },
-                        new global::Task
+                        new global::CustomTask
                         {
                             Sentence = "Sakinys kalbinis vienetas sudarytas iš vieno ar daugiau žodžių.",
                             Options = new List<string> { ".", ",", ";", ":", "!", "?" },
