@@ -84,22 +84,14 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
         protected bool ComparePunctuationWithOriginal(string userText, string correctText)
         {
-            if (userText.Length != correctText.Length)
-            {
-                return false;
-            }
 
-            for (int i = 0; i < correctText.Length; i++)
-            {
-                if (char.IsPunctuation(correctText[i]))
-                {
-                    if (userText[i] != correctText[i])
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
+            bool isCorrect = ((userText.Length == correctText.Length) && (
+                 correctText
+                     .Select((ch, i) => new { Char = ch, Index = i })    
+                     .Where(x => char.IsPunctuation(x.Char))              
+                     .All(x => userText[x.Index] == x.Char)));              
+
+            return isCorrect;
         }
 
         protected void NextTask()
