@@ -1,8 +1,6 @@
 ﻿@page "/spellingtask"
 @inherits SpellingTaskBase
 
-
-
 @if(!startExercise)
 {
     <TaskUploadPrompt OnTaskUploaded="LoadCustomTasks" OnUseDefaultTasks="StartWithDefaultTasks" />
@@ -38,8 +36,6 @@ else
                 }
             </div>
         }
-    
-
 
         <!-- Explanation for revisited task -->
         @if (reviewMode)
@@ -66,29 +62,23 @@ else
     else
     {
         <h1 class="overview-title">Užduoties apžvalga</h1>
-          <div class="container">
-
+        <div class="container">
             <div class="container-bright-long">
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="correct-answers">Teisingi atsakymai<br />
-                    @correctTotal / @tasks.Count</p>
-                <p class="correct-answers">Surinkta Taškų<br /> @score</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <p class="correct-answers">Teisingi atsakymai<br />
+                        @correctTotal / @tasks.Count</p>
+                    <p class="correct-answers">Surinkta Taškų<br /> @score</p>
+                </div>
             </div>
-            </div>
 
+                @for (int i = 0; i < tasks.Count; i++)
+                {
+                    var index = i;
+                    <button class="summary-button @(taskStatus[i] ? "green" : "red")" @onclick="() => GoToTask(index)">
+                        @(i + 1)
+                    </button>
+                }
 
-        
-
-
-            @for (int i = 0; i < tasks.Count; i++)
-            {
-                var index = i;
-                <button class="summary-button @(taskStatus[i] ? "green" : "red")" @onclick="() => GoToTask(index)">
-                    @(i + 1)
-                </button>
-            }
-
-        
         </div>
         <button class="next-button" @onclick="RestartTasks">Bandyti dar kartą</button>
     }

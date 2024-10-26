@@ -29,7 +29,7 @@
 
     public void InitializeHighlights()
     {
-        Highlights.Clear(); // Ensure Highlights are cleared before initializing
+        Highlights.Clear(); 
         for (int i = 0; i < Sentence.Length; i++)
         {
             if (Sentence[i] == ' ')

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using System.Text.Json;
 using System.Collections.Generic;
 using System.Linq;
+using lithuanian_language_learning_tool.Helpers;
 
 namespace lithuanian_language_learning_tool.Components.Pages
 {
@@ -71,7 +72,8 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 isCorrect = true;
                 correctAnswersCount++;
                 taskStatus[currentTaskIndex] = true;
-                score = isCorrect ? score + 100 : score;
+
+                score += tasks[currentTaskIndex].CalculateScore(isCorrect, multiplier: 2); // simple scoring system - needs improvement (time based score, punctuation marks count)
             }
             else
             {
@@ -129,7 +131,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
             }
         }
 
-        protected void GoToTask(int taskIndex)
+        protected void GoToTask(int taskIndex = 0)
         {
             if (taskIndex >= 0 && taskIndex < tasks.Count)
             {
@@ -166,6 +168,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected void StartExercise()
         {
             startExercise = true;
+            reviewMode = false;
             tasks[currentTaskIndex].UserText = tasks[currentTaskIndex].Sentence;
             tasks[currentTaskIndex].InitializeHighlights();
             taskStatus = Enumerable.Repeat(false, tasks.Count).ToList();
