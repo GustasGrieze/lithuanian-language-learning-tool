@@ -62,25 +62,25 @@ else
     else
     {
         <h1 class="overview-title">Užduoties apžvalga</h1>
-          <div class="container">
-
+        <div class="container">
             <div class="container-bright-long">
-            <div class="d-flex justify-content-between align-items-center">
-                <p class="correct-answers">Teisingi atsakymai<br />
-                    @correctTotal / @tasks.Count</p>
-                <p class="correct-answers">Surinkta Taškų<br /> @score</p>
-            </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <p class="correct-answers">Teisingi atsakymai<br />
+                        @correctTotal / @tasks.Count</p>
+                    <p class="correct-answers">Surinkta Taškų<br /> @score</p>
+                </div>
             </div>
 
-            @for (int i = 0; i < tasks.Count; i++)
-            {
-                var index = i;
-                <button class="summary-button @(taskStatus[i] ? "green" : "red")" @onclick="() => GoToTask(index)">
-                    @(i + 1)
-                </button>
-            }
+            <div class="summary-button-container">
+                @for (int i = 0; i < tasks.Count; i++)
+                {
+                    var index = i;
+                    <button class="summary-button @(taskStatus[i] ? "green" : "red")" @onclick="() => GoToTask(index)">
+                        @(i + 1)
+                    </button>
+                }
+            </div>
 
-        
         </div>
         <button class="next-button" @onclick="RestartTasks">Bandyti dar kartą</button>
     }
