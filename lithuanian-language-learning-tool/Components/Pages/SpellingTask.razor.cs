@@ -103,7 +103,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
             reviewMode = false;
         }
 		
-		protected void GoToTask(int taskIndex)
+		protected void GoToTask(int taskIndex = 0)
         {
             if (taskIndex >= 0 && taskIndex < tasks.Count)
             {

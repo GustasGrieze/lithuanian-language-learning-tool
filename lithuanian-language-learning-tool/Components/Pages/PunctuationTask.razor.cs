@@ -72,7 +72,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 isCorrect = true;
                 correctAnswersCount++;
                 taskStatus[currentTaskIndex] = true;
-                score += tasks[currentTaskIndex].CalculateScore(isCorrect); // simple scoring system - needs improvement (time based score, punctuation marks count)
+                score += tasks[currentTaskIndex].CalculateScore(isCorrect, multiplier: 2); // simple scoring system - needs improvement (time based score, punctuation marks count)
             }
             else
             {
@@ -125,7 +125,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
             score = 0;
         }
 
-        protected void GoToTask(int taskIndex)
+        protected void GoToTask(int taskIndex = 0)
         {
             if (taskIndex >= 0 && taskIndex < tasks.Count)
             {
