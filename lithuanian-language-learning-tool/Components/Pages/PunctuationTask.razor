@@ -1,70 +1,93 @@
 ﻿@page "/punctuationtask"
 @inherits PunctuationTaskBase
 
-    @if(!startExercise)
+@if (!startExercise)
+{
+    <TaskUploadPrompt OnTaskUploaded="LoadCustomTasks" OnUseDefaultTasks="StartWithDefaultTasks" />
+}
+else
+{
+    @if (!showSummary)
     {
-        <TaskUploadPrompt OnTaskUploaded="LoadCustomTasks" OnUseDefaultTasks="StartWithDefaultTasks" />
-    }
-    else
-    {
-        @if (!showSummary)
+        <h1>Skyrybos Užduotis</h1>
+
+        @if (!reviewMode)
         {
-            <h1>Skyrybos Užduotis</h1>
-        
-            @if (!reviewMode)
-            {
 
-                <div class="score-label">
-                    <h2>Taškai: @score</h2>
-                </div>
+            <div class="score-label">
+                <h2>Taškai: @score</h2>
+            </div>
 
-                <Timer @ref="timer" SecondsToRun="20" TimerOut="TimerOut" />
-
-                <div class="task-box" style="height: 300px;">
-                    <textarea @bind="userText" class="edit-textarea"></textarea>
-                </div>
-            }
-   
+            <Timer @ref="timer" SecondsToRun="20" TimerOut="TimerOut" /> 
 
 
-            <!-- Explanation for revisited task -->
-            @if (reviewMode)
-            {
-                <div class="task-box" style="height: 300px;">
-                    <textarea readonly @bind="userText" class="edit-textarea"></textarea>
-                </div>
-
-                <div class="answer-section">
-                <h4>Teisingas atsakymas</h4>
-                    <p class="explanation-message">@correctAnswer</p>
-                </div>
-                <div class="answer-section">
-                <h4>Paaiškinimas</h4>
-                <p class="explanation-message">@explanationMessage</p>
-                </div>
-            <button class="next-button" @onclick="() => showSummary = true">Grįžti į apžvalgą</button>
-            }
-            else if (isCorrect)
-            {
-                <button class="next-button" @onclick="NextTask">Kita užduotis</button>
-            }
-            else
-            {
-                <button class="next-button" @onclick="CheckPunctuation">Pateikti</button>
-                <button class="next-button" @onclick="SkipTask">Praleisti</button>
-            }
-
-            <div class="feedback">
-                @if (feedbackMessage != null)
+            <div class="task-box" style="height: 300px;">
+                @if (tasks.Count > currentTaskIndex)
                 {
-                    <p class="@feedbackClass">@feedbackMessage</p>
+                    int previousIndex = 0;
+                    var currentTask = tasks[currentTaskIndex];
+                    foreach (var highlight in currentTask.Highlights)
+                    {
+                        <span @onclick="() => ToggleHighlight(highlight.SpaceIndex)" style="cursor:pointer;">
+                            @(currentTask.UserText.Substring(previousIndex, highlight.SpaceIndex - previousIndex))
+                        </span>
+
+                        <span style="background-color:@(highlight.IsSelected ? "yellow" : "transparent"); cursor:pointer;"
+                              @onclick="() => ToggleHighlight(highlight.SpaceIndex)">
+                            &nbsp;
+                        </span>
+
+                        previousIndex = highlight.SpaceIndex + 1;
+                    }
+                    <span>@(currentTask.UserText.Substring(previousIndex))</span>
                 }
             </div>
 
-        
+            <div class="options">
+                @foreach (var option in tasks[currentTaskIndex].Options)
+                {
+                    <button class="option" @onclick="() => InsertPunctuation(option)">@option</button>
+                }
+            </div>
+        }
+
+        <!-- Explanation for revisited task -->
+        @if (reviewMode)
+        {
+            <div class="task-box" style="height: 300px;">
+                <textarea readonly class="edit-textarea">@tasks[currentTaskIndex].UserText</textarea>
+            </div>
+            <div class="answer-section">
+                <h4>Teisingas atsakymas</h4>
+                <p class="explanation-message">@correctAnswer</p>
+            </div>
+            <div class="answer-section">
+                <h4>Paaiškinimas</h4>
+                <p class="explanation-message">@explanationMessage</p>
+            </div>
+            <button class="next-button" @onclick="() => showSummary = true">Grįžti į apžvalgą</button>
+        }
+        else if (isCorrect)
+        {
+            <button class="next-button" @onclick="NextTask">Kita užduotis</button>
         }
         else
         {
+            <button class="next-button" @onclick="CheckPunctuation">Pateikti</button>
+            <button class="next-button" @onclick="SkipTask">Praleisti</button>
+        }
+
+        <div class="feedback">
+            @if (feedbackMessage != null)
+            {
+                <p class="@feedbackClass">@feedbackMessage</p>
+            }
+        </div>
+
+        
+    }
+    else
+    {
         <h1 class="overview-title">Užduoties apžvalga</h1>
         <div class="container">
 
@@ -89,10 +112,7 @@
             }
 
 
-            </div>
-            <button class="next-button" @onclick="StartExercise">Bandyti dar kartą</button>
-        }
+        </div>
+        <button class="next-button" @onclick="StartExercise">Bandyti dar kartą</button>
     }
-
-    
-
+}
