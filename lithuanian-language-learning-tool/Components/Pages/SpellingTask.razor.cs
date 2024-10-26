@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using System.Runtime.Intrinsics.X86;
 using System.Text.Json;
+using lithuanian_language_learning_tool.Helpers;
 
 namespace lithuanian_language_learning_tool.Components.Pages
 {
@@ -65,7 +66,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 : $"Neteisingai. Teisingas atsakymas: {tasks[currentTaskIndex].CorrectAnswer}";
             correctTotal = isCorrect ? correctTotal + 1 : correctTotal;
             taskStatus[currentTaskIndex] = isCorrect;
-            score = isCorrect ? score + (100) : score; // simple scoring system - needs improvement (time based score)
+            score += tasks[currentTaskIndex].CalculateScore(isCorrect); // simple scoring system - needs improvement (time based score)
         }
 
         protected void NextTask()

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using System.Text.Json;
 using System.Collections.Generic;
 using System.Linq;
+using lithuanian_language_learning_tool.Helpers;
 
 namespace lithuanian_language_learning_tool.Components.Pages
 {
@@ -71,7 +72,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 isCorrect = true;
                 correctAnswersCount++;
                 taskStatus[currentTaskIndex] = true;
-                score = isCorrect ? score + (100) : score; // simple scoring system - needs improvement (time based score, punctuation marks count)
+                score += tasks[currentTaskIndex].CalculateScore(isCorrect); // simple scoring system - needs improvement (time based score, punctuation marks count)
             }
             else
             {
