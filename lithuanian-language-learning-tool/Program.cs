@@ -1,4 +1,5 @@
 using lithuanian_language_learning_tool.Components;
+using lithuanian_language_learning_tool.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -35,6 +36,7 @@ builder.Services.AddAuthorization();
 
 // Add the server-side Blazor authentication state provider
 builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
