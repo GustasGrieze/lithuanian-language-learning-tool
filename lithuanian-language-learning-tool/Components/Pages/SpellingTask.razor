@@ -1,8 +1,6 @@
 ﻿@page "/spellingtask"
 @inherits SpellingTaskBase
 
-
-
 @if(!startExercise)
 {
     <TaskUploadPrompt OnTaskUploaded="LoadCustomTasks" OnUseDefaultTasks="StartWithDefaultTasks" />
@@ -38,8 +36,6 @@ else
                 }
             </div>
         }
-    
-
 
         <!-- Explanation for revisited task -->
         @if (reviewMode)
@@ -75,10 +71,6 @@ else
                 <p class="correct-answers">Surinkta Taškų<br /> @score</p>
             </div>
             </div>
-
-
-        
-
 
             @for (int i = 0; i < tasks.Count; i++)
             {
