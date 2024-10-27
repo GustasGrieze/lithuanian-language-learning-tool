@@ -8,23 +8,23 @@ namespace lithuanian_language_learning_tool.Components.Pages
     public class SpellingTaskBase : ComponentBase
     {
         protected Timer timer = new Timer();
-        protected List<global::Task> tasks = new List<global::Task>
+        protected List<CustomTask> tasks = new List<CustomTask>
         {
-            new global::Task
+            new CustomTask
             {
                 Sentence = "Vilnius yra Liet_vos sostinė.",
                 Options = new List<string> { "u", "ū", "o", "uo" },
                 CorrectAnswer = "u",
                 Explanation = "Teisingas atsakymas yra 'u', nes žodyje 'Lietuvos' rašoma trumpa balsė 'u'. Šis žodis yra kilmininko forma, reiškianti 'Lietuva'."
             },
-            new global::Task
+            new CustomTask
             {
                 Sentence = "Lietuvoje yra daug gra_ių ežerų.",
                 Options = new List<string> { "ž", "š", "s", "z" },
                 CorrectAnswer = "ž",
                 Explanation = "Teisingas atsakymas yra 'ž', nes 'gražių' kyla iš gražus."
             },
-            new global::Task
+            new CustomTask
             {
                 Sentence = "Kaunas yra antras pag_l dydį Lietuvos miestas.",
                 Options = new List<string> { "a", "ą", "e", "ę" },
@@ -141,16 +141,17 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected void StartExercise()
         {
             startExercise = true;
+            reviewMode = false;
             userText = tasks[currentTaskIndex].Sentence;
             taskStatus = Enumerable.Repeat(false, tasks.Count).ToList();
 
             RestartTasks();
         }
-        private List<global::Task> ParseUploadedTasks(string fileContent)
+        private List<CustomTask> ParseUploadedTasks(string fileContent)
         {
             try
             {
-                List<global::Task> uploadedTasks = JsonSerializer.Deserialize<List<global::Task>>(fileContent);
+                List<CustomTask> uploadedTasks = JsonSerializer.Deserialize<List<CustomTask>>(fileContent);
 
                 if (uploadedTasks != null)
                 {
@@ -165,23 +166,23 @@ namespace lithuanian_language_learning_tool.Components.Pages
             {
                 Console.WriteLine(ex.StackTrace);
                 StartWithDefaultTasks();
-                return new List<global::Task>
+                return new List<CustomTask>
                     {
-                        new global::Task
+                        new CustomTask
                         {
                             Sentence = "Vilnius yra Liet_vos sostinė.",
                             Options = new List<string> { "u", "ū", "o", "uo" },
                             CorrectAnswer = "u",
                             Explanation = "Teisingas atsakymas yra 'u', nes žodyje 'Lietuvos' rašoma trumpa balsė 'u'. Šis žodis yra kilmininko forma, reiškianti 'Lietuva'."
                         },
-                        new global::Task
+                        new CustomTask
                         {
                             Sentence = "Lietuvoje yra daug gra_ių ežerų.",
                             Options = new List<string> { "ž", "š", "s", "z" },
                             CorrectAnswer = "ž",
                             Explanation = "Teisingas atsakymas yra 'ž', nes 'gražių' kyla iš gražus."
                         },
-                        new global::Task
+                        new CustomTask
                         {
                             Sentence = "Kaunas yra antras pag_l dydį Lietuvos miestas.",
                             Options = new List<string> { "a", "ą", "e", "ę" },

@@ -71,7 +71,6 @@ else
                 </div>
             </div>
 
-            <div class="summary-button-container">
                 @for (int i = 0; i < tasks.Count; i++)
                 {
                     var index = i;
@@ -79,7 +78,6 @@ else
                         @(i + 1)
                     </button>
                 }
-            </div>
 
         </div>
         <button class="next-button" @onclick="RestartTasks">Bandyti dar kartą</button>

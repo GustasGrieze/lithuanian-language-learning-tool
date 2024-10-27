@@ -20,7 +20,10 @@ namespace lithuanian_language_learning_tool.Services
         private readonly HashSet<string> _adminEmails = new()
         {
             // Add admin emails here
-            "3darijus@gmail.com"
+            "3darijus@gmail.com",
+            "testporator@gmail.com"
+
+
         };
 
         public async Task<User> GetOrCreateUserFromGoogleAsync(AuthenticationState authState)
