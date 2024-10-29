@@ -1,10 +1,10 @@
 using lithuanian_language_learning_tool.Components;
-using lithuanian_language_learning_tool.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
+using lithuanian_language_learning_tool.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

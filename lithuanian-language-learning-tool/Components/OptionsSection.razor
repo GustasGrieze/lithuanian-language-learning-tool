@@ -1,0 +1,17 @@
+﻿@typeparam TTask where TTask : CustomTask
+@using lithuanian_language_learning_tool.Models
+
+<div class="options">
+    @foreach (var option in Task.Options)
+    {
+        <button class="option" @onclick="() => OnOptionSelected.InvokeAsync(option)">@option</button>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public TTask Task { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnOptionSelected { get; set; }
+}

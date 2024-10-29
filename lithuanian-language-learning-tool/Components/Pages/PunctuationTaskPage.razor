@@ -1,0 +1,93 @@
+﻿@page "/punctuationtask"
+@using Models
+@inherits PunctuationTaskBase
+
+@if (!startExercise)
+{
+    <TaskUploadPrompt OnTaskUploaded="LoadCustomTasks" OnUseDefaultTasks="StartWithDefaultTasks" />
+}
+else
+{
+    @if (!showSummary)
+    {
+        <h1>Skyrybos Užduotis</h1>
+
+        @if (reviewMode)
+        {
+            <TaskReview Task="currentTask" OnBackToSummary="() => showSummary = true" />
+        }
+        else
+        {
+
+            <div class="score-label">
+                <h2>Taškai: @score</h2>
+            </div>
+
+            <Timer @ref="timer" SecondsToRun="20" TimerOut="TimerOut" /> 
+
+
+            <div class="task-box" style="height: 300px;">
+                @if (tasks.Count > currentTaskIndex)
+                {
+                    int previousIndex = 0;
+                    var currentTask = tasks[currentTaskIndex];
+                    foreach (var highlight in currentTask.Highlights)
+                    {
+                        <span @onclick="() => ToggleHighlight(highlight.SpaceIndex)" style="cursor:pointer;">
+                            @(currentTask.UserText.Substring(previousIndex, highlight.SpaceIndex - previousIndex))
+                        </span>
+
+                        <span style="background-color:@(highlight.IsSelected ? "yellow" : "transparent"); cursor:pointer;"
+                              @onclick="() => ToggleHighlight(highlight.SpaceIndex)">
+                            &nbsp;
+                        </span>
+
+                        previousIndex = highlight.SpaceIndex + 1;
+                    }
+                    <span>@(currentTask.UserText.Substring(previousIndex))</span>
+                }
+            </div>
+
+            <OptionsSection Task="currentTask" TTask="PunctuationTask" OnOptionSelected="InsertPunctuation" />
+
+            if (currentTask.TaskStatus)
+            {
+                <button class="next-button" @onclick="NextTask">Kita užduotis</button>
+
+            }
+            else
+            {
+                <button class="next-button" @onclick="() => CheckAnswer()">Pateikti</button>
+                <button class="next-button" @onclick="SkipTask">Praleisti</button>
+
+            }
+
+            if (showFeedback)
+            {
+                <div class="feedback @(currentTask.TaskStatus ? "correct" : "incorrect")">
+                    @feedbackMessage
+                </div>
+            }
+            
+
+
+            
+        }
+
+        
+
+        
+
+        
+    }
+    else
+    {
+        <SummaryPage CorrectAnswersCount="correctAnswersCount"
+                     TTask="PunctuationTask"
+                     Tasks="tasks"
+                     Score="score"
+                     OnTaskSelected="GoToTask"
+                     OnRestart="StartExercise" />
+    }
+}
+ 

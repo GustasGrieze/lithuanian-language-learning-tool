@@ -1,7 +1,7 @@
-<h3>Do you want to upload custom tasks or use default tasks?</h3>
+﻿<h3>Ar norite įkelti užduotis ar naudoti jau sukurtas?</h3>
 
-<button class="btn btn-primary" @onclick="ShowUpload">Upload Custom Tasks</button>
-<button class="btn btn-secondary" @onclick="StartWithDefaultTasks">Use Default Tasks</button>
+<button class="btn btn-primary" @onclick="ShowUpload">Įkelti</button>
+<button class="btn btn-secondary" @onclick="StartWithDefaultTasks">Naudoti egzistuojančias</button>
 
 @if (showUpload)
 {
@@ -44,6 +44,6 @@
 
     private async Task StartWithDefaultTasks()
     {
-        await OnUseDefaultTasks.InvokeAsync(null);
+        await OnUseDefaultTasks.InvokeAsync();
     }
 }
