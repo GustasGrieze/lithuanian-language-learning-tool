@@ -22,7 +22,7 @@ namespace lithuanian_language_learning_tool.Models
             }
         }
 
-        public class Highlight
+        public struct Highlight
         {
             public int SpaceIndex { get; set; }  // The index of the space between words
             public bool IsSelected { get; set; } // Whether this space is currently highlighted
@@ -35,5 +35,6 @@ namespace lithuanian_language_learning_tool.Models
                 HasPunctuation = false;
             }
         }
+
     }
 }

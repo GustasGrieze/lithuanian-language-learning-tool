@@ -23,30 +23,44 @@ else
                 <h2>Taškai: @score</h2>
             </div>
 
-            <Timer @ref="timer" SecondsToRun="20" TimerOut="TimerOut" /> 
-
+@*             <Timer @ref="timer" SecondsToRun="20" TimerOut="TimerOut" /> 
+ *@
 
             <div class="task-box" style="height: 300px;">
                 @if (tasks.Count > currentTaskIndex)
                 {
                     int previousIndex = 0;
                     var currentTask = tasks[currentTaskIndex];
+
                     foreach (var highlight in currentTask.Highlights)
                     {
-                        <span @onclick="() => ToggleHighlight(highlight.SpaceIndex)" style="cursor:pointer;">
-                            @(currentTask.UserText.Substring(previousIndex, highlight.SpaceIndex - previousIndex))
-                        </span>
+                        // Ensure SpaceIndex is valid
+                        if (highlight.SpaceIndex >= previousIndex && highlight.SpaceIndex <= currentTask.UserText.Length)
+                        {
+                            // Display text up to the space index
+                            <span @onclick="() => ToggleHighlight(highlight.SpaceIndex)" style="cursor:pointer;">
+                                @(currentTask.UserText.Substring(previousIndex, highlight.SpaceIndex - previousIndex))
+                            </span>
 
-                        <span style="background-color:@(highlight.IsSelected ? "yellow" : "transparent"); cursor:pointer;"
-                              @onclick="() => ToggleHighlight(highlight.SpaceIndex)">
-                            &nbsp;
-                        </span>
+                            // Display the space, highlighted if selected
+                            <span style="background-color:@(highlight.IsSelected ? "yellow" : "transparent"); cursor:pointer;"
+                                  @onclick="() => ToggleHighlight(highlight.SpaceIndex)">
+                                &nbsp;
+                            </span>
 
-                        previousIndex = highlight.SpaceIndex + 1;
+                            // Update the previous index to after the space
+                            previousIndex = highlight.SpaceIndex + 1;
+                        }
                     }
-                    <span>@(currentTask.UserText.Substring(previousIndex))</span>
+
+                    // Display any remaining text after the last space
+                    if (previousIndex < currentTask.UserText.Length)
+                    {
+                        <span>@(currentTask.UserText.Substring(previousIndex))</span>
+                    }
                 }
             </div>
+
 
             <OptionsSection Task="currentTask" TTask="PunctuationTask" OnOptionSelected="InsertPunctuation" />
 
