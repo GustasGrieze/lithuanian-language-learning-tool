@@ -1,0 +1,32 @@
+[
+  {
+    "Sentence": "Vilnius yra Liet_vos sostinė.",
+    "Options": [ "u", "ū", "o", "uo" ],
+    "CorrectAnswer": "u",
+    "Explanation": "Teisingas atsakymas yra 'u', nes žodyje 'Lietuvos' rašoma trumpa balsė 'u'. Šis žodis yra kilmininko forma, reiškianti 'Lietuva'."
+  },
+  {
+    "Sentence": "Šiandien labai gražus oras, visi džiaug_si saule.",
+    "Options": [ "ę", "e", "ė", "ia" ],
+    "CorrectAnswer": "ia",
+    "Explanation": "Teisingas atsakymas yra 'e', nes žodyje 'saule' rašoma ilgą balsę 'e'."
+  },
+  {
+    "Sentence": "Mokytojas pask_lbė naują užduotį.",
+    "Options": [ "ia", "y", "ė", "e" ],
+    "CorrectAnswer": "e",
+    "Explanation": "Teisingas atsakymas yra 'e', nes žodyje 'paskelbė' rašoma 'e'."
+  },
+  {
+    "Sentence": "Vaikai žaidžia lauke ant smėlio r_ros.",
+    "Options": [ "ą", "a", "e", "ia" ],
+    "CorrectAnswer": "a",
+    "Explanation": "Teisingas atsakymas yra 'a', nes žodyje 'rasos' rašoma 'a'."
+  },
+  {
+    "Sentence": "Šuo bėga greitai link savo s_vininko namų.",
+    "Options": [ "ą", "a", "e", "ė" ],
+    "CorrectAnswer": "a",
+    "Explanation": "Teisingas atsakymas yra 'a', nes žodyje 'savininko' rašoma 'a'."
+  }
+]

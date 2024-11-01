@@ -1,5 +1,5 @@
-using lithuanian_language_learning_tool.Models;
 using Microsoft.AspNetCore.Components.Authorization;
+using lithuanian_language_learning_tool.Models;
 using System.Security.Claims;
 
 namespace lithuanian_language_learning_tool.Services
@@ -29,7 +29,7 @@ namespace lithuanian_language_learning_tool.Services
         public async Task<User> GetOrCreateUserFromGoogleAsync(AuthenticationState authState)
         {
             var user = authState.User;
-            
+
             if (!user.Identity?.IsAuthenticated ?? true)
             {
                 throw new UnauthorizedAccessException("User is not authenticated");
@@ -40,9 +40,9 @@ namespace lithuanian_language_learning_tool.Services
             var givenName = user.FindFirst(ClaimTypes.GivenName)?.Value;
             var familyName = user.FindFirst(ClaimTypes.Surname)?.Value;
             var name = user.FindFirst(ClaimTypes.Name)?.Value;
-           
+
             var existingUser = _users.FirstOrDefault(u => u.GoogleId == googleId);
-            
+
             if (existingUser != null)
             {
                 existingUser.LastLoginAt = DateTime.UtcNow;
@@ -83,7 +83,7 @@ namespace lithuanian_language_learning_tool.Services
         public async Task<User?> GetCurrentUserAsync(AuthenticationState authState)
         {
             var user = authState.User;
-            
+
             if (!user.Identity?.IsAuthenticated ?? true)
             {
                 return CreateGuestUser();

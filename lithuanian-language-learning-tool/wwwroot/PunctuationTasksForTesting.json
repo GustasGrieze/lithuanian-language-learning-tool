@@ -1,0 +1,32 @@
+[
+  {
+    "Sentence": "Vilnius Lietuvos sostinė yra vienas seniausių Europos miestų...",
+    "Options": [ ".", ",", ";", ":", "!", "?" ],
+    "CorrectAnswer": "Vilnius, Lietuvos sostinė, yra vienas seniausių Europos miestų...",
+    "Explanation": "Kableliai naudojami atskirti miestą ir jo aprašą."
+  },
+  {
+    "Sentence": "Ar ateisi vakarienei ar vakarojimui namuose",
+    "Options": [ ".", ",", ";", ":", "!", "?" ],
+    "CorrectAnswer": "Ar tu ateisi vakarienei, ar vakarojimui namuose?",
+    "Explanation": "Kablelis naudojamas atskirti prieštara, o klausimo ženklas baigia sakinį."
+  },
+  {
+    "Sentence": "Šie vaisiai yra skanūs tokie kaip obuoliai bananai ir kriaušės",
+    "Options": [ ".", ",", ";", ":", "!", "?" ],
+    "CorrectAnswer": "Šie vaisiai yra skanūs, tokie kaip obuoliai, bananai ir kriaušės.",
+    "Explanation": "Kableliai naudojami išvardijant vaisius."
+  },
+  {
+    "Sentence": "Jis dirba ilgai todėl dažnai pavargsta",
+    "Options": [ ".", ",", ";", ":", "!", "?" ],
+    "CorrectAnswer": "Jis dirba ilgai, todėl dažnai pavargsta.",
+    "Explanation": "Kablelis naudojamas prieš jungtuką 'todėl'."
+  },
+  {
+    "Sentence": "Noriu pavasarį keliauti į Italiją tačiau reikia sutaupyti",
+    "Options": [ ".", ",", ";", ":", "!", "?" ],
+    "CorrectAnswer": "Noriu pavasarį keliauti į Italiją, tačiau reikia sutaupyti.",
+    "Explanation": "Kablelis naudojamas prieš jungtuką 'tačiau'."
+  }
+]
