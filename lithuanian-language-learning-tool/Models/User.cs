@@ -95,21 +95,21 @@ namespace lithuanian_language_learning_tool.Models
         }
     }
 
-    public class UserAchievement
+    struct UserAchievement
     {
-        public string AchievementId { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public DateTime UnlockedAt { get; set; }
+        public string AchievementId;
+        public string Name;
+        public string Description;
+        public DateTime UnlockedAt;
     }
 
-    public class PracticeSession
+    struct PracticeSession
     {
-        public DateTime SessionDate { get; set; }
-        public TimeSpan Duration { get; set; }
-        public int ScoreEarned { get; set; }
-        public string LessonType { get; set; }
-        public int CorrectAnswers { get; set; }
-        public int TotalQuestions { get; set; }
+        public DateTime SessionDate;
+        public TimeSpan Duration;
+        public int ScoreEarned;
+        public string LessonType;
+        public int CorrectAnswers;
+        public int TotalQuestions;
     }
 }
