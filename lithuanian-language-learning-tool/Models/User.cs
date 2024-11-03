@@ -95,7 +95,7 @@ namespace lithuanian_language_learning_tool.Models
         }
     }
 
-    struct UserAchievement
+    public struct UserAchievement
     {
         public string AchievementId;
         public string Name;
@@ -103,12 +103,12 @@ namespace lithuanian_language_learning_tool.Models
         public DateTime UnlockedAt;
     }
 
-    struct PracticeSession
+    public struct PracticeSession
     {
         public DateTime SessionDate;
         public TimeSpan Duration;
         public int ScoreEarned;
-        public string LessonType;
+        public string LessonType;       // could be Enum
         public int CorrectAnswers;
         public int TotalQuestions;
     }
