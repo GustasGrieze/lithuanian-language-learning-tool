@@ -23,8 +23,12 @@ else
                 <h2>Taškai: @score</h2>
             </div>
 
-@*             <Timer @ref="timer" SecondsToRun="20" TimerOut="TimerOut" /> 
- *@
+            @if (showFlash)
+            {
+                <div class="flash-overlay @(_lastAnswerCorrect ? "correct-flash" : "incorrect-flash")"></div>
+            }
+
+            <Timer @ref="timer" SecondsToRun="20" TimerOut="TimerOut" /> 
 
             <div class="task-box" style="height: 300px;">
                 @if (tasks.Count > currentTaskIndex)
@@ -61,8 +65,7 @@ else
                 }
             </div>
 
-
-            <OptionsSection Task="currentTask" TTask="PunctuationTask" OnOptionSelected="InsertPunctuation" />
+            <OptionsSection Task="currentTask" TTask="PunctuationTask" OnOptionSelected="InsertPunctuation" IsSelected="showFeedback"/>
 
             if (currentTask.TaskStatus)
             {
@@ -75,24 +78,7 @@ else
                 <button class="next-button" @onclick="SkipTask">Praleisti</button>
 
             }
-
-            if (showFeedback)
-            {
-                <div class="feedback @(currentTask.TaskStatus ? "correct" : "incorrect")">
-                    @feedbackMessage
-                </div>
-            }
-            
-
-
-            
-        }
-
-        
-
-        
-
-        
+        }   
     }
     else
     {

@@ -60,7 +60,7 @@ namespace lithuanian_language_learning_tool.Models
         {
             return Role switch
             {
-                UserRole.Admin => true, // Admins have all permissions
+                UserRole.Admin => true,
                 UserRole.RegisteredUser => IsRegisteredUserPermission(permission),
                 UserRole.Guest => IsGuestPermission(permission),
                 _ => false
@@ -69,7 +69,6 @@ namespace lithuanian_language_learning_tool.Models
 
         private bool IsRegisteredUserPermission(string permission)
         {
-            // Define permissions available to registered users
             var registeredUserPermissions = new HashSet<string>
             {
                 "view_profile",
@@ -84,7 +83,6 @@ namespace lithuanian_language_learning_tool.Models
 
         private bool IsGuestPermission(string permission)
         {
-            // Define permissions available to guests
             var guestPermissions = new HashSet<string>
             {
                 "view_public_content",
@@ -95,21 +93,21 @@ namespace lithuanian_language_learning_tool.Models
         }
     }
 
-    public class UserAchievement
+    public struct UserAchievement
     {
-        public string AchievementId { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public DateTime UnlockedAt { get; set; }
+        public string AchievementId;
+        public string Name;
+        public string Description;
+        public DateTime UnlockedAt;
     }
 
-    public class PracticeSession
+    public struct PracticeSession
     {
-        public DateTime SessionDate { get; set; }
-        public TimeSpan Duration { get; set; }
-        public int ScoreEarned { get; set; }
-        public string LessonType { get; set; }
-        public int CorrectAnswers { get; set; }
-        public int TotalQuestions { get; set; }
+        public DateTime SessionDate;
+        public TimeSpan Duration;
+        public int ScoreEarned;
+        public string LessonType;
+        public int CorrectAnswers;
+        public int TotalQuestions;
     }
 }

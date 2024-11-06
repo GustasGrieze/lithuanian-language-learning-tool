@@ -39,5 +39,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
         {
             return selectedAnswer == currentTask.CorrectAnswer;
         }
+
+
     }
 }
