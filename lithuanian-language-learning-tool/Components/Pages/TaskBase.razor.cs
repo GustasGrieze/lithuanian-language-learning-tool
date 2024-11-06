@@ -32,6 +32,10 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected bool showFeedback = false;
         protected bool showSummary = false;
 
+
+        protected bool showFlash = false;
+        protected bool _lastAnswerCorrect = false;
+
         protected override void OnInitialized()
         {
             GenerateDefaultTasks();
@@ -67,8 +71,14 @@ namespace lithuanian_language_learning_tool.Components.Pages
          * Be carful as this selectedAnswer arguement is only optional due to different implentation in Spelling and Punctuation but is actually necessary.
          */
         protected abstract bool IsAnswerCorrect(string selectedAnswer);
-        protected void CheckAnswer(string selectedAnswer = "")
+        protected async Task CheckAnswer(string selectedAnswer="")
         {
+            _lastAnswerCorrect = selectedAnswer == currentTask.CorrectAnswer;
+            showFlash = true;
+            await Task.Delay(300);
+            showFlash = false;
+            
+
             showFeedback = true;
             currentTask.TaskStatus = IsAnswerCorrect(selectedAnswer);
             feedbackMessage = currentTask.TaskStatus
@@ -80,6 +90,8 @@ namespace lithuanian_language_learning_tool.Components.Pages
             currentTask.TaskStatus = currentTask.TaskStatus;
             score += currentTask.CalculateScore(currentTask.TaskStatus, multiplier: 2); // simple scoring system - needs improvement (time based score)
             StateHasChanged();
+
+            NextTask();
         }
 
         protected void StartWithDefaultTasks()
@@ -97,6 +109,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
             correctAnswersCount = 0;
             feedbackMessage = null;
             showSummary = false;
+            showFeedback = false;
             reviewMode = false;
             startExercise = true;
             if (tasks.Count > 0)
@@ -148,6 +161,9 @@ namespace lithuanian_language_learning_tool.Components.Pages
         {
             if (currentTaskIndex < tasks.Count - 1)
             {
+                timer.Dispose();
+                timer.ResetTimer();
+
                 currentTaskIndex++;
                 currentTask = tasks[currentTaskIndex];
                 feedbackMessage = null;

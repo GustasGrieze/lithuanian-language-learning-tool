@@ -1,20 +1,38 @@
 ﻿<div class="clock">
     <h1>@Time</h1>
 </div>
-<div class="progress-bar" style="transition: width @(SecondsToRun)s linear, background-color @(SecondsToRun)s linear;
-                                  width: @(progressWidth)%;
-                                  background-color: @(progressColor);">
+<div class="@_progressBarClass"
+     style="width: @(_isResetting ? "100" : "0")%;
+            transition: width @(SecondsToRun)s linear, background-color @(SecondsToRun)s linear;
+            background-color: @(_isResetting ? "rgb(0,255,0)" : "rgb(255,0,0)");">
 </div>
 
 @code {
-    private int progressWidth = 100;
-    private string progressColor = "rgb(0,255,0)";
-
     protected override async Task OnInitializedAsync()
     {
-        await Task.Delay(1);
-        progressWidth = 0;
-        progressColor = "rgb(255,0,0)";
-        StateHasChanged();
+        await StartTimer();
     }
 }
+
+<style>
+    .progress-bar {
+        height: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-grow: 1;
+        padding-bottom: 10px;
+        transition-delay: 0s;
+        transition-property: width, background;
+    }
+
+    .progress-bar-reset {
+        height: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-grow: 1;
+        padding-bottom: 10px;
+        transition: none !important;
+    }
+</style>
