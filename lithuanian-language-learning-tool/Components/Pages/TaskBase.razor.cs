@@ -73,12 +73,6 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected abstract bool IsAnswerCorrect(string selectedAnswer);
         protected async Task CheckAnswer(string selectedAnswer="")
         {
-            _lastAnswerCorrect = selectedAnswer == currentTask.CorrectAnswer;
-            showFlash = true;
-            await Task.Delay(300);
-            showFlash = false;
-            
-
             showFeedback = true;
             currentTask.TaskStatus = IsAnswerCorrect(selectedAnswer);
             feedbackMessage = currentTask.TaskStatus
@@ -88,6 +82,12 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 ? correctAnswersCount + 1
                 : correctAnswersCount;
             currentTask.TaskStatus = currentTask.TaskStatus;
+
+            _lastAnswerCorrect = currentTask.TaskStatus;
+            showFlash = true;
+            await Task.Delay(300);
+            showFlash = false;
+
             score += currentTask.CalculateScore(currentTask.TaskStatus, multiplier: 2); // simple scoring system - needs improvement (time based score)
             StateHasChanged();
 

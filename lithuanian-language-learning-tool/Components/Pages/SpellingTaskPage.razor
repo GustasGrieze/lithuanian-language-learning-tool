@@ -20,7 +20,10 @@ else
         }
         else 
         {
-            <!-- Move the flash overlay outside the relative container -->
+            <div class="score-label">
+                <h2>Taškai: @score</h2>
+            </div>
+
             @if (showFlash)
             {
                 <div class="flash-overlay @(_lastAnswerCorrect ? "correct-flash" : "incorrect-flash")"></div>
@@ -34,21 +37,6 @@ else
 
                 <OptionsSection Task="currentTask" TTask="SpellingTask" OnOptionSelected="CheckAnswer" IsSelected="showFeedback" />
             </div>
-
-
-            <!--
-            // removed these buttons because tasks change automaticaly on answering - fast paced gameplay
-            /*
-            if (showFeedback)
-            {
-                <div class="feedback @(currentTask.TaskStatus ? "correct" : "incorrect")">
-                    @feedbackMessage
-                </div>
-            }
-
-            <button class="next-button" @onclick="NextTask">Kita užduotis</button>
-            */
-            -->
         }
 
         

@@ -23,6 +23,11 @@ else
                 <h2>Taškai: @score</h2>
             </div>
 
+            @if (showFlash)
+            {
+                <div class="flash-overlay @(_lastAnswerCorrect ? "correct-flash" : "incorrect-flash")"></div>
+            }
+
             <Timer @ref="timer" SecondsToRun="20" TimerOut="TimerOut" /> 
 
 
@@ -61,24 +66,7 @@ else
                 <button class="next-button" @onclick="SkipTask">Praleisti</button>
 
             }
-
-            if (showFeedback)
-            {
-                <div class="feedback @(currentTask.TaskStatus ? "correct" : "incorrect")">
-                    @feedbackMessage
-                </div>
-            }
-            
-
-
-            
-        }
-
-        
-
-        
-
-        
+        }   
     }
     else
     {
