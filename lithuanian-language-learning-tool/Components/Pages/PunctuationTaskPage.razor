@@ -33,7 +33,7 @@ else
             <div class="task-box" style="height: 300px;">
                 @if (tasks.Count > currentTaskIndex)
                 {
-                    int previousIndex = 0;
+                    var previousIndex = 0;
                     var currentTask = tasks[currentTaskIndex];
 
                     foreach (var highlight in currentTask.Highlights)

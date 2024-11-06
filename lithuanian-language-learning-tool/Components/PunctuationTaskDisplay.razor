@@ -3,7 +3,7 @@
 <div class="task-box" style="height: 300px;">
     @if (PuncTask != null)
     {
-        int previousIndex = 0;
+        var previousIndex = 0;
         foreach (var highlight in PuncTask.Highlights)
         {
             <span @onclick="() => OnToggleHighlight.InvokeAsync(highlight.SpaceIndex)" style="cursor:pointer;">

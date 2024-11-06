@@ -63,7 +63,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
         {
             if (currentTask?.Highlights == null) return;
 
-            for (int i = 0; i < currentTask.Highlights.Count; i++)
+            for (var i = 0; i < currentTask.Highlights.Count; i++)
             {
                 var highlight = currentTask.Highlights[i];
                 highlight.IsSelected = highlight.SpaceIndex == spaceIndex;
@@ -100,7 +100,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 {
                     currentTask.UserText = currentTask.UserText.Insert(insertionIndex, punctuation);
                     int punctuationLength = punctuation.Length;
-                    for (int i = 0; i < currentTask.Highlights.Count; i++)
+                    for (var i = 0; i < currentTask.Highlights.Count; i++)
                     {
                         if (currentTask.Highlights[i].SpaceIndex >= insertionIndex)
                         {

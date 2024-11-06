@@ -13,7 +13,7 @@ namespace lithuanian_language_learning_tool.Models
         public void InitializeHighlights()
         {
             Highlights.Clear();
-            for (int i = 0; i < Sentence.Length; i++)
+            for (var i = 0; i < Sentence.Length; i++)
             {
                 if (Sentence[i] == ' ')
                 {
