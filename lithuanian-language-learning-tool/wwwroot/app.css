@@ -313,19 +313,19 @@ h1, .overview-title {
     animation: flash 0.5s ease-out forwards;
     -webkit-animation: flash 0.5s ease-out forwards;
     opacity: 0;
-    will-change: opacity; /* Helps with performance */
-    -webkit-transform: translateZ(0); /* Forces GPU acceleration */
-    -webkit-backface-visibility: hidden; /* Chrome specific fix */
+    will-change: opacity;
+    -webkit-transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
 }
 
 .correct-flash {
-    background-color: rgba(76, 175, 80, 0.3); /* Green */
-    -webkit-transform: translate3d(0,0,0); /* Chrome specific fix */
+    background-color: rgba(76, 175, 80, 0.3);
+    -webkit-transform: translate3d(0,0,0);
 }
 
 .incorrect-flash {
-    background-color: rgba(244, 67, 54, 0.3); /* Red */
-    -webkit-transform: translate3d(0,0,0); /* Chrome specific fix */
+    background-color: rgba(244, 67, 54, 0.3);
+    -webkit-transform: translate3d(0,0,0);
 }
 
 

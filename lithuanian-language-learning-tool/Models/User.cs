@@ -60,7 +60,7 @@ namespace lithuanian_language_learning_tool.Models
         {
             return Role switch
             {
-                UserRole.Admin => true, // Admins have all permissions
+                UserRole.Admin => true,
                 UserRole.RegisteredUser => IsRegisteredUserPermission(permission),
                 UserRole.Guest => IsGuestPermission(permission),
                 _ => false
@@ -69,7 +69,6 @@ namespace lithuanian_language_learning_tool.Models
 
         private bool IsRegisteredUserPermission(string permission)
         {
-            // Define permissions available to registered users
             var registeredUserPermissions = new HashSet<string>
             {
                 "view_profile",
@@ -84,7 +83,6 @@ namespace lithuanian_language_learning_tool.Models
 
         private bool IsGuestPermission(string permission)
         {
-            // Define permissions available to guests
             var guestPermissions = new HashSet<string>
             {
                 "view_public_content",
@@ -108,7 +106,7 @@ namespace lithuanian_language_learning_tool.Models
         public DateTime SessionDate;
         public TimeSpan Duration;
         public int ScoreEarned;
-        public string LessonType;       // could be Enum
+        public string LessonType;
         public int CorrectAnswers;
         public int TotalQuestions;
     }
