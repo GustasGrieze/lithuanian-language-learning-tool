@@ -18,7 +18,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected override void NextTask()
         {
             base.NextTask();
-            if (currentTaskIndex < tasks.Count - 1)
+            if (currentTaskIndex < tasks.Count)
             {
                 currentTask.InitializeHighlights();
             }
@@ -51,7 +51,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 new PunctuationTask
                 {
                     Sentence = "Sakinys kalbinis vienetas sudarytas iš vieno ar daugiau žodžių.",
-                    Options = new List<string> { ".", ",", ";", ":", "!", "?" },
+                    Options = new List<string> { ".", ",", ";", ":", " -", "?" },
                     CorrectAnswer = "Sakinys - kalbinis vienetas, sudarytas iš vieno ar daugiau žodžių.",
                     Explanation = "Brūkšnys naudojamas pabrėžti sakinį apibūdinantį elementą."
                 }
@@ -63,13 +63,16 @@ namespace lithuanian_language_learning_tool.Components.Pages
         {
             if (currentTask?.Highlights == null) return;
 
-            foreach (var highlight in currentTask.Highlights)
+            for (int i = 0; i < currentTask.Highlights.Count; i++)
             {
+                var highlight = currentTask.Highlights[i];
                 highlight.IsSelected = highlight.SpaceIndex == spaceIndex;
+                currentTask.Highlights[i] = highlight;
             }
 
             StateHasChanged();
         }
+
 
         protected void InsertPunctuation(string punctuation)
         {
@@ -80,35 +83,43 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 currentTask.UserText = currentTask.Sentence;
             }
 
-            var selectedHighlight = currentTask.Highlights.FirstOrDefault(h => h.IsSelected);
-            if (selectedHighlight != null)
+            int selectedIndex = currentTask.Highlights.FindIndex(h => h.IsSelected);
+            if (selectedIndex != -1)
             {
+                var selectedHighlight = currentTask.Highlights[selectedIndex];
                 int insertionIndex = selectedHighlight.SpaceIndex;
 
                 if (insertionIndex > 0 && char.IsPunctuation(currentTask.UserText[insertionIndex - 1]))
                 {
-                    currentTask.UserText = currentTask.UserText.Remove(insertionIndex - 1, 1);
-                    currentTask.UserText = currentTask.UserText.Insert(insertionIndex - 1, punctuation);
+                    currentTask.UserText = currentTask.UserText.Remove(insertionIndex - 1, 1)
+                                                           .Insert(insertionIndex - 1, punctuation);
                     selectedHighlight.IsSelected = false;
+                    currentTask.Highlights[selectedIndex] = selectedHighlight;
                 }
                 else
                 {
                     currentTask.UserText = currentTask.UserText.Insert(insertionIndex, punctuation);
                     int punctuationLength = punctuation.Length;
-                    foreach (var highlight in currentTask.Highlights)
+                    for (int i = 0; i < currentTask.Highlights.Count; i++)
                     {
-                        if (highlight.SpaceIndex >= insertionIndex)
+                        if (currentTask.Highlights[i].SpaceIndex >= insertionIndex)
                         {
-                            highlight.SpaceIndex += punctuationLength;
+                            var hl = currentTask.Highlights[i];
+                            hl.SpaceIndex += punctuationLength;
+                            currentTask.Highlights[i] = hl;
                         }
                     }
                     selectedHighlight.HasPunctuation = true;
                     selectedHighlight.IsSelected = false;
+                    //currentTask.Highlights[selectedIndex] = selectedHighlight;
                 }
 
-                StateHasChanged();
+               
             }
+            StateHasChanged();
         }
+
+
 
         protected override bool IsAnswerCorrect(string selectedAnswer)
         {
