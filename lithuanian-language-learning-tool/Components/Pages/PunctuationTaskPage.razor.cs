@@ -15,7 +15,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
             
         }
 
-        protected override void NextTask()
+        protected override async Task NextTask()
         {
             base.NextTask();
             if (currentTaskIndex < tasks.Count)

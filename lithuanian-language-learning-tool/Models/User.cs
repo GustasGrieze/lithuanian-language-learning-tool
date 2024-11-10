@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace lithuanian_language_learning_tool.Models
 {
@@ -22,7 +23,7 @@ namespace lithuanian_language_learning_tool.Models
         public string DisplayName { get; set; }
         public string GivenName { get; set; }
         public string FamilyName { get; set; }
-        public string ProfilePictureUrl { get; set; }
+        public string? ProfilePictureUrl { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime LastLoginAt { get; set; }
 
@@ -47,6 +48,7 @@ namespace lithuanian_language_learning_tool.Models
 
 
         // Progress tracking
+        [NotMapped]
         public Dictionary<string, int> LessonProgress { get; set; } = new();
         public List<PracticeSession> PracticeSessions { get; set; } = new();
 
@@ -93,21 +95,37 @@ namespace lithuanian_language_learning_tool.Models
         }
     }
 
-    public struct UserAchievement
+    public class UserAchievement
     {
-        public string AchievementId;
-        public string Name;
-        public string Description;
-        public DateTime UnlockedAt;
+        [Key]
+        public int Id { get; set; } // Primary key for EF
+
+        public string AchievementId { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public DateTime UnlockedAt { get; set; }
+
+        // Foreign key to link to User
+        public string UserId { get; set; }
+        public User User { get; set; }
     }
 
-    public struct PracticeSession
+
+
+    public class PracticeSession
     {
-        public DateTime SessionDate;
-        public TimeSpan Duration;
-        public int ScoreEarned;
-        public string LessonType;
-        public int CorrectAnswers;
-        public int TotalQuestions;
+        [Key]
+        public int Id { get; set; } // Primary key for EF
+
+        public DateTime SessionDate { get; set; }
+        public TimeSpan Duration { get; set; }
+        public int ScoreEarned { get; set; }
+        public string LessonType { get; set; }
+        public int CorrectAnswers { get; set; }
+        public int TotalQuestions { get; set; }
+
+        // Foreign key to link to User
+        public string UserId { get; set; }
+        public User User { get; set; }
     }
 }

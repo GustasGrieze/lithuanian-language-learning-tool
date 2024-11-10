@@ -19,7 +19,7 @@
                                 <img class="h-24 w-24 rounded-full" src="@_user.ProfilePictureUrl" alt="Profile picture" />
                             }
                             <div>
-                                <h2 class="text-2xl font-bold">@_user.DisplayName @(@_user.Role == @UserRole.Admin ? "("+@_user.Role+")" : "" )</h2>
+                                <h2 class="text-2xl font-bold">@_user.DisplayName @(@_user.Role == @UserRole.Admin ? "(" + @_user.Role + ")" : "")</h2>
                                 <p class="text-gray-600">@_user.Email</p>
                             </div>
                         </div>
@@ -42,7 +42,7 @@
                             </div>
                         </div>
 
-                        @if (_user.Achievements.Any())
+                        @if (_user.Achievements != null && _user.Achievements.Any())
                         {
                             <div class="border rounded-lg p-4">
                                 <h3 class="font-semibold mb-2">Achievements (@_user.Achievements.Count)</h3>

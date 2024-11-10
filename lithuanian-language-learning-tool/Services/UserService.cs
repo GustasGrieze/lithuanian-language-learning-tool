@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using lithuanian_language_learning_tool.Models;
 using System.Security.Claims;
+using lithuanian_language_learning_tool.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace lithuanian_language_learning_tool.Services
 {
@@ -12,40 +14,48 @@ namespace lithuanian_language_learning_tool.Services
         Task<bool> PromoteToAdminAsync(string userId);
         Task<bool> DemoteFromAdminAsync(string userId);
 
+        Task UpdateUserAsync(User user);
+
     }
 
     public class UserService : IUserService
     {
-        private readonly List<User> _users = new(); // To be replaced with your actual database context
+        private readonly IDbContextFactory<AppDbContext> _contextFactory;
         private readonly HashSet<string> _adminEmails = new()
         {
-            // Add admin emails here
             "3darijus@gmail.com",
             "testporator@gmail.com"
-
-
         };
+
+        public UserService(IDbContextFactory<AppDbContext> contextFactory)
+        {
+            _contextFactory = contextFactory;
+        }
 
         public async Task<User> GetOrCreateUserFromGoogleAsync(AuthenticationState authState)
         {
-            var user = authState.User;
+            using var context = _contextFactory.CreateDbContext();
 
-            if (!user.Identity?.IsAuthenticated ?? true)
+            var userClaims = authState.User;
+
+            if (!userClaims.Identity?.IsAuthenticated ?? true)
             {
                 throw new UnauthorizedAccessException("User is not authenticated");
             }
 
-            var googleId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var email = user.FindFirst(ClaimTypes.Email)?.Value;
-            var givenName = user.FindFirst(ClaimTypes.GivenName)?.Value;
-            var familyName = user.FindFirst(ClaimTypes.Surname)?.Value;
-            var name = user.FindFirst(ClaimTypes.Name)?.Value;
+            var googleId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var email = userClaims.FindFirst(ClaimTypes.Email)?.Value;
+            var givenName = userClaims.FindFirst(ClaimTypes.GivenName)?.Value;
+            var familyName = userClaims.FindFirst(ClaimTypes.Surname)?.Value;
+            var name = userClaims.FindFirst(ClaimTypes.Name)?.Value;
+            var profilePictureUrl = userClaims.FindFirst("picture")?.Value;
 
-            var existingUser = _users.FirstOrDefault(u => u.GoogleId == googleId);
+            var existingUser = await context.Users.FirstOrDefaultAsync(u => u.GoogleId == googleId);
 
             if (existingUser != null)
             {
                 existingUser.LastLoginAt = DateTime.UtcNow;
+                await context.SaveChangesAsync(); // Update last login time
                 return existingUser;
             }
 
@@ -58,16 +68,18 @@ namespace lithuanian_language_learning_tool.Services
                 DisplayName = name,
                 LastLoginAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
-                ProfilePictureUrl = user.FindFirst("picture")?.Value,
+                ProfilePictureUrl = profilePictureUrl,
                 Role = _adminEmails.Contains(email) ? UserRole.Admin : UserRole.RegisteredUser
             };
 
-            _users.Add(newUser);
+            context.Users.Add(newUser);
+            await context.SaveChangesAsync();
             return newUser;
         }
 
         public User CreateGuestUser()
         {
+            using var context = _contextFactory.CreateDbContext();
             var guestUser = new User
             {
                 DisplayName = "Guest",
@@ -76,37 +88,52 @@ namespace lithuanian_language_learning_tool.Services
                 LastLoginAt = DateTime.UtcNow
             };
 
-            _users.Add(guestUser);
+            context.Users.Add(guestUser);
+            context.SaveChanges(); // Note: This is synchronous; for async, use SaveChangesAsync in async contexts
             return guestUser;
         }
 
         public async Task<User?> GetCurrentUserAsync(AuthenticationState authState)
         {
-            var user = authState.User;
+            using var context = _contextFactory.CreateDbContext();
+            var userClaims = authState.User;
 
-            if (!user.Identity?.IsAuthenticated ?? true)
+            if (!userClaims.Identity?.IsAuthenticated ?? true)
             {
                 return CreateGuestUser();
             }
 
-            var googleId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return _users.FirstOrDefault(u => u.GoogleId == googleId);
+            var googleId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return await context.Users.FirstOrDefaultAsync(u => u.GoogleId == googleId);
         }
 
         public async Task<bool> PromoteToAdminAsync(string userId)
         {
-            var user = _users.FirstOrDefault(u => u.Id == userId);
+            using var context = _contextFactory.CreateDbContext();
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null) return false;
+
             user.Role = UserRole.Admin;
+            await context.SaveChangesAsync();
             return true;
         }
 
         public async Task<bool> DemoteFromAdminAsync(string userId)
         {
-            var user = _users.FirstOrDefault(u => u.Id == userId);
+            using var context = _contextFactory.CreateDbContext();
+            var user = await context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null) return false;
+
             user.Role = UserRole.RegisteredUser;
+            await context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task UpdateUserAsync(User user)
+        {
+            using var context = _contextFactory.CreateDbContext();
+            context.Users.Update(user);
+            await context.SaveChangesAsync();
         }
     }
 }
