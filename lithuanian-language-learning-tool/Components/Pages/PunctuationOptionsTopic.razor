@@ -1,0 +1,19 @@
+@page "/punctuationoptionstopic"
+@inject NavigationManager NavigationManager
+
+<h1>Skyrybos užduotys</h1>
+
+<div class="button-container">
+    <button class="button" @onclick="NavigateToTask">Vienarūšės sakinio dalys</button>
+    <button class="button" @onclick="NavigateToTask">Pažyminiai</button>
+    <button class="button" @onclick="NavigateToTask">Sudėtiniai sakiniai</button>
+    <button class="button" @onclick="NavigateToTask">Įterpiniai</button>
+</div>
+
+@code {
+    private void NavigateToTask()
+    {
+        NavigationManager.NavigateTo("/punctuationtask");
+    }
+
+}

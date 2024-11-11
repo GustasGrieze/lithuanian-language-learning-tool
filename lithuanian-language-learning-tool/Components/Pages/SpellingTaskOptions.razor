@@ -1,0 +1,21 @@
+@page "/spellingoptions"
+@inject NavigationManager NavigationManager
+
+<h1>Rašybos užduotys</h1>
+
+<div class="button-container">
+    <button class="button" @onclick="NavigateToThematicTasks">Užduotys pagal tema</button>
+    <button class="button" @onclick="NavigateToRandomTasks">Randomizuotos užduotys</button>
+</div>
+
+@code {
+    private void NavigateToThematicTasks()
+    {
+        NavigationManager.NavigateTo("/spellingoptionstopic");
+    }
+
+    private void NavigateToRandomTasks()
+    {
+        NavigationManager.NavigateTo("/spellingoptionsrandom");
+    }
+}

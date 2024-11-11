@@ -1,0 +1,17 @@
+@page "/punctuationoptionsrandom"
+@inject NavigationManager NavigationManager
+
+<h1>Skyrybos užduotys</h1>
+
+<div class="button-container">
+    <button class="button" @onclick="NavigateToTask">Paprastos Užduotys</button>
+    <button class="button" @onclick="NavigateToTask">Sudėtingos Užduotys</button>
+</div>
+
+@code {
+    private void NavigateToTask()
+    {
+        NavigationManager.NavigateTo("/punctuationtask");
+    }
+
+}
