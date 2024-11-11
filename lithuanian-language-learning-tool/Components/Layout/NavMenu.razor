@@ -8,14 +8,16 @@
         <div class="d-flex w-100 justify-content-center">
             <NavLink class="navbar-brand" href="/">Lietuvių kalbos mokymosi įrankis</NavLink>
         </div>
-        <div class="d-flex w-100 justify-content-end">
+        <div class="d-flex w-100 justify-content-end align-items-center">
             <CascadingAuthenticationState>
                 <AuthorizeView>
                     <Authorized>
-                        <NavLink class="navbar-brand" href="/profile">Profile</NavLink>
-                        <NavLink class="navbar-brand" href="/">Statistics</NavLink>
-                        <span>Hello, @context.User.Identity.Name!</span>
-                        <button class="btn btn-link" @onclick="Logout">Logout</button>
+                        <div class="d-flex align-items-center">
+                        <NavLink class="navbar-brand" href="/profile">&emsp; @context.User.Identity.Name &emsp;</NavLink>
+                        </div>
+                        <div class="button-container">
+                        <button class="button" @onclick="Logout">Logout</button>
+                        </div>
                     </Authorized>
                     <NotAuthorized>
                         <Login></Login>
