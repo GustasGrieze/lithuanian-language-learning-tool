@@ -1,0 +1,8 @@
+[
+    {
+      "Sentence": "Vilnius yra Liet_vos sostinė.",
+      "Options": [ "a", ",", "?", "uo" ],
+      "CorrectAnswer": "u",
+      "Explanation": "Teisingas atsakymas yra 'u', nes žodyje 'Lietuvos' rašoma trumpa balsė 'u'. Šis žodis yra kilmininko forma, reiškianti 'Lietuva'."
+    }
+]
