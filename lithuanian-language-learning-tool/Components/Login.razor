@@ -1,6 +1,8 @@
 ﻿@inject NavigationManager NavigationManager
 
-<button class="btn btn-primary" @onclick="SignInWithGoogle">Sign in with Google</button>
+<div class="button-container">
+    <button class="button" @onclick="SignInWithGoogle">Sign in with Google</button>
+</div>
 
 @code {
     private void SignInWithGoogle()

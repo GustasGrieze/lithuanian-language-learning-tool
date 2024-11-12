@@ -1,9 +1,23 @@
 ﻿@page "/"
+@inject NavigationManager NavigationManager
+
 <h1>Lietuvių kalbos mokymosi įrankis</h1>
 <div class="button-container">
-    <NavLink href="/spellingtask" class="button">Rašybos užduotys</NavLink>
-    <NavLink href="/punctuationtask" class="button">Skyrybos užduotys</NavLink>
+    <button class="button" @onclick="GoToSpellingTask">Rašybos užduotys</button>
+    <button class="button" @onclick="GoToPunctationTask">Skyrybos užduotys</button>
 </div>
 <div class="container">
     <p>Pasirinkite užduočių tipą aukščiau, kad pradėtumėte mokytis.</p>
 </div>
+
+@code {
+    private void GoToSpellingTask()
+    {
+        NavigationManager.NavigateTo("/rasybos/pasirinkimai");
+    }
+
+        private void GoToPunctationTask()
+    {
+        NavigationManager.NavigateTo("/skyrybos/pasirinkimai");
+    }
+}

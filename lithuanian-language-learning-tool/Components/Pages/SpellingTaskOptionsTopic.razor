@@ -1,0 +1,18 @@
+@page "/rasybos/pasirinkimai/temos"
+@inject NavigationManager NavigationManager
+
+<h1>Rašybos užduotys</h1>
+
+<div class="button-container">
+    <button class="button" @onclick="NavigateToTask">Nosinės</button>
+    <button class="button" @onclick="NavigateToTask">Žodžių rašyba atskirai ir kartu</button>
+    <button class="button" @onclick="NavigateToTask">Priebalsių suminkštėjimas</button>
+</div>
+
+@code {
+    private void NavigateToTask()
+    {
+        NavigationManager.NavigateTo("/rasybos/uzduotys");
+    }
+
+}
