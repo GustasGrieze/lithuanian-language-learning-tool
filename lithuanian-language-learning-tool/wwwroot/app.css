@@ -124,7 +124,6 @@ h1, .overview-title {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    text-decoration: line-through;
 }
 
 .button:hover, .next-button:hover {
