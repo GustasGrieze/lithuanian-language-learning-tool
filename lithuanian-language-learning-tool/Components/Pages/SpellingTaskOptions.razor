@@ -1,4 +1,4 @@
-@page "/spellingoptions"
+@page "/rasybos/pasirinkimai"
 @inject NavigationManager NavigationManager
 
 <h1>Rašybos užduotys</h1>
@@ -11,11 +11,11 @@
 @code {
     private void NavigateToThematicTasks()
     {
-        NavigationManager.NavigateTo("/spellingoptionstopic");
+        NavigationManager.NavigateTo("/rasybos/pasirinkimai/temos");
     }
 
     private void NavigateToRandomTasks()
     {
-        NavigationManager.NavigateTo("/spellingoptionsrandom");
+        NavigationManager.NavigateTo("/rasybos/pasirinkimai/randomizuoti");
     }
 }

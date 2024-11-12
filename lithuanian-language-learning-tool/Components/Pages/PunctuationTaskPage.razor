@@ -1,6 +1,8 @@
-﻿@page "/punctuationtask"
+﻿@page "/skyrybos/uzduotys"
 @using Models
 @inherits PunctuationTaskBase
+
+<h1>Skyrybos užduotys</h1>
 
 @if (!startExercise)
 {
@@ -10,8 +12,6 @@ else
 {
     @if (!showSummary)
     {
-        <h1>Skyrybos Užduotis</h1>
-
         @if (reviewMode)
         {
             <TaskReview Task="currentTask" OnBackToSummary="() => showSummary = true" />

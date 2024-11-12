@@ -1,4 +1,4 @@
-@page "/punctuationoptions"
+@page "/skyrybos/pasirinkimai"
 @inject NavigationManager NavigationManager
 
 <h1>Skyrybos užduotys</h1>
@@ -11,11 +11,11 @@
 @code {
     private void NavigateToThematicTasks()
     {
-        NavigationManager.NavigateTo("/punctuationoptionstopic");
+        NavigationManager.NavigateTo("/skyrybos/pasirinkimai/temos");
     }
 
     private void NavigateToRandomTasks()
     {
-        NavigationManager.NavigateTo("/punctuationoptionsrandom");
+        NavigationManager.NavigateTo("/skyrybos/pasirinkimai/randomizuoti");
     }
 }

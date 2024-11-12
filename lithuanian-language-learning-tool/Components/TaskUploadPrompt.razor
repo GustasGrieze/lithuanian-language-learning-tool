@@ -37,11 +37,11 @@
     private void SetTaskTypeBasedOnUrl()
     {
         var uri = NavigationManager.Uri.ToLower();
-        if ((uri.Contains("/punctuationtask")) || (uri.Contains("/punctuationoptionstopic")) || (uri.Contains("/punctuationoptionsrandom")))
+        if ((uri.Contains("/rasybos/uzduotys")) || (uri.Contains("/rasybos/pasirinkimai/temos")) || (uri.Contains("/rasybos/pasirinkimai/randomizuoti")))
         {
             taskType = "punctuation";
         }
-        else if ((uri.Contains("/spellingtask")) || (uri.Contains("/spellingoptionstopic")) || (uri.Contains("/spellingoptionsrandom")))
+        else if ((uri.Contains("/skyrybos/uzduotys")) || (uri.Contains("/skyrybos/pasirinkimai/temos")) || (uri.Contains("/skyrybos/pasirinkimai/uzduotys")))
         {
             taskType = "spelling";
         }
