@@ -5,15 +5,23 @@ namespace lithuanian_language_learning_tool.Data
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) 
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
+
         public DbSet<User> Users { get; set; }
         public DbSet<UserAchievement> UserAchievements { get; set; }
         public DbSet<PracticeSession> PracticeSessions { get; set; }
 
+        public DbSet<CustomTask> CustomTasks { get; set; }
+        public DbSet<PunctuationTask> PunctuationTasks { get; set; }
+        public DbSet<SpellingTask> SpellingTasks { get; set; }
+
+        public DbSet<AnswerOption> AnswerOptions { get; set; } 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Configure User relationships
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Achievements)
                 .WithOne(a => a.User)
@@ -24,8 +32,20 @@ namespace lithuanian_language_learning_tool.Data
                 .WithOne(p => p.User)
                 .HasForeignKey(p => p.UserId);
 
-            // Configure LessonProgress as JSON if using a compatible database, or handle serialization in the application layer
-        }
+            modelBuilder.Entity<CustomTask>()
+                .HasDiscriminator<string>("TaskType")
+                .HasValue<CustomTask>("Custom")
+                .HasValue<PunctuationTask>("Punctuation")
+                .HasValue<SpellingTask>("Spelling");
 
+            modelBuilder.Entity<AnswerOption>()
+                .HasOne(to => to.CustomTask)
+                .WithMany(ct => ct.AnswerOptions)
+                .HasForeignKey(to => to.CustomTaskId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
+            modelBuilder.Entity<PunctuationTask>()
+                .Ignore(pt => pt.Highlights);
+        }
     }
 }

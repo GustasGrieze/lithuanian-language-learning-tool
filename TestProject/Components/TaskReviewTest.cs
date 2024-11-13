@@ -17,7 +17,7 @@ namespace TestProject.Components
     public class TaskReviewTests : TestContext
     {
         [Fact]
-        public void TaskReview_ShouldRenderTaskContentCorrectly()
+        public void TaskReviewShouldRenderTaskContentCorrectly()
         {
             // Arrange
             var task = new CustomTask

@@ -12,5 +12,18 @@ services:
     volumes:
       - sql_data:/var/opt/mssql
 
+  test_sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: test_sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrongPassword123
+    ports:
+      - "1434:1433"  # Exposing a different port for the test database
+    volumes:
+      - test_sql_data:/var/opt/mssql
+
 volumes:
   sql_data:
+  test_sql_data:
+

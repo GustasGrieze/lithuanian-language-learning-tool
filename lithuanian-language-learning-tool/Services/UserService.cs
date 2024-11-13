@@ -54,7 +54,7 @@ namespace lithuanian_language_learning_tool.Services
 
             if (existingUser != null)
             {
-                existingUser.LastLoginAt = DateTime.UtcNow;
+                existingUser.LastLoginAt = DateTime.UtcNow.ToLocalTime();
                 await context.SaveChangesAsync(); // Update last login time
                 return existingUser;
             }
@@ -66,8 +66,8 @@ namespace lithuanian_language_learning_tool.Services
                 GivenName = givenName,
                 FamilyName = familyName,
                 DisplayName = name,
-                LastLoginAt = DateTime.UtcNow,
-                CreatedAt = DateTime.UtcNow,
+                LastLoginAt = DateTime.UtcNow.ToLocalTime(),
+                CreatedAt = DateTime.UtcNow.ToLocalTime(),
                 ProfilePictureUrl = profilePictureUrl,
                 Role = _adminEmails.Contains(email) ? UserRole.Admin : UserRole.RegisteredUser
             };
@@ -79,7 +79,9 @@ namespace lithuanian_language_learning_tool.Services
 
         public User CreateGuestUser()
         {
-            using var context = _contextFactory.CreateDbContext();
+            // edit: no adding Guest user to DB
+
+            //using var context = _contextFactory.CreateDbContext();
             var guestUser = new User
             {
                 DisplayName = "Guest",
@@ -88,8 +90,8 @@ namespace lithuanian_language_learning_tool.Services
                 LastLoginAt = DateTime.UtcNow
             };
 
-            context.Users.Add(guestUser);
-            context.SaveChanges(); // Note: This is synchronous; for async, use SaveChangesAsync in async contexts
+            //context.Users.Add(guestUser);
+            //context.SaveChanges(); // Note: This is synchronous; for async, use SaveChangesAsync in async contexts
             return guestUser;
         }
 

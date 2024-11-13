@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace lithuanian_language_learning_tool.Models
 {
     public class PunctuationTask : CustomTask
     {
+        [NotMapped]
         public List<Highlight> Highlights { get; set; }
         public PunctuationTask()
         {
@@ -36,5 +38,9 @@ namespace lithuanian_language_learning_tool.Models
             }
         }
 
+        public override int CalculateScore(bool isCorrect, int multiplier = 1)
+        {
+            return isCorrect ? 20 * multiplier : 0;
+        }
     }
 }

@@ -187,14 +187,16 @@ namespace lithuanian_language_learning_tool.Components.Pages
         }
         protected virtual async Task EndExercise()
         {
-            await UpdateUserHighScore();
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var currentUser = await UserService.GetCurrentUserAsync(authState);
+
+            if(currentUser != null &&!currentUser.IsGuest)
+                await UpdateUserHighScore(currentUser);
             showSummary = true;
         }
 
-        protected async Task UpdateUserHighScore()
+        protected async Task UpdateUserHighScore(User currentUser)
         {
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            var currentUser = await UserService.GetCurrentUserAsync(authState);
             if (currentUser != null)
             {
                 if (score > currentUser.HighScore)

@@ -3,11 +3,22 @@ namespace lithuanian_language_learning_tool.Helpers
 {
     public static class CustomTaskExtensions
     {
-        // Extension method to calculate the score based on task correctness
-        public static int CalculateScore(this CustomTask task, bool isCorrect, int multiplier = 1)
+        // Converts List<string> to List<TaskOption>
+        public static void SetOptionsFromStrings(this CustomTask task, List<string> optionTexts)
         {
-
-            return isCorrect ? 100 * multiplier : 0;
+            task.AnswerOptions.Clear();
+            if (optionTexts != null)
+            {
+                task.AnswerOptions.AddRange(optionTexts.Select(ot => new AnswerOption { OptionText = ot }));
+            }
         }
+
+        // Converts List<TaskOption> to List<string>
+        public static List<string> GetOptionTexts(this CustomTask task)
+        {
+            return task.AnswerOptions?.Select(o => o.OptionText).ToList() ?? new List<string>();
+        }
+
+
     }
 }
