@@ -26,7 +26,7 @@ namespace lithuanian_language_learning_tool.Services
             _context = context;
         }
 
-        // Adds a new task with its options
+
         public async Task AddTaskAsync(T task, List<string> options)
         {
             if (options != null && options.Any())
@@ -41,7 +41,7 @@ namespace lithuanian_language_learning_tool.Services
             await _context.SaveChangesAsync();
         }
 
-        // Retrieves a task by its ID
+
         public async Task<T> GetTaskAsync(int taskId)
         {
             return await _context.CustomTasks
@@ -50,7 +50,6 @@ namespace lithuanian_language_learning_tool.Services
                 .FirstOrDefaultAsync(ct => ct.Id == taskId);
         }
 
-        // Updates an existing task and its options
         public async Task UpdateTaskAsync(T task, List<string> newOptions)
         {
             var existingTask = await _context.CustomTasks
