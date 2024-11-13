@@ -14,7 +14,9 @@ namespace lithuanian_language_learning_tool.Services
         Task<bool> PromoteToAdminAsync(string userId);
         Task<bool> DemoteFromAdminAsync(string userId);
 
-        Task UpdateUserAsync(User user);
+        Task<List<User>> GetTopUsersAsync(int topCount);
+
+		Task UpdateUserAsync(User user);
 
     }
 
@@ -135,5 +137,14 @@ namespace lithuanian_language_learning_tool.Services
             context.Users.Update(user);
             await context.SaveChangesAsync();
         }
-    }
+
+		public async Task<List<User>> GetTopUsersAsync(int topCount)
+		{
+			using var context = _contextFactory.CreateDbContext();
+			return await context.Users
+				.OrderByDescending(u => u.HighScore)
+				.Take(topCount)
+				.ToListAsync();
+		}
+	}
 }
