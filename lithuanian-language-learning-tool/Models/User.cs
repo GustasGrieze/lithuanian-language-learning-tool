@@ -24,7 +24,7 @@ namespace lithuanian_language_learning_tool.Models
         public string GivenName { get; set; }
         public string FamilyName { get; set; }
         public string? ProfilePictureUrl { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow.ToLocalTime();
         public DateTime LastLoginAt { get; set; }
 
 

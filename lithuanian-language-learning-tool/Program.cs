@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using lithuanian_language_learning_tool.Data;
 using Microsoft.Extensions.Configuration;
+using lithuanian_language_learning_tool.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +50,8 @@ builder.Services.AddDbContextFactory<AppDbContext>(options =>
     .EnableSensitiveDataLogging()   // Enables detailed logging
     .LogTo(Console.WriteLine));     // Outputs logs to the console;
 
+builder.Services.AddScoped<ITaskService<PunctuationTask>, TaskService<PunctuationTask>>();
+builder.Services.AddScoped<ITaskService<SpellingTask>, TaskService<SpellingTask>>();
 
 var app = builder.Build();
 
