@@ -5,6 +5,10 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using lithuanian_language_learning_tool.Services;
+using Microsoft.EntityFrameworkCore;
+using System;
+using lithuanian_language_learning_tool.Data;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +42,14 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
 builder.Services.AddScoped<IUserService, UserService>();
 
+// Add services to the container.
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new NullReferenceException("No connection string in config.");
+builder.Services.AddDbContextFactory<AppDbContext>(options =>
+    options.UseSqlServer(connectionString)
+    .EnableSensitiveDataLogging()   // Enables detailed logging
+    .LogTo(Console.WriteLine));     // Outputs logs to the console;
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -64,5 +76,6 @@ app.MapGet("/logout", async (HttpContext context) =>
     await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     return Results.Redirect("/");
 });
+
 
 app.Run();

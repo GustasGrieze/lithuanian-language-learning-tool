@@ -5,11 +5,19 @@ using System.Linq;
 using lithuanian_language_learning_tool.Helpers;
 using lithuanian_language_learning_tool.Models;
 using System.Threading.Tasks;
+using lithuanian_language_learning_tool.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace lithuanian_language_learning_tool.Components.Pages
 {
     public abstract class TaskBase<TTask> : ComponentBase where TTask : CustomTask, new()
     {
+        [Inject]
+        protected IUserService UserService { get; set; }
+
+        [Inject]
+        protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+
 
         protected int score = 0;
         protected int correctAnswersCount = 0;
@@ -91,7 +99,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
             score += currentTask.CalculateScore(currentTask.TaskStatus, multiplier: 2); // simple scoring system - needs improvement (time based score)
             StateHasChanged();
 
-            NextTask();
+            await NextTask();
         }
 
         protected void StartWithDefaultTasks()
@@ -124,6 +132,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
         protected void RestartTasks()
         {
+            
             currentTask.TaskStatus = false;
             foreach (var task in tasks)
             {
@@ -148,16 +157,16 @@ namespace lithuanian_language_learning_tool.Components.Pages
             }
         }
 
-        protected void TimerOut()
+        protected async void  TimerOut()
         {
-            showSummary = true;
+            await EndExercise();
         }
-        protected void SkipTask()
+        protected async void SkipTask()
         {
-            NextTask();
+            await NextTask();
         }
 
-        protected virtual void NextTask()
+        protected virtual async Task NextTask()
         {
             if (currentTaskIndex < tasks.Count - 1)
             {
@@ -173,9 +182,29 @@ namespace lithuanian_language_learning_tool.Components.Pages
             }
             else
             {
-                showSummary = true;
+                await EndExercise();
             }
         }
+        protected virtual async Task EndExercise()
+        {
+            await UpdateUserHighScore();
+            showSummary = true;
+        }
+
+        protected async Task UpdateUserHighScore()
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var currentUser = await UserService.GetCurrentUserAsync(authState);
+            if (currentUser != null)
+            {
+                if (score > currentUser.HighScore)
+                {
+                    currentUser.HighScore = score;
+                    await UserService.UpdateUserAsync(currentUser);
+                }
+            }
+        }
+
 
     }
 }
