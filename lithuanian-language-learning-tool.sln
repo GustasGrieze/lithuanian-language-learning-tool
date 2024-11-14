@@ -4,7 +4,7 @@ VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lithuanian-language-learning-tool", "lithuanian-language-learning-tool\lithuanian-language-learning-tool.csproj", "{7B6CC177-93E3-4AB9-8AC6-D24E9810F22A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject", "TestProject\TestProject.csproj", "{00F3D85D-78BB-4DDB-9A5E-0DBC4E976A88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject", "TestProject\TestProject.csproj", "{00F3D85D-78BB-4DDB-9A5E-0DBC4E976A88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
