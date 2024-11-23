@@ -4,7 +4,7 @@
 @inject IUserService UserService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<PageTitle>Profile</PageTitle>
+<PageTitle>Profilis</PageTitle>
 
 <CascadingAuthenticationState>
     <AuthorizeView>
@@ -26,19 +26,19 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                             <div class="border rounded-lg p-4">
-                                <h3 class="font-semibold mb-2">Learning Statistics</h3>
-                                <p>High Score: @_user.HighScore</p>
-                                <p>Lessons Completed: @_user.TotalLessonsCompleted</p>
-                                <p>Current Streak: @_user.CurrentStreak days</p>
-                                <p>Best Streak: @_user.BestStreak days</p>
-                                <p>Accuracy Rate: @_user.AccuracyRate.ToString("F1")%</p>
+                                <h3 class="font-semibold mb-2">Statistika</h3>
+                                <p>Geriausias rezultatas: @_user.HighScore</p>
+                                <p>Užduočių atlikta: @_user.TotalLessonsCompleted</p>
+                                <p>Dabartinis streak'as: @_user.CurrentStreak days</p>
+                                <p>Geriausias streak'as: @_user.BestStreak days</p>
+                                <p>Tikslumas: @_user.AccuracyRate.ToString("F1")%</p>
                             </div>
 
                             <div class="border rounded-lg p-4">
-                                <h3 class="font-semibold mb-2">Account Information</h3>
-                                <p>Member since: @_user.CreatedAt.ToString("MMMM dd, yyyy")</p>
-                                <p>Last login: @_user.LastLoginAt.ToString("MMMM dd, yyyy HH:mm")</p>
-                                <p>Total study time: @FormatStudyTime(_user.TotalStudyTime)</p>
+                                <h3 class="font-semibold mb-2">Profilio informacija</h3>
+                                <p>Narys nuo: @_user.CreatedAt.ToString("MMMM dd, yyyy")</p>
+                                <p>Paskutinis prisijungimas: @_user.LastLoginAt.ToString("MMMM dd, yyyy")</p>
+                                <p>Iš viso mokytasi: @FormatStudyTime(_user.TotalStudyTime)</p>
                             </div>
                         </div>
 
@@ -62,8 +62,7 @@
                         @if (_user.IsAdmin)
                         {
                             <div class="mt-6 border rounded-lg p-4 bg-gray-50">
-                                <h3 class="font-semibold mb-2">Admin Panel</h3>
-                                <p class="text-sm text-gray-600 mb-4">You have administrative privileges.</p>
+                                <h3 class="font-semibold mb-2">Admin valdymas</h3>
                                 <!-- Add admin-specific controls here -->
                             </div>
                         }
@@ -100,8 +99,8 @@
     {
         if (time.TotalHours >= 1)
         {
-            return $"{time.TotalHours:F1} hours";
+            return $"{time.TotalHours:F1} valandų";
         }
-        return $"{time.TotalMinutes:F0} minutes";
+        return $"{time.TotalMinutes:F0} minučių";
     }
 }
