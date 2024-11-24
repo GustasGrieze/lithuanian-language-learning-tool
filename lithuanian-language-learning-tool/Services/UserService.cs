@@ -46,11 +46,11 @@ namespace lithuanian_language_learning_tool.Services
             }
 
             var googleId = userClaims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var email = userClaims.FindFirst(ClaimTypes.Email)?.Value;
-            var givenName = userClaims.FindFirst(ClaimTypes.GivenName)?.Value;
-            var familyName = userClaims.FindFirst(ClaimTypes.Surname)?.Value;
-            var name = userClaims.FindFirst(ClaimTypes.Name)?.Value;
-            var profilePictureUrl = userClaims.FindFirst("picture")?.Value;
+            var email = userClaims.FindFirst(ClaimTypes.Email)?.Value ?? "unknown@example.com";
+            var givenName = userClaims.FindFirst(ClaimTypes.GivenName)?.Value ?? "Unknown";
+            var familyName = userClaims.FindFirst(ClaimTypes.Surname)?.Value ?? "User";
+            var name = userClaims.FindFirst(ClaimTypes.Name)?.Value ?? $"{givenName} {familyName}";
+            var profilePictureUrl = userClaims.FindFirst("picture")?.Value ?? string.Empty;
 
             var existingUser = await context.Users.FirstOrDefaultAsync(u => u.GoogleId == googleId);
 

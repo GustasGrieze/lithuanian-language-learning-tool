@@ -38,11 +38,17 @@ namespace TestProject.Database
 
             await ApplyMigrationsAsync();
 
+            
+
             var services = new ServiceCollection();
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(ConnectionString));
+            services.AddDbContextFactory<AppDbContext>(options =>
+                options.UseSqlServer(ConnectionString));
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITaskService<PunctuationTask>, TaskService<PunctuationTask>>();
             services.AddScoped<ITaskService<SpellingTask>, TaskService<SpellingTask>>();
+
             ServiceProvider = services.BuildServiceProvider();
 
             _respawner = await Respawner.CreateAsync(ConnectionString, new RespawnerOptions

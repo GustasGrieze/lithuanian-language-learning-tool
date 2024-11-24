@@ -70,16 +70,14 @@ namespace lithuanian_language_learning_tool.Services
                 
                 if (newOptions != null)
                 {
-                    existingTask.Options = newOptions; // Utilizes the setter in CustomTask
+                    existingTask.Options = newOptions; 
                 }
 
-                // Handle any additional properties specific to derived classes
+              
                 if (existingTask is PunctuationTask punctuationTask && task is PunctuationTask updatedPunctuationTask)
                 {
                     punctuationTask.Highlights = updatedPunctuationTask.Highlights;
                 }
-
-                // For SpellingTask, handle any specific updates here if necessary
 
                 await _context.SaveChangesAsync();
             }

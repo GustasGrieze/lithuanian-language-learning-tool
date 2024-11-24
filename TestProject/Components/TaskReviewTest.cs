@@ -8,7 +8,7 @@ using Bunit;
 using Xunit;
 using Microsoft.AspNetCore.Components;
 using lithuanian_language_learning_tool.Models;
-using lithuanian_language_learning_tool.Components; // Replace with your actual namespace
+using lithuanian_language_learning_tool.Components;
 
 
 namespace TestProject.Components

@@ -52,6 +52,7 @@ builder.Services.AddDbContextFactory<AppDbContext>(options =>
 
 builder.Services.AddScoped<ITaskService<PunctuationTask>, TaskService<PunctuationTask>>();
 builder.Services.AddScoped<ITaskService<SpellingTask>, TaskService<SpellingTask>>();
+builder.Services.AddScoped<IUploadService, UploadService>();
 
 var app = builder.Build();
 

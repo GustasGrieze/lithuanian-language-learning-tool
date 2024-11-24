@@ -83,11 +83,11 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 currentTask.UserText = currentTask.Sentence;
             }
 
-            int selectedIndex = currentTask.Highlights.FindIndex(h => h.IsSelected);
+            var selectedIndex = currentTask.Highlights.FindIndex(h => h.IsSelected);
             if (selectedIndex != -1)
             {
                 var selectedHighlight = currentTask.Highlights[selectedIndex];
-                int insertionIndex = selectedHighlight.SpaceIndex;
+                var insertionIndex = selectedHighlight.SpaceIndex;
 
                 if (insertionIndex > 0 && char.IsPunctuation(currentTask.UserText[insertionIndex - 1]))
                 {
@@ -99,7 +99,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 else
                 {
                     currentTask.UserText = currentTask.UserText.Insert(insertionIndex, punctuation);
-                    int punctuationLength = punctuation.Length;
+                    var punctuationLength = punctuation.Length;
                     for (var i = 0; i < currentTask.Highlights.Count; i++)
                     {
                         if (currentTask.Highlights[i].SpaceIndex >= insertionIndex)
@@ -129,5 +129,12 @@ namespace lithuanian_language_learning_tool.Components.Pages
                        .Where(x => char.IsPunctuation(x.Char))
                        .All(x => currentTask.UserText[x.Index] == x.Char);
         }
+
+        ///--->>> For testing
+        protected internal void SetCurrentTask(PunctuationTask task)
+        {
+            currentTask = task;
+        }
+
     }
 }
