@@ -28,7 +28,7 @@ else
                 <div class="flash-overlay @(_lastAnswerCorrect ? "correct-flash" : "incorrect-flash")"></div>
             }
 
-            <Timer @ref="timer" SecondsToRun="20" TimerOut="TimerOut" /> 
+            <Timer @ref="timer" SecondsToRun="20" TimerOut="TimerOut" />  
 
             <div class="task-box" style="height: 300px;">
                 @if (tasks.Count > currentTaskIndex)

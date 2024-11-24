@@ -92,15 +92,19 @@ namespace lithuanian_language_learning_tool.Components.Pages
             currentTask.TaskStatus = currentTask.TaskStatus;
 
             _lastAnswerCorrect = currentTask.TaskStatus;
+
+
+            await NextTask();
             showFlash = true;
             await Task.Delay(300);
             showFlash = false;
 
             score += currentTask.CalculateScore(currentTask.TaskStatus, multiplier: 2); // simple scoring system - needs improvement (time based score)
-            StateHasChanged();
+            StateHasChanged();  
 
-            await NextTask();
+
         }
+
 
         protected void StartWithDefaultTasks()
         {
@@ -187,12 +191,12 @@ namespace lithuanian_language_learning_tool.Components.Pages
         }
         protected virtual async Task EndExercise()
         {
+            showSummary = true;
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var currentUser = await UserService.GetCurrentUserAsync(authState);
 
             if(currentUser != null &&!currentUser.IsGuest)
-                await UpdateUserHighScore(currentUser);
-            showSummary = true;
+                await UpdateUserHighScore(currentUser);     
         }
 
         protected async Task UpdateUserHighScore(User currentUser)
