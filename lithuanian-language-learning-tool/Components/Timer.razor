@@ -1,12 +1,4 @@
-﻿@inject NavigationManager NavigationManager
-@inject lithuanian_language_learning_tool.Services.IUploadService UploadService
-@inject lithuanian_language_learning_tool.Services.ITimer TimerService
-@using System.Text.Json
-@using System.IO
-@using lithuanian_language_learning_tool.Exceptions
-@using lithuanian_language_learning_tool.Services;
-
-<div class="clock">
+﻿<div class="clock">
     <h1>@Time</h1>
 </div>
 <div class="@_progressBarClass"
@@ -16,84 +8,11 @@
 </div>
 
 @code {
-    [Parameter] public EventCallback TimerOut { get; set; }
-    [Parameter] public int SecondsToRun { get; set; }
-
-    private int _secondsToRun;
-    protected string Time { get; set; } = "00:00";
-
-    private bool _isResetting = true;
-    private string _progressBarClass => _isResetting ? "progress-bar-reset" : "progress-bar";
-
     protected override async Task OnInitializedAsync()
     {
         await StartTimer();
     }
-
-    private async Task StartTimer()
-    {
-        _secondsToRun = SecondsToRun;
-        TimerService.Interval = 1000; // 1 second
-        TimerService.AutoReset = true;
-        TimerService.Elapsed += OnTimedEvent;
-
-        Time = TimeSpan.FromSeconds(_secondsToRun).ToString(@"mm\:ss");
-
-        _isResetting = true;
-        await InvokeAsync(StateHasChanged); // Ensure UI update runs on the dispatcher
-
-        await Task.Delay(50);
-
-        _isResetting = false;
-        await InvokeAsync(StateHasChanged); // Ensure UI update runs on the dispatcher
-
-        TimerService.Start();
-    }
-
-    private async void OnTimedEvent(object? sender, TimerElapsedEventArgs e)
-    {
-        _secondsToRun--;
-
-        await InvokeAsync(() =>
-        {
-            Time = TimeSpan.FromSeconds(_secondsToRun).ToString(@"mm\:ss");
-            StateHasChanged();
-        });
-
-        if (_secondsToRun <= 0)
-        {
-            TimerService.Stop();
-            await InvokeAsync(() => TimerOut.InvokeAsync());
-        }
-    }
-
-
-  
-    public async Task ResetTimer()
-    {
-        if (TimerService != null)
-        {
-            TimerService.Stop();
-            TimerService?.Dispose();
-            await StartTimer();
-        }
-    }
-
-    public async Task StopTimer()
-    {
-        if (TimerService != null)
-        {
-            TimerService.Stop();
-        }
-    }
-
-    public void Dispose()
-    {
-        TimerService?.Dispose();
-    }
-
 }
-
 
 <style>
     .progress-bar {

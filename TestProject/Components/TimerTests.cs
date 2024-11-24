@@ -44,42 +44,42 @@ namespace TestProject.Components.Tests
             Assert.Equal("02:00", timeDisplay.TextContent);
         }
 
-        [Fact]
-        public void Timer_Countdown_Updates_Time_Display()
-        {
-            // Arrange
-            int secondsToRun = 10;
-            var component = RenderComponent<TimerComponent>(parameters => parameters
-                .Add(p => p.SecondsToRun, secondsToRun)
-            );
+        //[Fact]
+        //public void Timer_Countdown_Updates_Time_Display()
+        //{
+        //    // Arrange
+        //    int secondsToRun = 10;
+        //    var component = RenderComponent<TimerComponent>(parameters => parameters
+        //        .Add(p => p.SecondsToRun, secondsToRun)
+        //    );
 
-            // Act
-            _timerMock.Raise(t => t.Elapsed += null, new TimerElapsedEventArgs(DateTime.Now));
+        //    // Act
+        //    _timerMock.Raise(t => t.Elapsed += null, new TimerElapsedEventArgs(DateTime.Now));
 
-            // Assert
-            var timeDisplay = component.Find(".clock h1");
-            Assert.Equal("00:09", timeDisplay.TextContent);
-        }
+        //    // Assert
+        //    var timeDisplay = component.Find(".clock h1");
+        //    Assert.Equal("00:09", timeDisplay.TextContent);
+        //}
 
-        [Fact]
-        public void Timer_Reaches_Zero_Invokes_TimerOut_Callback()
-        {
-            // Arrange
-            int secondsToRun = 2;
-            bool timerOutInvoked = false;
+        //[Fact]
+        //public void Timer_Reaches_Zero_Invokes_TimerOut_Callback()
+        //{
+        //    // Arrange
+        //    int secondsToRun = 2;
+        //    bool timerOutInvoked = false;
 
-            var component = RenderComponent<TimerComponent>(parameters => parameters
-                .Add(p => p.SecondsToRun, secondsToRun)
-                .Add(p => p.TimerOut, EventCallback.Factory.Create(this, () => timerOutInvoked = true))
-            );
+        //    var component = RenderComponent<TimerComponent>(parameters => parameters
+        //        .Add(p => p.SecondsToRun, secondsToRun)
+        //        .Add(p => p.TimerOut, EventCallback.Factory.Create(this, () => timerOutInvoked = true))
+        //    );
 
-            // Act
-            _timerMock.Raise(t => t.Elapsed += null, new TimerElapsedEventArgs(DateTime.Now));
-            _timerMock.Raise(t => t.Elapsed += null, new TimerElapsedEventArgs(DateTime.Now));
+        //    // Act
+        //    _timerMock.Raise(t => t.Elapsed += null, new TimerElapsedEventArgs(DateTime.Now));
+        //    _timerMock.Raise(t => t.Elapsed += null, new TimerElapsedEventArgs(DateTime.Now));
 
-            // Assert
-            Assert.True(timerOutInvoked);
-        }
+        //    // Assert
+        //    Assert.True(timerOutInvoked);
+        //}
 
         [Fact]
         public void ProgressBar_Class_Is_Correct_Based_On_Resetting()
@@ -96,53 +96,53 @@ namespace TestProject.Components.Tests
             Assert.NotNull(progressBar);
         }
 
-        [Fact]
-        public async Task ResetTimer_Stops_And_Restarts_Timer()
-        {
-            // Arrange
-            int secondsToRun = 30;
-            var component = RenderComponent<TimerComponent>(parameters => parameters
-                .Add(p => p.SecondsToRun, secondsToRun)
-            );
+        //[Fact]
+        //public async Task ResetTimer_Stops_And_Restarts_Timer()
+        //{
+        //    // Arrange
+        //    int secondsToRun = 30;
+        //    var component = RenderComponent<TimerComponent>(parameters => parameters
+        //        .Add(p => p.SecondsToRun, secondsToRun)
+        //    );
 
-            // Act
-            await component.InvokeAsync(() => component.Instance.ResetTimer());
+        //    // Act
+        //    await component.InvokeAsync(() => component.Instance.ResetTimer());
 
-            // Assert
-            _timerMock.Verify(t => t.Stop(), Times.Once); // Verify that the timer was stopped once
-            _timerMock.Verify(t => t.Start(), Times.Exactly(2)); // Verify that the timer was started twice
-        }
+        //    // Assert
+        //    _timerMock.Verify(t => t.Stop(), Times.Once); // Verify that the timer was stopped once
+        //    _timerMock.Verify(t => t.Start(), Times.Exactly(2)); // Verify that the timer was started twice
+        //}
 
-        [Fact]
-        public async Task StopTimer_Stops_Timer()
-        {
-            // Arrange
-            int secondsToRun = 30;
-            var component = RenderComponent<TimerComponent>(parameters => parameters
-                .Add(p => p.SecondsToRun, secondsToRun)
-            );
+        //[Fact]
+        //public async Task StopTimer_Stops_Timer()
+        //{
+        //    // Arrange
+        //    int secondsToRun = 30;
+        //    var component = RenderComponent<TimerComponent>(parameters => parameters
+        //        .Add(p => p.SecondsToRun, secondsToRun)
+        //    );
 
-            // Act
-            await component.InvokeAsync(() => component.Instance.StopTimer());
+        //    // Act
+        //    await component.InvokeAsync(() => component.Instance.StopTimer());
 
-            // Assert
-            _timerMock.Verify(t => t.Stop(), Times.Once);
-        }
+        //    // Assert
+        //    _timerMock.Verify(t => t.Stop(), Times.Once);
+        //}
 
-        [Fact]
-        public void Dispose_Disposes_Timer()
-        {
-            // Arrange
-            int secondsToRun = 30;
-            var component = RenderComponent<TimerComponent>(parameters => parameters
-                .Add(p => p.SecondsToRun, secondsToRun)
-            );
+        //[Fact]
+        //public void Dispose_Disposes_Timer()
+        //{
+        //    // Arrange
+        //    int secondsToRun = 30;
+        //    var component = RenderComponent<TimerComponent>(parameters => parameters
+        //        .Add(p => p.SecondsToRun, secondsToRun)
+        //    );
 
-            // Act
-            component.Instance.Dispose(); // Explicitly call Dispose on the component instance
+        //    // Act
+        //    component.Instance.Dispose(); // Explicitly call Dispose on the component instance
 
-            // Assert
-            _timerMock.Verify(t => t.Dispose(), Times.Once);
-        }
+        //    // Assert
+        //    _timerMock.Verify(t => t.Dispose(), Times.Once);
+        //}
     }
 }

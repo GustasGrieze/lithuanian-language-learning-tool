@@ -1,92 +1,82 @@
-﻿//using System.Timers;
-//using Microsoft.AspNetCore.Components;
+﻿using System.Timers;
+using Microsoft.AspNetCore.Components;
 
-//namespace lithuanian_language_learning_tool.Components
-//{
-//    public interface ITimer : IDisposable
-//    {
-//        event ElapsedEventHandler Elapsed;
-//        bool AutoReset { get; set; }
-//        double Interval { get; set; }
-//        void Start();
-//        void Stop();
-//    }
+namespace lithuanian_language_learning_tool.Components
+{
+    public partial class Timer : ComponentBase, IDisposable
+    {
+        [Parameter]
+        public int SecondsToRun { get; set; }
+        private System.Timers.Timer _timer = null!;
+        private int _secondsToRun;
+        protected string Time { get; set; } = "00:00";
 
+        [Parameter]
+        public EventCallback TimerOut { get; set; }
 
-//    public partial class Timer : ComponentBase, IDisposable
-//    {
-//        [Parameter]
-//        public int SecondsToRun { get; set; }
-//        private System.Timers.Timer _timer = null!;
-//        private int _secondsToRun;
-//        protected string Time { get; set; } = "00:00";
+        private bool _isResetting = true;
+        private string _progressBarClass => _isResetting ? "progress-bar-reset" : "progress-bar";
 
-//        [Parameter]
-//        public EventCallback TimerOut { get; set; }
+        private async Task StartTimer()
+        {
+            _secondsToRun = SecondsToRun;
+            _timer = new System.Timers.Timer(1000);
+            _timer.Elapsed += OnTimedEvent;
+            _timer.AutoReset = true;
 
-//        private bool _isResetting = true;
-//        private string _progressBarClass => _isResetting ? "progress-bar-reset" : "progress-bar";
+            Time = TimeSpan.FromSeconds(_secondsToRun).ToString(@"mm\:ss");
+            _isResetting = true;
+            StateHasChanged();
 
-//        private async Task StartTimer()
-//        {
-//            _secondsToRun = SecondsToRun;
-//            _timer = new System.Timers.Timer(1000);
-//            _timer.Elapsed += OnTimedEvent;
-//            _timer.AutoReset = true;
+            await Task.Delay(50);
 
-//            Time = TimeSpan.FromSeconds(_secondsToRun).ToString(@"mm\:ss");
-//            _isResetting = true;
-//            StateHasChanged();
+            // Start the animation
+            _isResetting = false;
+            StateHasChanged();
 
-//            await Task.Delay(50);
+            _timer.Start();
+        }
 
-//            // Start the animation
-//            _isResetting = false;
-//            StateHasChanged();
+        private async void OnTimedEvent(object? sender, ElapsedEventArgs e)
+        {
+            _secondsToRun--;
 
-//            _timer.Start();
-//        }
+            await InvokeAsync(() =>
+            {
+                Time = TimeSpan.FromSeconds(_secondsToRun).ToString(@"mm\:ss");
+                StateHasChanged();
+            });
 
-//        private async void OnTimedEvent(object? sender, ElapsedEventArgs e)
-//        {
-//            _secondsToRun--;
+            if (_secondsToRun <= 0)
+            {
+                _timer.Stop();
+                await InvokeAsync(() =>
+                    TimerOut.InvokeAsync()
+                );
+            }
+        }
 
-//            await InvokeAsync(() =>
-//            {
-//                Time = TimeSpan.FromSeconds(_secondsToRun).ToString(@"mm\:ss");
-//                StateHasChanged();
-//            });
+        public async Task ResetTimer()
+        {
+            if (_timer != null)
+            {
+                _timer.Stop();
+                _timer.Dispose();
+                await StartTimer();
+            }
+        }
 
-//            if (_secondsToRun <= 0)
-//            {
-//                _timer.Stop();
-//                await InvokeAsync(() =>
-//                    TimerOut.InvokeAsync()
-//                );
-//            }
-//        }
+        public async Task StopTimer()
+        {
+            if (_timer != null)
+            {
+                _timer.Stop();
+            }
+        }
 
-//        public async Task ResetTimer()
-//        {
-//            if (_timer != null)
-//            {
-//                _timer.Stop();
-//                _timer.Dispose();
-//                await StartTimer();
-//            }
-//        }
-
-//        public async Task StopTimer()
-//        {
-//            if (_timer != null)
-//            {
-//                _timer.Stop();
-//            }
-//        }
-
-//        public void Dispose()
-//        {
-//            _timer.Dispose();
-//        }
-//    }
-//}
+        public void Dispose()
+        {
+            _timer.Dispose();
+        }
+    }
+}
