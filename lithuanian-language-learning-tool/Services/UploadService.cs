@@ -1,11 +1,5 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using global::lithuanian_language_learning_tool.Exceptions;
 using System.Text.Json;
-using global::lithuanian_language_learning_tool.Exceptions;
-using Microsoft.Extensions.Logging;
 
 namespace lithuanian_language_learning_tool.Services
 {
@@ -24,12 +18,7 @@ namespace lithuanian_language_learning_tool.Services
             _logger = logger;
         }
 
-        /// <summary>
-        /// Validates the structure of the uploaded JSON content based on task type.
-        /// </summary>
-        /// <param name="jsonContent">The JSON content as a string.</param>
-        /// <param name="taskType">Type of the task (e.g., "punctuation", "spelling").</param>
-        /// <exception cref="TaskUploadException">Thrown when validation fails.</exception>
+
         public void ValidateJsonStructure(string jsonContent, string taskType)
         {
             try
@@ -63,7 +52,7 @@ namespace lithuanian_language_learning_tool.Services
                     }
                     else if (taskType == "spelling")
                     {
-                        if (!options.All(opt => opt.Length <=3 && char.IsLetter(opt[0])))
+                        if (!options.All(opt => opt.Length <= 3 && char.IsLetter(opt[0])))
                         {
                             throw new TaskUploadException("Netinkama Options struktūra: rašybos užduotyse leidžiamos tik raidės.");
                         }
@@ -75,11 +64,6 @@ namespace lithuanian_language_learning_tool.Services
                 throw new TaskUploadException("JSON failas yra netinkamai suformatuotas.");
             }
         }
-
-        /// <summary>
-        /// Logs exceptions to a log file.
-        /// </summary>
-        /// <param name="ex">The exception to log.</param>
         public void LogException(Exception ex)
         {
             // Using ILogger for logging

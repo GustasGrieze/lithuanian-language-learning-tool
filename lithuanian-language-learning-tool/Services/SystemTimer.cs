@@ -1,6 +1,4 @@
-﻿// File: Services/SystemTimer.cs
-
-namespace lithuanian_language_learning_tool.Services
+﻿namespace lithuanian_language_learning_tool.Services
 {
     public interface ITimer : IDisposable
     {

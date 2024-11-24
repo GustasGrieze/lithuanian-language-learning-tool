@@ -1,5 +1,4 @@
 ﻿using lithuanian_language_learning_tool.Models;
-using Xunit;
 namespace TestProject.Models
 {
     public class PuntuationTaskTests
@@ -42,7 +41,7 @@ namespace TestProject.Models
 
         [Theory]
         [InlineData("Test sentence with spaces.", 3)]
-        [InlineData("Only one space.", 2)] 
+        [InlineData("Only one space.", 2)]
         [InlineData("", 0)]
         public void InitializeHighlights_ShouldClearExistingHighlights(string sentence, int expectedHighlightCount)
         {
@@ -57,7 +56,7 @@ namespace TestProject.Models
             task.InitializeHighlights();
 
             // Assert
-            Assert.Equal(expectedHighlightCount, task.Highlights.Count); 
+            Assert.Equal(expectedHighlightCount, task.Highlights.Count);
         }
 
 

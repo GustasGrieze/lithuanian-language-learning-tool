@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Components.Authorization;
-using lithuanian_language_learning_tool.Models;
-using System.Security.Claims;
 using lithuanian_language_learning_tool.Data;
+using lithuanian_language_learning_tool.Models;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace lithuanian_language_learning_tool.Services
 {
@@ -16,7 +16,7 @@ namespace lithuanian_language_learning_tool.Services
 
         Task<List<User>> GetTopUsersAsync(int topCount);
 
-		Task UpdateUserAsync(User user);
+        Task UpdateUserAsync(User user);
 
     }
 
@@ -56,6 +56,22 @@ namespace lithuanian_language_learning_tool.Services
 
             if (existingUser != null)
             {
+                var today = DateTime.UtcNow.Date;
+                var lastLoginDate = existingUser.LastLoginAt.Date;
+
+                if (lastLoginDate == today.AddDays(-1)) // Logged in yesterday
+                {
+                    existingUser.CurrentStreak++;
+                    if (existingUser.CurrentStreak > existingUser.BestStreak)
+                    {
+                        existingUser.BestStreak = existingUser.CurrentStreak;
+                    }
+                }
+                else if (lastLoginDate < today.AddDays(-1)) // Missed a day
+                {
+                    existingUser.CurrentStreak = 1;
+                }
+
                 existingUser.LastLoginAt = DateTime.UtcNow.ToLocalTime();
                 await context.SaveChangesAsync(); // Update last login time
                 return existingUser;
@@ -136,13 +152,13 @@ namespace lithuanian_language_learning_tool.Services
             await context.SaveChangesAsync();
         }
 
-		public async Task<List<User>> GetTopUsersAsync(int topCount)
-		{
-			using var context = _contextFactory.CreateDbContext();
-			return await context.Users
-				.OrderByDescending(u => u.HighScore)
-				.Take(topCount)
-				.ToListAsync();
-		}
-	}
+        public async Task<List<User>> GetTopUsersAsync(int topCount)
+        {
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Users
+                .OrderByDescending(u => u.HighScore)
+                .Take(topCount)
+                .ToListAsync();
+        }
+    }
 }

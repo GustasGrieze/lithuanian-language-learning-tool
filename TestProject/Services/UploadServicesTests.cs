@@ -1,12 +1,9 @@
 ﻿// File: UploadServiceTests.cs
-using System;
-using System.Collections.Generic;
-using System.Text.Json;
 using lithuanian_language_learning_tool.Exceptions;
 using lithuanian_language_learning_tool.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
-using Xunit;
+using System;
 
 namespace TestProject.Services.Tests
 {

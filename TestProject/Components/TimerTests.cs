@@ -1,14 +1,5 @@
-﻿using System;
-using lithuanian_language_learning_tool.Components;
-using lithuanian_language_learning_tool.Services;
+﻿using lithuanian_language_learning_tool.Services;
 using Moq;
-using Bunit;
-using Xunit;
-using Microsoft.AspNetCore.Components;
-using System.Threading.Tasks;
-using System.Timers;
-
-// Alias to avoid ambiguity
 using TimerComponent = lithuanian_language_learning_tool.Components.Timer;
 
 namespace TestProject.Components.Tests

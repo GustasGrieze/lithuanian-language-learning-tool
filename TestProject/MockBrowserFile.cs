@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using System;
 using System.IO;
 using System.Threading;
-using Microsoft.AspNetCore.Components.Forms;
 
 namespace TestProject.Helpers
 {

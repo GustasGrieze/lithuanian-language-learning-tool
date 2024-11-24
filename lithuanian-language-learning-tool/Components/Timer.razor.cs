@@ -1,5 +1,5 @@
-﻿using System.Timers;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
+using System.Timers;
 
 namespace lithuanian_language_learning_tool.Components
 {

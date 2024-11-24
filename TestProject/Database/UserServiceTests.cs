@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using lithuanian_language_learning_tool.Data;
+﻿using lithuanian_language_learning_tool.Data;
 using lithuanian_language_learning_tool.Models;
 using lithuanian_language_learning_tool.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using TestProject.Database;
-using Xunit;
+
 
 namespace TestProject.Services
 {

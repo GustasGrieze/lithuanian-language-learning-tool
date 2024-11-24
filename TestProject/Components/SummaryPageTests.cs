@@ -1,11 +1,6 @@
-﻿// File: SummaryPageTests.cs
-using Bunit;
-using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using TestProject.Components;
+﻿using lithuanian_language_learning_tool.Components;
 using lithuanian_language_learning_tool.Models;
-using Xunit;
-using lithuanian_language_learning_tool.Components;
+using System.Collections.Generic;
 
 namespace TestProject.Components.Tests
 {

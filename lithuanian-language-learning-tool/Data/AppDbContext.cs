@@ -17,7 +17,7 @@ namespace lithuanian_language_learning_tool.Data
         public DbSet<PunctuationTask> PunctuationTasks { get; set; }
         public DbSet<SpellingTask> SpellingTasks { get; set; }
 
-        public DbSet<AnswerOption> AnswerOptions { get; set; } 
+        public DbSet<AnswerOption> AnswerOptions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,7 +42,7 @@ namespace lithuanian_language_learning_tool.Data
                 .HasOne(to => to.CustomTask)
                 .WithMany(ct => ct.AnswerOptions)
                 .HasForeignKey(to => to.CustomTaskId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<PunctuationTask>()
                 .Ignore(pt => pt.Highlights);

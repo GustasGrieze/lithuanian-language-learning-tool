@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using lithuanian_language_learning_tool.Components;
+﻿using lithuanian_language_learning_tool.Components;
 using lithuanian_language_learning_tool.Exceptions;
 using lithuanian_language_learning_tool.Services;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Moq;
-using Bunit;
-using Xunit;
+using System;
+using System.Threading.Tasks;
 using TestProject.Helpers;
-using Microsoft.AspNetCore.Components;
 
 namespace TestProject.Components.Tests
 {

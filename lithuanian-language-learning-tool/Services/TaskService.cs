@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using lithuanian_language_learning_tool.Data;
+﻿using lithuanian_language_learning_tool.Data;
 using lithuanian_language_learning_tool.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -59,7 +56,7 @@ namespace lithuanian_language_learning_tool.Services
 
             if (existingTask != null)
             {
-                
+
                 existingTask.Sentence = task.Sentence;
                 existingTask.UserText = task.UserText;
                 existingTask.CorrectAnswer = task.CorrectAnswer;
@@ -67,13 +64,13 @@ namespace lithuanian_language_learning_tool.Services
                 existingTask.TaskStatus = task.TaskStatus;
                 existingTask.Topic = task.Topic;
 
-                
+
                 if (newOptions != null)
                 {
-                    existingTask.Options = newOptions; 
+                    existingTask.Options = newOptions;
                 }
 
-              
+
                 if (existingTask is PunctuationTask punctuationTask && task is PunctuationTask updatedPunctuationTask)
                 {
                     punctuationTask.Highlights = updatedPunctuationTask.Highlights;

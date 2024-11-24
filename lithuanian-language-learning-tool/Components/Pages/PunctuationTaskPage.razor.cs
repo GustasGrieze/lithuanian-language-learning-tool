@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Text.Json;
 using lithuanian_language_learning_tool.Models;
-using Microsoft.AspNetCore.Components;
 
 namespace lithuanian_language_learning_tool.Components.Pages
 {
@@ -12,7 +9,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
         {
             base.StartExercise();
             currentTask.InitializeHighlights();
-            
+
         }
 
         protected override async Task NextTask()
@@ -114,7 +111,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
                     //currentTask.Highlights[selectedIndex] = selectedHighlight;
                 }
 
-               
+
             }
             StateHasChanged();
         }

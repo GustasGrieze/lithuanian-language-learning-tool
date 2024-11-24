@@ -1,6 +1,5 @@
 ﻿using lithuanian_language_learning_tool.Models;
 using System.Collections.Generic;
-
 namespace TestProject.Models
 {
     public class CustomTaskTests
@@ -20,8 +19,8 @@ namespace TestProject.Models
             task.Reset();
 
             // Assert
-            Assert.Equal("Original sentence.", task.UserText); 
-            Assert.False(task.TaskStatus); 
+            Assert.Equal("Original sentence.", task.UserText);
+            Assert.False(task.TaskStatus);
         }
 
         [Theory]
