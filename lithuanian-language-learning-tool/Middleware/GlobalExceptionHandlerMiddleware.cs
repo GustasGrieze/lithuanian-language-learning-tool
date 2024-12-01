@@ -32,7 +32,6 @@ namespace lithuanian_language_learning_tool.Middleware
             var logPath = Path.Combine("logs", "errors.log");
             Directory.CreateDirectory("logs");
 
-            // Log the exception details
             using (var writer = new StreamWriter(logPath, append: true))
             {
                 writer.WriteLine($"[{DateTime.Now}] {exception.Message}");
@@ -40,11 +39,10 @@ namespace lithuanian_language_learning_tool.Middleware
                 writer.WriteLine("--------------------------------------------------");
             }
 
-            // Prepare a JSON response
             var response = new
             {
                 error = "An error occurred while processing your request.",
-                details = exception.Message // Avoid exposing too much info in production
+                details = exception.Message
             };
 
             context.Response.ContentType = "application/json";
