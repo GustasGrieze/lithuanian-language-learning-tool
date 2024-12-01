@@ -39,11 +39,11 @@
         var uri = NavigationManager.Uri.ToLower();
         if ((uri.Contains("/rasybos/uzduotys")) || (uri.Contains("/rasybos/pasirinkimai/temos")) || (uri.Contains("/rasybos/pasirinkimai/randomizuoti")))
         {
-            taskType = "punctuation";
+            taskType = "spelling";
         }
         else if ((uri.Contains("/skyrybos/uzduotys")) || (uri.Contains("/skyrybos/pasirinkimai/temos")) || (uri.Contains("/skyrybos/pasirinkimai/uzduotys")))
         {
-            taskType = "spelling";
+            taskType = "punctation";
         }
     }
 
@@ -75,11 +75,6 @@
         catch (lithuanian_language_learning_tool.Exceptions.TaskUploadException ex)
         {
             errorMessage = $"Klaida įkeliant failą: {ex.Message}";
-            LogException(ex);
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Nenumatyta klaida: {ex.Message}";
             LogException(ex);
         }
     }
@@ -128,7 +123,7 @@
                 }
                 else if (taskType == "spelling")
                 {
-                    if (!options.All(opt => opt.Length == 1 && char.IsLetter(opt[0])))
+                    if (!options.All(opt => opt.Length >= 1 && char.IsLetter(opt[0])))
                     {
                         throw new TaskUploadException("Netinkama Options struktūra: rašybos užduotyse leidžiamos tik raidės.");
                     }
