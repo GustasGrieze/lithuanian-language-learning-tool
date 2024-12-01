@@ -160,5 +160,6 @@ namespace lithuanian_language_learning_tool.Services
                 .Take(topCount)
                 .ToListAsync();
         }
+
     }
 }

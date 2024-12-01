@@ -45,8 +45,6 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            // Remove GenerateDefaultTasks();
-            // Instead, load tasks from the database
             await LoadTasksFromDatabase();
         }
         protected async Task LoadTasksFromDatabase()
@@ -54,9 +52,6 @@ namespace lithuanian_language_learning_tool.Components.Pages
             tasks = await TaskService.GetAllTasksAsync();
             if (tasks == null || tasks.Count == 0)
             {
-                // Handle the case when there are no tasks in the database
-                // Optionally, you can generate default tasks or show a message
-                // For now, we'll initialize tasks to an empty list
                 tasks = new List<TTask>();
             }
         }
@@ -194,6 +189,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 feedbackMessage = null;
                 showFeedback = false;
                 currentTask.TaskStatus = false;
+                
                 StateHasChanged();
 
             }
@@ -209,23 +205,36 @@ namespace lithuanian_language_learning_tool.Components.Pages
             var currentUser = await UserService.GetCurrentUserAsync(authState);
 
             if (currentUser != null && !currentUser.IsGuest)
-                await UpdateUserHighScore(currentUser);
+            {
+                await UpdateUserStats(currentUser);
+
+            }
+                
 
             showSummary = true;
             StateHasChanged();
         }
+        protected async Task UpdateUserStats(User currentUser)
+        {
+            if (currentUser != null)
+            {
+               UpdateUserHighScore(currentUser);
+               currentUser.TotalLessonsCompleted += tasks.Count;
+               await UserService.UpdateUserAsync(currentUser);
 
-        protected async Task UpdateUserHighScore(User currentUser)
+            }
+        }
+
+        protected void UpdateUserHighScore(User currentUser)
         {
             if (currentUser != null)
             {
                 if (score > currentUser.HighScore)
                 {
                     currentUser.HighScore = score;
-                    await UserService.UpdateUserAsync(currentUser);
                 }
             }
-        }
+        } 
 
 
     }

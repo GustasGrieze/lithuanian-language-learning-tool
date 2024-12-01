@@ -70,7 +70,7 @@
             }
 
             // Delegate validation to UploadService
-            UploadService.ValidateJsonStructure(fileContent, TaskType);
+            //UploadService.ValidateJsonStructure(fileContent, TaskType);
 
             await OnTaskUploaded.InvokeAsync(fileContent);
             errorMessage = "";
@@ -92,11 +92,7 @@
         await OnUseDefaultTasks.InvokeAsync();
     }
 
-    /// <summary>
-    /// Helper method to format study time.
-    /// </summary>
-    /// <param name="time">TimeSpan representing study time.</param>
-    /// <returns>Formatted string.</returns>
+
     private string FormatStudyTime(TimeSpan time)
     {
         if (time.TotalHours >= 1)
