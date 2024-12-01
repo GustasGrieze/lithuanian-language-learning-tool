@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
-using System.Text.Json;
-using System.Collections.Generic;
-using System.Linq;
-using lithuanian_language_learning_tool.Helpers;
-using lithuanian_language_learning_tool.Models;
-using System.Threading.Tasks;
+﻿using lithuanian_language_learning_tool.Models;
 using lithuanian_language_learning_tool.Services;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using System.Text.Json;
 
 namespace lithuanian_language_learning_tool.Components.Pages
 {
@@ -29,9 +25,9 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected int currentTaskIndex = 0;
         protected TTask currentTask;
 
-        
-        
-        
+
+
+
         //-----
         protected string? feedbackMessage;
         protected string feedbackClass = "";
@@ -95,7 +91,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
          * Be carful as this selectedAnswer arguement is only optional due to different implentation in Spelling and Punctuation but is actually necessary.
          */
         protected abstract bool IsAnswerCorrect(string selectedAnswer);
-        protected async Task CheckAnswer(string selectedAnswer="")
+        protected async Task CheckAnswer(string selectedAnswer = "")
         {
             showFeedback = true;
             currentTask.TaskStatus = IsAnswerCorrect(selectedAnswer);
@@ -108,6 +104,9 @@ namespace lithuanian_language_learning_tool.Components.Pages
             currentTask.TaskStatus = currentTask.TaskStatus;
 
             _lastAnswerCorrect = currentTask.TaskStatus;
+
+
+            await NextTask();
             showFlash = true;
             await Task.Delay(300);
             showFlash = false;
@@ -115,8 +114,9 @@ namespace lithuanian_language_learning_tool.Components.Pages
             score += currentTask.CalculateScore(currentTask.TaskStatus, multiplier: 2); // simple scoring system - needs improvement (time based score)
             StateHasChanged();
 
-            await NextTask();
+
         }
+
 
         protected void StartWithDefaultTasks()
         {
@@ -148,7 +148,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
         protected void RestartTasks()
         {
-            
+
             currentTask.TaskStatus = false;
             foreach (var task in tasks)
             {
@@ -204,11 +204,13 @@ namespace lithuanian_language_learning_tool.Components.Pages
         }
         protected virtual async Task EndExercise()
         {
+            showSummary = true;
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var currentUser = await UserService.GetCurrentUserAsync(authState);
 
-            if(currentUser != null &&!currentUser.IsGuest)
+            if (currentUser != null && !currentUser.IsGuest)
                 await UpdateUserHighScore(currentUser);
+
             showSummary = true;
             StateHasChanged();
         }

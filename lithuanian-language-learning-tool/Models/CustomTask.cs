@@ -1,8 +1,6 @@
 ﻿using lithuanian_language_learning_tool.Helpers;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Threading.Tasks;
 
 namespace lithuanian_language_learning_tool.Models
 {

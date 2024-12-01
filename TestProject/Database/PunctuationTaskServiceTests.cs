@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using lithuanian_language_learning_tool.Models;
+﻿using lithuanian_language_learning_tool.Models;
 using lithuanian_language_learning_tool.Services;
-using TestProject.Database;
-using Xunit;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TestProject.Database
 {
