@@ -10,9 +10,9 @@ using System;
 using lithuanian_language_learning_tool.Data;
 using Microsoft.Extensions.Configuration;
 using lithuanian_language_learning_tool.Models;
+using lithuanian_language_learning_tool.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -21,7 +21,6 @@ if (builder.Environment.IsDevelopment())
 {
     builder.Configuration.AddUserSecrets<Program>();
 }
-
 
 builder.Services.AddAuthentication(options =>
 {
@@ -55,12 +54,18 @@ builder.Services.AddScoped<ITaskService<SpellingTask>, TaskService<SpellingTask>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
+
+app.MapGet("/trigger-exception", () =>
+{
+    throw new Exception("This is a test exception!");
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -79,6 +84,5 @@ app.MapGet("/logout", async (HttpContext context) =>
     await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     return Results.Redirect("/");
 });
-
 
 app.Run();
