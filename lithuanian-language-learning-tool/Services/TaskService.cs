@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using lithuanian_language_learning_tool.Data;
+﻿using lithuanian_language_learning_tool.Data;
 using lithuanian_language_learning_tool.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,9 +7,10 @@ namespace lithuanian_language_learning_tool.Services
 {
     public interface ITaskService<T> where T : CustomTask
     {
-        Task AddTaskAsync(T task, List<string> options);
+        Task AddTaskAsync(T task);
         Task<T> GetTaskAsync(int taskId);
-        Task UpdateTaskAsync(T task, List<string> newOptions);
+        Task<List<T>> GetAllTasksAsync();
+        Task UpdateTaskAsync(T task);
         Task DeleteTaskAsync(int taskId);
         Task<List<string>> GetOptionsAsync(int taskId);
     }
@@ -26,21 +24,11 @@ namespace lithuanian_language_learning_tool.Services
             _context = context;
         }
 
-
-        public async Task AddTaskAsync(T task, List<string> options)
+        public async Task AddTaskAsync(T task)
         {
-            if (options != null && options.Any())
-            {
-                foreach (var optionText in options)
-                {
-                    task.AnswerOptions.Add(new AnswerOption { OptionText = optionText });
-                }
-            }
-
             _context.CustomTasks.Add(task);
             await _context.SaveChangesAsync();
         }
-
 
         public async Task<T> GetTaskAsync(int taskId)
         {
@@ -50,7 +38,15 @@ namespace lithuanian_language_learning_tool.Services
                 .FirstOrDefaultAsync(ct => ct.Id == taskId);
         }
 
-        public async Task UpdateTaskAsync(T task, List<string> newOptions)
+        public async Task<List<T>> GetAllTasksAsync()
+        {
+            return await _context.CustomTasks
+                .OfType<T>()
+                .Include(ct => ct.AnswerOptions)
+                .ToListAsync();
+        }
+
+        public async Task UpdateTaskAsync(T task)
         {
             var existingTask = await _context.CustomTasks
                 .OfType<T>()
@@ -59,7 +55,6 @@ namespace lithuanian_language_learning_tool.Services
 
             if (existingTask != null)
             {
-                
                 existingTask.Sentence = task.Sentence;
                 existingTask.UserText = task.UserText;
                 existingTask.CorrectAnswer = task.CorrectAnswer;
@@ -67,24 +62,17 @@ namespace lithuanian_language_learning_tool.Services
                 existingTask.TaskStatus = task.TaskStatus;
                 existingTask.Topic = task.Topic;
 
-                
-                if (newOptions != null)
-                {
-                    existingTask.Options = newOptions; // Utilizes the setter in CustomTask
-                }
+                // Set new options via Options property, which handles AnswerOptions
+                existingTask.Options = task.Options;
 
-                // Handle any additional properties specific to derived classes
                 if (existingTask is PunctuationTask punctuationTask && task is PunctuationTask updatedPunctuationTask)
                 {
                     punctuationTask.Highlights = updatedPunctuationTask.Highlights;
                 }
 
-                // For SpellingTask, handle any specific updates here if necessary
-
                 await _context.SaveChangesAsync();
             }
         }
-
 
         public async Task DeleteTaskAsync(int taskId)
         {
@@ -98,6 +86,7 @@ namespace lithuanian_language_learning_tool.Services
                 await _context.SaveChangesAsync();
             }
         }
+
         public async Task<List<string>> GetOptionsAsync(int taskId)
         {
             var task = await GetTaskAsync(taskId);
@@ -105,3 +94,4 @@ namespace lithuanian_language_learning_tool.Services
         }
     }
 }
+

@@ -6,7 +6,16 @@
 
 @if (!startExercise)
 {
-    <TaskUploadPrompt OnTaskUploaded="LoadCustomTasks" OnUseDefaultTasks="StartWithDefaultTasks" />
+    @* <TaskUploadPrompt OnTaskUploaded="LoadCustomTasks" OnUseDefaultTasks="StartWithDefaultTasks" /> *@
+    @if (tasks == null || tasks.Count == 0)
+    {
+        <p>Nėra jokių užduočių. Prašome kreiptis į administratorių.</p>
+    }
+    else
+    {
+        <button class="next-button" @onclick="StartExercise">Pradėti Užduotis</button>
+    }
+
 }
 else
 {
@@ -30,7 +39,7 @@ else
             }
 
             <div class="task-container">
-                <Timer @ref=timer SecondsToRun="5" TimerOut="TimerOut" />
+                <Timer @ref="timer" SecondsToRun="5" TimerOut="TimerOut" />
                 <div class="task-box" style="height: 300px;">
                     <textarea disabled @bind=currentTask.Sentence class="edit-textarea"></textarea>
                 </div>

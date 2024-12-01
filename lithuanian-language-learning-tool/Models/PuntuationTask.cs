@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace lithuanian_language_learning_tool.Models
 {
@@ -44,3 +43,4 @@ namespace lithuanian_language_learning_tool.Models
         }
     }
 }
+

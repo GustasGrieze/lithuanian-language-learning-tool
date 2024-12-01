@@ -1,5 +1,3 @@
-using System;
-
 namespace lithuanian_language_learning_tool.Exceptions
 {
     public class TaskUploadException : Exception

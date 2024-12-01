@@ -1,10 +1,12 @@
 using lithuanian_language_learning_tool.Components;
+using lithuanian_language_learning_tool.Data;
+using lithuanian_language_learning_tool.Models;
+using lithuanian_language_learning_tool.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
-using lithuanian_language_learning_tool.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using lithuanian_language_learning_tool.Data;
@@ -51,6 +53,7 @@ builder.Services.AddDbContextFactory<AppDbContext>(options =>
 
 builder.Services.AddScoped<ITaskService<PunctuationTask>, TaskService<PunctuationTask>>();
 builder.Services.AddScoped<ITaskService<SpellingTask>, TaskService<SpellingTask>>();
+builder.Services.AddScoped<IUploadService, UploadService>();
 
 var app = builder.Build();
 

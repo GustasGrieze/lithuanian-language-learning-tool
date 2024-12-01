@@ -1,0 +1,106 @@
+﻿@using System.Text.Json
+@using lithuanian_language_learning_tool.Models
+@using lithuanian_language_learning_tool.Services
+@using Microsoft.AspNetCore.Components
+@using lithuanian_language_learning_tool.Exceptions
+@using System.ComponentModel.DataAnnotations
+@inject IUploadService UploadService
+
+<div class="mt-4">
+    <h3>Įkelti Naujas Užduotis</h3>
+    <EditForm Model="uploadModel" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-4">
+            <label class="block text-gray-700">Užduoties Tipas:</label>
+            <InputSelect @bind-Value="uploadModel.TaskType" class="mt-1 block w-full">
+                <option value="">Pasirinkite Tipą</option>
+                <option value="punctuation">Skyrybos</option>
+                <option value="spelling">Rašyba</option>
+            </InputSelect>
+            <ValidationMessage For="@(() => uploadModel.TaskType)" />
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700">Užduočių Failas (JSON):</label>
+            <InputFile OnChange="HandleFileSelected" accept=".json" />
+            @if (!string.IsNullOrEmpty(uploadModel.FileName))
+            {
+                <p class="text-sm text-gray-600 mt-1">Pasirinktas failas: @uploadModel.FileName</p>
+            }
+            <ValidationMessage For="@(() => uploadModel.FileContent)" />
+        </div>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="bg-red-100 text-red-700 p-2 rounded mb-4">
+                @errorMessage
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(successMessage))
+        {
+            <div class="bg-green-100 text-green-700 p-2 rounded mb-4">
+                @successMessage
+            </div>
+        }
+
+        <button type="submit" class="next-button">
+            Įkelti Užduotis
+        </button>
+    </EditForm>
+</div>
+
+@code {
+    private UploadModel uploadModel = new UploadModel();
+    private string errorMessage = "";
+    private string successMessage = "";
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file == null)
+            return;
+
+        uploadModel.FileName = file.Name;
+
+        using var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10 MB limit
+        using var reader = new StreamReader(stream);
+        uploadModel.FileContent = await reader.ReadToEndAsync();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        errorMessage = "";
+        successMessage = "";
+
+        try
+        {
+            await UploadService.ValidateAndUploadAsync(uploadModel.FileContent, uploadModel.TaskType);
+            successMessage = $"Užduotys sėkmingai įkeltos.";
+            uploadModel = new UploadModel(); // Reset the form
+        }
+        catch (TaskUploadException ex)
+        {
+            errorMessage = $"Klaida įkeliant užduotis: {ex.Message}";
+            UploadService.LogException(ex);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Nenumatyta klaida: {ex.Message}";
+            UploadService.LogException(ex);
+        }
+    }
+
+    public class UploadModel
+    {
+        [Required(ErrorMessage = "Prašome pasirinkti užduoties tipą.")]
+        public string TaskType { get; set; } = "";
+
+        public string FileName { get; set; } = "";
+
+        [Required(ErrorMessage = "Prašome įkelti užduočių failą.")]
+        public string FileContent { get; set; } = "";
+    }
+}

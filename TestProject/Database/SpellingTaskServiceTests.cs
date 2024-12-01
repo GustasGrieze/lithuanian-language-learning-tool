@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿// File: SpellingTaskServiceTests.cs
 using lithuanian_language_learning_tool.Models;
 using lithuanian_language_learning_tool.Services;
-using TestProject.Database;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace TestProject.Database
@@ -34,9 +35,10 @@ namespace TestProject.Database
                 Topic = "Basic Spelling"
             };
             var options = new List<string> { ".", "!", "?" };
+            task.Options = options; // Set options via the task's Options property
 
             // Act
-            await _taskService.AddTaskAsync(task, options);
+            await _taskService.AddTaskAsync(task); // Pass only the task
             var retrievedTask = await _taskService.GetTaskAsync(task.Id);
 
             // Assert
@@ -65,13 +67,14 @@ namespace TestProject.Database
                 Topic = "Advanced Spelling"
             };
             var initialOptions = new List<string> { ",", ".", "!" };
-
-            await _taskService.AddTaskAsync(task, initialOptions);
+            task.Options = initialOptions; // Set initial options
+            await _taskService.AddTaskAsync(task); // Pass only the task
 
             // Act
             var newOptions = new List<string> { ":", "?" };
             task.CorrectAnswer = "Pasirinkumu pataisymas!";
-            await _taskService.UpdateTaskAsync(task, newOptions);
+            task.Options = newOptions; // Update options via the task's Options property
+            await _taskService.UpdateTaskAsync(task); // Pass only the task
             var updatedTask = await _taskService.GetTaskAsync(task.Id);
 
             // Assert
@@ -101,8 +104,8 @@ namespace TestProject.Database
                 Topic = "Basic Spelling"
             };
             var options = new List<string> { ".", "!", "?" };
-
-            await _taskService.AddTaskAsync(task, options);
+            task.Options = options; // Set options via the task's Options property
+            await _taskService.AddTaskAsync(task); // Pass only the task
             var taskId = task.Id;
 
             // Act

@@ -1,6 +1,5 @@
-﻿using System.Threading.Tasks;
-using Respawn;
-using Microsoft.Data.SqlClient;
+﻿using Respawn;
+using System.Threading.Tasks;
 
 namespace TestProject.Database
 {

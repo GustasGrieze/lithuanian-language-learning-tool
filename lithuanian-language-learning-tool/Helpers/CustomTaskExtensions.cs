@@ -6,12 +6,21 @@ namespace lithuanian_language_learning_tool.Helpers
         // Converts List<string> to List<TaskOption>
         public static void SetOptionsFromStrings(this CustomTask task, List<string> optionTexts)
         {
-            task.AnswerOptions.Clear();
+            if (task.AnswerOptions == null)
+            {
+                task.AnswerOptions = new List<AnswerOption>();
+            }
+            else
+            {
+                task.AnswerOptions.Clear();
+            }
+
             if (optionTexts != null)
             {
                 task.AnswerOptions.AddRange(optionTexts.Select(ot => new AnswerOption { OptionText = ot }));
             }
         }
+
 
         // Converts List<TaskOption> to List<string>
         public static List<string> GetOptionTexts(this CustomTask task)
