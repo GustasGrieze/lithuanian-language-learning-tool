@@ -1,8 +1,19 @@
 ﻿@page "/profile"
 @using lithuanian_language_learning_tool.Services
 @using lithuanian_language_learning_tool.Models
+@using ChartJs.Blazor.LineChart;
+@using ChartJs.Blazor.Common;
+@using ChartJs.Blazor.Common.Enums;
+@using ChartJs.Blazor.Common.Axes;
+@using ChartJs.Blazor.Common.Time;
+@using ChartJs.Blazor.Common.Handlers;
+@using System.Drawing;
+@using ChartJs.Blazor.Util;
+
 @inject IUserService UserService
 @inject AuthenticationStateProvider AuthenticationStateProvider
+
+
 
 <PageTitle>Profilis</PageTitle>
 
@@ -40,25 +51,9 @@
                                 <p>Paskutinis prisijungimas: @_user.LastLoginAt.ToString("MMMM dd, yyyy")</p>
                                 <p>Iš viso mokytasi: @FormatStudyTime(_user.TotalStudyTime)</p>
                             </div>
-                            <!--
-                            <ChartJS Height="400px">
-                                <ChartJSChart Type="ChartType.Line">
-                                    <ChartJSData>
-                                        <ChartJSDataset Label="Problems Solved">
-                                            <ChartJSDataPoints>
-                                                @foreach (var data in ProblemSolvingData)
-                                                {
-                                                    <ChartJSDataPoint X="@data.Date" Y="@data.ProblemsSolved" />
-                                                }
-                                            </ChartJSDataPoints>
-                                        </ChartJSDataset>
-                                    </ChartJSData>
-                                </ChartJSChart>
 
-                                <ChartJSChart Type="ChartType.Heatmap">
-                                    </ChartJSChart>
-                            </ChartJS>
-                            -->
+                            <!-- <Chart Config="_config" @ref="_chart"></Chart> -->
+                            
                         </div>
 
                         @if (_user.Achievements != null && _user.Achievements.Any())
@@ -105,10 +100,17 @@
     </AuthorizeView>
 </CascadingAuthenticationState>
 
+
 @code {
     public User? _user;
-    private List<DateTime> timeline;
-    private List<int> scores;
+    struct TimeScoreGraph
+    {
+        public DateTime timeline;
+        public int scores;
+    };
+    private List<TimeScoreGraph> _timeScoreGraph;
+    private List<TimePoint> timeScoreGraph;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -116,8 +118,17 @@
         _user = await UserService.GetOrCreateUserFromGoogleAsync(authState);
         List<PracticeSession> practiceSessions = await UserService.GetPracticeSessionsForUser(_user.Id);
         var groupedSessions = practiceSessions.GroupBy(s => s.SessionDate.Date);
-        timeline = groupedSessions.Select(g => g.Key).ToList();
-        scores = groupedSessions.Select(g => g.Sum(s => s.ScoreEarned)).ToList();
+        _timeScoreGraph = groupedSessions.Select(g => new TimeScoreGraph
+            {
+                timeline = g.Key,
+                scores = g.Sum(s => s.ScoreEarned)
+            }).ToList();
+
+        foreach(TimeScoreGraph t in _timeScoreGraph)
+        {
+            timeScoreGraph.Add(new TimePoint(t.timeline, (double)t.scores));
+        }
+
     }
 
     private string FormatStudyTime(TimeSpan time)
@@ -128,4 +139,72 @@
         }
         return $"{time.TotalMinutes:F0} minučių";
     }
+
+    private const int InitalCount = 7;
+    private LineConfig _config;
+    private Chart _chart;
+
+    protected override void OnInitialized()
+    {
+        _config = new LineConfig
+            {
+                Options = new LineOptions
+                {
+                    Responsive = true,
+                    Title = new OptionsTitle
+                    {
+                        Display = true,
+                        Text = "ChartJs.Blazor Time Scale Chart"
+                    },
+                    Tooltips = new Tooltips
+                    {
+                        Mode = InteractionMode.Nearest,
+                        Intersect = true
+                    },
+                    Hover = new Hover
+                    {
+                        Mode = InteractionMode.Nearest,
+                        Intersect = true
+                    },
+                    Scales = new Scales
+                    {
+                        XAxes = new List<CartesianAxis>
+                    {
+                        new TimeAxis
+                        {
+                            ScaleLabel = new ScaleLabel
+                            {
+                                LabelString = "Date"
+                            },
+                            Time = new TimeOptions
+                            {
+                                TooltipFormat = "ll HH:mm"
+                            },
+                        }
+                    },
+                        YAxes = new List<CartesianAxis>
+                    {
+                        new LinearCartesianAxis
+                        {
+                            ScaleLabel = new ScaleLabel
+                            {
+                                LabelString = "Value"
+                            }
+                        }
+                    }
+                    }
+                }
+        };
+
+
+        IDataset<TimePoint> dataset3 = new LineDataset<TimePoint>(timeScoreGraph.ToArray())
+        {
+                Label = "Dataset with point data",
+                BackgroundColor = ColorUtil.FromDrawingColor(Color.Green),
+                BorderColor = ColorUtil.FromDrawingColor(Color.Green),
+                Fill = FillingMode.Disabled
+            };
+        _config.Data.Datasets.Add(dataset3);
+    }
+
 }
