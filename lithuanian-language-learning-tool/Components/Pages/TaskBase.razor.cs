@@ -22,6 +22,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected int score = 0;
         protected int correctAnswersCount = 0;
         protected Timer timer = new Timer();
+        protected DateTime startTime;
         protected List<TTask> tasks = new List<TTask>();
         protected int currentTaskIndex = 0;
         protected TTask currentTask;
@@ -112,6 +113,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
         protected virtual void StartExercise()
         {
+            startTime = DateTime.Now;
             score = 0;
             currentTaskIndex = 0;
             correctAnswersCount = 0;
@@ -171,7 +173,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
             if (currentTaskIndex < tasks.Count - 1)
             {
                 timer.Dispose();
-                timer.ResetTimer();
+                await timer.ResetTimer();
 
                 currentTaskIndex++;
                 currentTask = tasks[currentTaskIndex];
@@ -187,12 +189,25 @@ namespace lithuanian_language_learning_tool.Components.Pages
         }
         protected virtual async Task EndExercise()
         {
+            showSummary = true;
+
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var currentUser = await UserService.GetCurrentUserAsync(authState);
 
             if(currentUser != null &&!currentUser.IsGuest)
+            {
                 await UpdateUserHighScore(currentUser);
-            showSummary = true;
+                PracticeSession practiceSession = new PracticeSession();
+                practiceSession.SessionDate = DateTime.Now;
+                practiceSession.Duration = DateTime.Now - startTime;
+                practiceSession.ScoreEarned = score;
+                practiceSession.LessonType = tasks[0] is PunctuationTask ? "Punctuation" : "Spelling";
+                practiceSession.CorrectAnswers = correctAnswersCount;
+                practiceSession.TotalQuestions = tasks.Count;
+                practiceSession.UserId = currentUser.Id; // Assuming User has an Id property
+
+                await UserService.RecordPracticeSession(currentUser, practiceSession);
+            }
         }
 
         protected async Task UpdateUserHighScore(User currentUser)

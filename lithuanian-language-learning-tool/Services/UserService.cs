@@ -18,6 +18,10 @@ namespace lithuanian_language_learning_tool.Services
 
 		Task UpdateUserAsync(User user);
 
+        Task RecordPracticeSession(User user, PracticeSession session);
+
+        Task<List<PracticeSession>> GetPracticeSessionsForUser(string userId);
+
     }
 
     public class UserService : IUserService
@@ -144,5 +148,26 @@ namespace lithuanian_language_learning_tool.Services
 				.Take(topCount)
 				.ToListAsync();
 		}
-	}
+
+        public async Task RecordPracticeSession(User user, PracticeSession session)
+        {
+            using var context = _contextFactory.CreateDbContext();
+
+            user.PracticeSessions.Add(session);
+
+            user.TotalStudyTime += session.Duration;
+            user.TotalAttempts += session.TotalQuestions;
+            user.CorrectAnswers += session.CorrectAnswers;
+
+            context.Users.Update(user);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<List<PracticeSession>> GetPracticeSessionsForUser(string userId)
+        {
+            using var context = _contextFactory.CreateDbContext();
+            return await context.PracticeSessions.Where(s => s.UserId == userId).ToListAsync();
+        }
+
+    }
 }

@@ -40,6 +40,25 @@
                                 <p>Paskutinis prisijungimas: @_user.LastLoginAt.ToString("MMMM dd, yyyy")</p>
                                 <p>Iš viso mokytasi: @FormatStudyTime(_user.TotalStudyTime)</p>
                             </div>
+                            <!--
+                            <ChartJS Height="400px">
+                                <ChartJSChart Type="ChartType.Line">
+                                    <ChartJSData>
+                                        <ChartJSDataset Label="Problems Solved">
+                                            <ChartJSDataPoints>
+                                                @foreach (var data in ProblemSolvingData)
+                                                {
+                                                    <ChartJSDataPoint X="@data.Date" Y="@data.ProblemsSolved" />
+                                                }
+                                            </ChartJSDataPoints>
+                                        </ChartJSDataset>
+                                    </ChartJSData>
+                                </ChartJSChart>
+
+                                <ChartJSChart Type="ChartType.Heatmap">
+                                    </ChartJSChart>
+                            </ChartJS>
+                            -->
                         </div>
 
                         @if (_user.Achievements != null && _user.Achievements.Any())
@@ -88,11 +107,17 @@
 
 @code {
     public User? _user;
+    private List<DateTime> timeline;
+    private List<int> scores;
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         _user = await UserService.GetOrCreateUserFromGoogleAsync(authState);
+        List<PracticeSession> practiceSessions = await UserService.GetPracticeSessionsForUser(_user.Id);
+        var groupedSessions = practiceSessions.GroupBy(s => s.SessionDate.Date);
+        timeline = groupedSessions.Select(g => g.Key).ToList();
+        scores = groupedSessions.Select(g => g.Sum(s => s.ScoreEarned)).ToList();
     }
 
     private string FormatStudyTime(TimeSpan time)
