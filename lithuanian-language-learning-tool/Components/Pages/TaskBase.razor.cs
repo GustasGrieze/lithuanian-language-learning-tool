@@ -18,6 +18,9 @@ namespace lithuanian_language_learning_tool.Components.Pages
         [Inject]
         protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
+        [Inject]
+        protected ITaskService<TTask> TaskService { get; set; }
+
 
         protected int score = 0;
         protected int correctAnswersCount = 0;
@@ -44,9 +47,22 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected bool showFlash = false;
         protected bool _lastAnswerCorrect = false;
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            GenerateDefaultTasks();
+            // Remove GenerateDefaultTasks();
+            // Instead, load tasks from the database
+            await LoadTasksFromDatabase();
+        }
+        protected async Task LoadTasksFromDatabase()
+        {
+            tasks = await TaskService.GetAllTasksAsync();
+            if (tasks == null || tasks.Count == 0)
+            {
+                // Handle the case when there are no tasks in the database
+                // Optionally, you can generate default tasks or show a message
+                // For now, we'll initialize tasks to an empty list
+                tasks = new List<TTask>();
+            }
         }
 
         protected void InitTasks()
@@ -157,11 +173,11 @@ namespace lithuanian_language_learning_tool.Components.Pages
             }
         }
 
-        protected async void  TimerOut()
+        protected async Task  TimerOut()
         {
             await EndExercise();
         }
-        protected async void SkipTask()
+        protected async Task SkipTask()
         {
             await NextTask();
         }
@@ -178,6 +194,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 feedbackMessage = null;
                 showFeedback = false;
                 currentTask.TaskStatus = false;
+                StateHasChanged();
 
             }
             else
@@ -193,6 +210,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
             if(currentUser != null &&!currentUser.IsGuest)
                 await UpdateUserHighScore(currentUser);
             showSummary = true;
+            StateHasChanged();
         }
 
         protected async Task UpdateUserHighScore(User currentUser)

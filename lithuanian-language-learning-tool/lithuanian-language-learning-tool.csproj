@@ -24,4 +24,8 @@
     <PackageReference Include="Testcontainers" Version="4.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Components\NewFolder\" />
+  </ItemGroup>
+
 </Project>

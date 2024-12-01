@@ -10,8 +10,9 @@ namespace lithuanian_language_learning_tool.Services
 {
     public interface ITaskService<T> where T : CustomTask
     {
-        Task AddTaskAsync(T task, List<string> options);
+        Task AddTaskAsync(T task);
         Task<T> GetTaskAsync(int taskId);
+        Task<List<T>> GetAllTasksAsync();
         Task UpdateTaskAsync(T task, List<string> newOptions);
         Task DeleteTaskAsync(int taskId);
         Task<List<string>> GetOptionsAsync(int taskId);
@@ -27,16 +28,8 @@ namespace lithuanian_language_learning_tool.Services
         }
 
 
-        public async Task AddTaskAsync(T task, List<string> options)
+        public async Task AddTaskAsync(T task)
         {
-            if (options != null && options.Any())
-            {
-                foreach (var optionText in options)
-                {
-                    task.AnswerOptions.Add(new AnswerOption { OptionText = optionText });
-                }
-            }
-
             _context.CustomTasks.Add(task);
             await _context.SaveChangesAsync();
         }
@@ -48,6 +41,14 @@ namespace lithuanian_language_learning_tool.Services
                 .OfType<T>() // Filters to the specific derived type
                 .Include(ct => ct.AnswerOptions)
                 .FirstOrDefaultAsync(ct => ct.Id == taskId);
+        }
+
+        public async Task<List<T>> GetAllTasksAsync()
+        {
+            return await _context.CustomTasks
+                .OfType<T>()
+                .Include(ct => ct.AnswerOptions) 
+                .ToListAsync();
         }
 
         public async Task UpdateTaskAsync(T task, List<string> newOptions)

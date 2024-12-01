@@ -1,0 +1,157 @@
+﻿@using System.Text.Json
+@using lithuanian_language_learning_tool.Models
+@using lithuanian_language_learning_tool.Services
+@using Microsoft.AspNetCore.Components
+@inject ITaskService<PunctuationTask> PunctuationTaskService
+@inject ITaskService<SpellingTask> SpellingTaskService
+
+<div class="mt-4">
+    <h3>Įkelti Naujas Užduotis</h3>
+    <EditForm Model="uploadModel" OnValidSubmit="HandleValidSubmit">
+        <div class="mb-4">
+            <label class="block text-gray-700">Užduoties Tipas:</label>
+            <InputSelect @bind-Value="uploadModel.TaskType" class="mt-1 block w-full">
+                <option value="">Pasirinkite Tipą</option>
+                <option value="Punctuation">Skyrybos</option>
+                <option value="Spelling">Rašyba</option>
+            </InputSelect>
+            <ValidationMessage For="@(() => uploadModel.TaskType)" />
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700">Užduočių Failas (JSON):</label>
+            <InputFile OnChange="HandleFileSelected" accept=".json" />
+            @if (!string.IsNullOrEmpty(uploadModel.FileName))
+            {
+                <p class="text-sm text-gray-600 mt-1">Pasirinktas failas: @uploadModel.FileName</p>
+            }
+            <ValidationMessage For="@(() => uploadModel.FileContent)" />
+        </div>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="bg-red-100 text-red-700 p-2 rounded mb-4">
+                @errorMessage
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(successMessage))
+        {
+            <div class="bg-green-100 text-green-700 p-2 rounded mb-4">
+                @successMessage
+            </div>
+        }
+
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            Įkelti Užduotis
+        </button>
+    </EditForm>
+</div>
+
+@code {
+    private UploadModel uploadModel = new UploadModel();
+    private string errorMessage = "";
+    private string successMessage = "";
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file == null)
+            return;
+
+        uploadModel.FileName = file.Name;
+
+        using var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10 MB limit
+        using var reader = new StreamReader(stream);
+        uploadModel.FileContent = await reader.ReadToEndAsync();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        errorMessage = "";
+        successMessage = "";
+
+        if (string.IsNullOrEmpty(uploadModel.TaskType))
+        {
+            errorMessage = "Prašome pasirinkti užduoties tipą.";
+            return;
+        }
+
+        if (string.IsNullOrEmpty(uploadModel.FileContent))
+        {
+            errorMessage = "Prašome įkelti užduočių failą.";
+            return;
+        }
+
+        try
+        {
+            if (uploadModel.TaskType == "Punctuation")
+            {
+                var tasks = JsonSerializer.Deserialize<List<PunctuationTask>>(uploadModel.FileContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                if (tasks == null || tasks.Count == 0)
+                {
+                    throw new Exception("Failas neturi jokių užduočių arba yra netinkamai suformatuotas.");
+                }
+
+                foreach (var task in tasks)
+                {
+                    // Optionally, validate each task's structure here
+                    task.UserText = task.Sentence;
+                    await PunctuationTaskService.AddTaskAsync(task);
+
+                }
+
+                successMessage = $"{tasks.Count} skyrybos užduočių sėkmingai įkeltos.";
+            }
+            else if (uploadModel.TaskType == "Spelling")
+            {
+                var tasks = JsonSerializer.Deserialize<List<SpellingTask>>(uploadModel.FileContent, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                if (tasks == null || tasks.Count == 0)
+                {
+                    throw new Exception("Failas neturi jokių užduočių arba yra netinkamai suformatuotas.");
+                }
+
+                foreach (var task in tasks)
+                {
+                    // Optionally, validate each task's structure here
+                    task.UserText = task.Sentence;
+                    await SpellingTaskService.AddTaskAsync(task);
+                }
+
+                successMessage = $"{tasks.Count} rašybos užduočių sėkmingai įkeltos.";
+            }
+            else
+            {
+                errorMessage = "Neteisingas užduoties tipas.";
+            }
+
+            // Reset the form after successful upload
+            uploadModel = new UploadModel();
+        }
+        catch (JsonException)
+        {
+            errorMessage = "JSON failas yra netinkamai suformatuotas.";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Klaida įkeliant užduotis: {ex.Message}";
+            var innerException = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+            errorMessage = $"Klaida įkeliant užduotis: {innerException}";
+        }
+    }
+
+    public class UploadModel
+    {
+        public string TaskType { get; set; } = "";
+        public string FileName { get; set; } = "";
+        public string FileContent { get; set; } = "";
+    }
+}

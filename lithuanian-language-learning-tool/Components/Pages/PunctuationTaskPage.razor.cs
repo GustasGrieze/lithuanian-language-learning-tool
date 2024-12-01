@@ -7,6 +7,18 @@ namespace lithuanian_language_learning_tool.Components.Pages
 {
     public partial class PunctuationTaskBase : TaskBase<PunctuationTask>
     {
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+            if (tasks.Count > 0)
+            {
+                // Initialize highlights for all tasks
+                foreach (var task in tasks)
+                {
+                    task.InitializeHighlights();
+                }
+            }
+        }
 
         protected override void StartExercise()
         {

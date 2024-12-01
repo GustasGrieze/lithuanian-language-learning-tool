@@ -15,6 +15,7 @@ namespace lithuanian_language_learning_tool.Models
         [Required]
         public string UserText { get; set; }  // User's current version of the sentence
         // Database-mapped options
+        [Required]
         public virtual List<AnswerOption> AnswerOptions { get; set; } = new();
 
         // In-code usage options (not mapped to the database)
