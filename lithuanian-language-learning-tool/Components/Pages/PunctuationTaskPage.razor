@@ -100,7 +100,7 @@ else
                      Score="score"
                      OnTaskSelected="GoToTask"
                      OnRestart="@(() => StartExercise(false))"
-                     OnRestartWithNewTasks="@(async () => StartExercise(true))"/>
+                     OnRestartWithNewTasks="async () => await StartExercise(true)"/>
     }
 }
  
