@@ -43,6 +43,8 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddBlazorBootstrap();
+
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new NullReferenceException("No connection string in config.");
 builder.Services.AddDbContextFactory<AppDbContext>(options =>
