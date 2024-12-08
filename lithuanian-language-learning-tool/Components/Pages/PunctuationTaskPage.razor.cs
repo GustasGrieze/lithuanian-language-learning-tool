@@ -16,16 +16,16 @@ namespace lithuanian_language_learning_tool.Components.Pages
             }
         }
 
-        protected virtual void StartExercise(bool refetchNewTasks = false)
+        protected virtual async Task StartExercise(bool refetchNewTasks = false)
         {
-            base.StartExercise(refetchNewTasks);
-            currentTask.InitializeHighlights();
+            await base.StartExercise(refetchNewTasks);
+            currentTask?.InitializeHighlights();
 
         }
 
         protected override async Task NextTask()
         {
-            base.NextTask();
+            await base.NextTask();
             if (currentTaskIndex < tasks.Count)
             {
                 currentTask.InitializeHighlights();
