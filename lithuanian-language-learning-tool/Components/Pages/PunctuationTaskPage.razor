@@ -6,7 +6,16 @@
 
 @if (!startExercise)
 {
-    <TaskUploadPrompt OnTaskUploaded="LoadCustomTasks" OnUseDefaultTasks="StartWithDefaultTasks" />
+    @* <TaskUploadPrompt OnTaskUploaded="LoadCustomTasks" OnUseDefaultTasks="StartWithDefaultTasks" /> *@
+    @if (tasks == null || tasks.Count == 0)
+    {
+        <p>Nėra jokių užduočių. Prašome kreiptis į administratorių.</p>
+    }
+    else
+    {
+        <button class="next-button" @onclick="@(() => StartExercise(false))">Pradėti Užduotis</button>
+    }
+    
 }
 else
 {
@@ -28,7 +37,7 @@ else
                 <div class="flash-overlay @(_lastAnswerCorrect ? "correct-flash" : "incorrect-flash")"></div>
             }
 
-            <Timer @ref="timer" SecondsToRun="20" TimerOut="TimerOut" /> 
+            <Timer @ref="timer" SecondsToRun="20" TimerOut="TimerOut" />  
 
             <div class="task-box" style="height: 300px;">
                 @if (tasks.Count > currentTaskIndex)
@@ -65,7 +74,10 @@ else
                 }
             </div>
 
-            <OptionsSection Task="currentTask" TTask="PunctuationTask" OnOptionSelected="InsertPunctuation" IsSelected="showFeedback"/>
+            <OptionsSection Task="currentTask" TTask="PunctuationTask" OnOptionSelected="HandleInsertPunctuation" IsSelected="showFeedback"/>
+            <button class="option" @onclick="@(() => HandleDeletePunctuation())">Ištrinti</button>
+
+
 
             if (currentTask.TaskStatus)
             {
@@ -87,7 +99,8 @@ else
                      Tasks="tasks"
                      Score="score"
                      OnTaskSelected="GoToTask"
-                     OnRestart="StartExercise" />
+                     OnRestart="@(() => StartExercise(false))"
+                     OnRestartWithNewTasks="@(async () => StartExercise(true))"/>
     }
 }
  

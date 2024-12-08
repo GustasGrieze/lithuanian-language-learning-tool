@@ -1,18 +1,20 @@
 using lithuanian_language_learning_tool.Components;
+using lithuanian_language_learning_tool.Data;
+using lithuanian_language_learning_tool.Models;
+using lithuanian_language_learning_tool.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
-using lithuanian_language_learning_tool.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using lithuanian_language_learning_tool.Data;
 using Microsoft.Extensions.Configuration;
 using lithuanian_language_learning_tool.Models;
+using lithuanian_language_learning_tool.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -21,7 +23,6 @@ if (builder.Environment.IsDevelopment())
 {
     builder.Configuration.AddUserSecrets<Program>();
 }
-
 
 builder.Services.AddAuthentication(options =>
 {
@@ -54,15 +55,22 @@ builder.Services.AddDbContextFactory<AppDbContext>(options =>
 
 builder.Services.AddScoped<ITaskService<PunctuationTask>, TaskService<PunctuationTask>>();
 builder.Services.AddScoped<ITaskService<SpellingTask>, TaskService<SpellingTask>>();
+builder.Services.AddScoped<IUploadService, UploadService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
+
+app.MapGet("/trigger-exception", () =>
+{
+    throw new Exception("This is a test exception!");
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -81,6 +89,5 @@ app.MapGet("/logout", async (HttpContext context) =>
     await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     return Results.Redirect("/");
 });
-
 
 app.Run();

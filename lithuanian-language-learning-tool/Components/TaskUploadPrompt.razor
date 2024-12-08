@@ -1,4 +1,5 @@
 ﻿@inject NavigationManager NavigationManager
+@inject lithuanian_language_learning_tool.Services.IUploadService UploadService
 @using System.Text.Json
 @using System.IO
 @using lithuanian_language_learning_tool.Exceptions
@@ -22,12 +23,12 @@
 
 @code {
     [Parameter] public EventCallback<string> OnTaskUploaded { get; set; }
-    [Parameter] public EventCallback OnUseDefaultTasks { get; set; }      
+    [Parameter] public EventCallback OnUseDefaultTasks { get; set; }
 
     private bool showUpload = false;
     private string fileName;
-    private string errorMessage = "";
-    private string taskType = "";
+    private string errorMessage;
+    public string TaskType { get; set; } = "";
 
     protected override void OnInitialized()
     {
@@ -39,11 +40,11 @@
         var uri = NavigationManager.Uri.ToLower();
         if ((uri.Contains("/rasybos/uzduotys")) || (uri.Contains("/rasybos/pasirinkimai/temos")) || (uri.Contains("/rasybos/pasirinkimai/randomizuoti")))
         {
-            taskType = "punctuation";
+            TaskType = "spelling"; 
         }
         else if ((uri.Contains("/skyrybos/uzduotys")) || (uri.Contains("/skyrybos/pasirinkimai/temos")) || (uri.Contains("/skyrybos/pasirinkimai/uzduotys")))
         {
-            taskType = "spelling";
+            TaskType = "punctuation";
         }
     }
 
@@ -65,84 +66,39 @@
 
             if (string.IsNullOrWhiteSpace(fileContent))
             {
-                throw new lithuanian_language_learning_tool.Exceptions.TaskUploadException("Įkelto failo turinys yra tuščias.");
+                throw new TaskUploadException("Įkelto failo turinys yra tuščias.");
             }
 
-            ValidateJsonStructure(fileContent, taskType);
+            // Delegate validation to UploadService
+            //UploadService.ValidateJsonStructure(fileContent, TaskType);
+
             await OnTaskUploaded.InvokeAsync(fileContent);
             errorMessage = "";
         }
-        catch (lithuanian_language_learning_tool.Exceptions.TaskUploadException ex)
+        catch (TaskUploadException ex)
         {
             errorMessage = $"Klaida įkeliant failą: {ex.Message}";
-            LogException(ex);
+            UploadService.LogException(ex);
         }
         catch (Exception ex)
         {
             errorMessage = $"Nenumatyta klaida: {ex.Message}";
-            LogException(ex);
-        }
-    }
-
-    private void LogException(Exception ex)
-    {
-        var logPath = Path.Combine("logs", "errors.log");
-        Directory.CreateDirectory("logs");
-        
-        using var writer = new StreamWriter(logPath, append: true);
-        writer.WriteLine($"[{DateTime.Now}] {ex.Message}");
-        writer.WriteLine(ex.StackTrace);
-        writer.WriteLine("--------------------------------------------------");
-    }
-
-    private void ValidateJsonStructure(string jsonContent, string taskType)
-    {
-        try
-        {
-            var tasks = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(jsonContent);
-
-            if (tasks == null || tasks.Count == 0)
-                throw new TaskUploadException("Failas neturi užduočių arba yra tuščias.");
-
-            foreach (var task in tasks)
-            {
-                if (!task.ContainsKey("Sentence") || !task.ContainsKey("Options") || 
-                    !task.ContainsKey("CorrectAnswer") || !task.ContainsKey("Explanation"))
-                {
-                    throw new TaskUploadException("Netinkama užduoties struktūra: trūksta laukų.");
-                }
-
-                // Tikriname "Options" lauką pagal užduoties tipą
-                var options = JsonSerializer.Deserialize<List<string>>(task["Options"].ToString());
-                if (options == null || options.Count == 0)
-                {
-                    throw new TaskUploadException("Options laukelis yra tuščias arba netinkamas.");
-                }
-
-                if (taskType == "punctuation")
-                {
-                    if (!options.All(opt => new[] { ".", ",", ";", ":", "!", "?" }.Contains(opt)))
-                    {
-                        throw new TaskUploadException("Netinkama Options struktūra: skyrybos užduotyse leidžiami tik skyrybos ženklai.");
-                    }
-                }
-                else if (taskType == "spelling")
-                {
-                    if (!options.All(opt => opt.Length == 1 && char.IsLetter(opt[0])))
-                    {
-                        throw new TaskUploadException("Netinkama Options struktūra: rašybos užduotyse leidžiamos tik raidės.");
-                    }
-                }
-            }
-        }
-        catch (JsonException)
-        {
-            throw new TaskUploadException("JSON failas yra netinkamai suformatuotas.");
+            UploadService.LogException(ex);
         }
     }
 
     private async Task StartWithDefaultTasks()
     {
         await OnUseDefaultTasks.InvokeAsync();
+    }
+
+
+    private string FormatStudyTime(TimeSpan time)
+    {
+        if (time.TotalHours >= 1)
+        {
+            return $"{time.TotalHours:F1} hours";
+        }
+        return $"{time.TotalMinutes:F0} minutes";
     }
 }

@@ -1,13 +1,12 @@
-﻿using System;
-using Microsoft.Data.SqlClient;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using lithuanian_language_learning_tool.Data;
-using Testcontainers.MsSql;
-using Respawn;
+﻿using lithuanian_language_learning_tool.Data;
 using lithuanian_language_learning_tool.Models;
 using lithuanian_language_learning_tool.Services;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Respawn;
+using System;
+using System.Threading.Tasks;
+using Testcontainers.MsSql;
 
 namespace TestProject.Database
 {
@@ -29,7 +28,7 @@ namespace TestProject.Database
         {
             await _container.StartAsync();
 
-          
+
             var masterConnectionString = $"{_container.GetConnectionString()};Database=master;TrustServerCertificate=True;";
 
             await CreateDatabaseAsync("TestDatabase", masterConnectionString);
@@ -38,11 +37,17 @@ namespace TestProject.Database
 
             await ApplyMigrationsAsync();
 
+
+
             var services = new ServiceCollection();
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(ConnectionString));
+            services.AddDbContextFactory<AppDbContext>(options =>
+                options.UseSqlServer(ConnectionString));
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITaskService<PunctuationTask>, TaskService<PunctuationTask>>();
             services.AddScoped<ITaskService<SpellingTask>, TaskService<SpellingTask>>();
+
             ServiceProvider = services.BuildServiceProvider();
 
             _respawner = await Respawner.CreateAsync(ConnectionString, new RespawnerOptions

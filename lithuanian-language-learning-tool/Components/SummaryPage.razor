@@ -22,7 +22,7 @@
     }
 </div>
 <button class="next-button" @onclick="OnRestart">Bandyti dar kartą</button>
-
+<button class="next-button" @onclick=" OnRestartWithNewTasks"> Pradėti Naujas Užduotis</button>
 @code {
     [Parameter] public List<TTask> Tasks { get; set; }
     [Parameter] public List<bool> TaskStatus { get; set; }
@@ -30,4 +30,5 @@
     [Parameter] public int CorrectAnswersCount { get; set; }
     [Parameter] public EventCallback<int> OnTaskSelected { get; set; }
     [Parameter] public EventCallback OnRestart { get; set; }
+    [Parameter] public EventCallback OnRestartWithNewTasks { get; set; }
 }

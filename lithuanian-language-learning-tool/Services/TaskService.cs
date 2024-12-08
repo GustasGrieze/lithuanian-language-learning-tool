@@ -1,46 +1,39 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using lithuanian_language_learning_tool.Data;
+﻿using lithuanian_language_learning_tool.Data;
 using lithuanian_language_learning_tool.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 
 namespace lithuanian_language_learning_tool.Services
 {
     public interface ITaskService<T> where T : CustomTask
     {
-        Task AddTaskAsync(T task, List<string> options);
+        Task AddTaskAsync(T task);
         Task<T> GetTaskAsync(int taskId);
-        Task UpdateTaskAsync(T task, List<string> newOptions);
+        Task<List<T>> GetAllTasksAsync();
+        Task UpdateTaskAsync(T task);
         Task DeleteTaskAsync(int taskId);
         Task<List<string>> GetOptionsAsync(int taskId);
+
+        Task<List<T>> GetRandomTasksAsync(int count);
     }
 
     public class TaskService<T> : ITaskService<T> where T : CustomTask
     {
         private readonly AppDbContext _context;
+        private readonly Random _random;
 
         public TaskService(AppDbContext context)
         {
             _context = context;
+            _random = new Random();
         }
 
-
-        public async Task AddTaskAsync(T task, List<string> options)
+        public async Task AddTaskAsync(T task)
         {
-            if (options != null && options.Any())
-            {
-                foreach (var optionText in options)
-                {
-                    task.AnswerOptions.Add(new AnswerOption { OptionText = optionText });
-                }
-            }
-
             _context.CustomTasks.Add(task);
             await _context.SaveChangesAsync();
         }
-
 
         public async Task<T> GetTaskAsync(int taskId)
         {
@@ -50,7 +43,62 @@ namespace lithuanian_language_learning_tool.Services
                 .FirstOrDefaultAsync(ct => ct.Id == taskId);
         }
 
-        public async Task UpdateTaskAsync(T task, List<string> newOptions)
+        public async Task<List<T>> GetAllTasksAsync()
+        {
+            return await _context.CustomTasks
+                .OfType<T>()
+                .Include(ct => ct.AnswerOptions)
+                .ToListAsync();
+        }
+
+        public async Task<List<T>> GetRandomTasksAsync(int count)
+        {
+            if (count <= 0)
+                throw new ArgumentException("Count must be greater than zero.", nameof(count));
+
+            var allTaskIds = await _context.CustomTasks
+                                           .OfType<T>()
+                                           .Select(ct => ct.Id)
+                                           .ToListAsync();
+
+            if (allTaskIds.Count == 0)
+                return new List<T>(); 
+
+            int fetchCount = Math.Min(count, allTaskIds.Count);
+
+            var selectedIds = GetRandomSubset(allTaskIds, fetchCount);
+
+            var randomTasks = await _context.CustomTasks
+                                            .OfType<T>()
+                                            .Where(ct => selectedIds.Contains(ct.Id))
+                                            .Include(ct => ct.AnswerOptions) // Include related data if necessary
+                                            .AsNoTracking() 
+                                            .ToListAsync();
+
+            var orderedRandomTasks = selectedIds.Select(id => randomTasks.FirstOrDefault(t => t.Id == id))
+                                                .Where(t => t != null)
+                                                .ToList();
+
+            return orderedRandomTasks;
+        }
+
+        private List<int> GetRandomSubset(List<int> source, int count)
+        {
+            int n = source.Count;
+            for (int i = 0; i < n; i++)
+            {
+                int j = _random.Next(i, n);
+                int temp = source[i];
+                source[i] = source[j];
+                source[j] = temp;
+            }
+
+            return source.Take(count).ToList();
+        }
+
+
+
+        public async Task UpdateTaskAsync(T task)
         {
             var existingTask = await _context.CustomTasks
                 .OfType<T>()
@@ -59,7 +107,6 @@ namespace lithuanian_language_learning_tool.Services
 
             if (existingTask != null)
             {
-                
                 existingTask.Sentence = task.Sentence;
                 existingTask.UserText = task.UserText;
                 existingTask.CorrectAnswer = task.CorrectAnswer;
@@ -67,24 +114,17 @@ namespace lithuanian_language_learning_tool.Services
                 existingTask.TaskStatus = task.TaskStatus;
                 existingTask.Topic = task.Topic;
 
-                
-                if (newOptions != null)
-                {
-                    existingTask.Options = newOptions; // Utilizes the setter in CustomTask
-                }
+                // Set new options via Options property, which handles AnswerOptions
+                existingTask.Options = task.Options;
 
-                // Handle any additional properties specific to derived classes
                 if (existingTask is PunctuationTask punctuationTask && task is PunctuationTask updatedPunctuationTask)
                 {
                     punctuationTask.Highlights = updatedPunctuationTask.Highlights;
                 }
 
-                // For SpellingTask, handle any specific updates here if necessary
-
                 await _context.SaveChangesAsync();
             }
         }
-
 
         public async Task DeleteTaskAsync(int taskId)
         {
@@ -98,6 +138,7 @@ namespace lithuanian_language_learning_tool.Services
                 await _context.SaveChangesAsync();
             }
         }
+
         public async Task<List<string>> GetOptionsAsync(int taskId)
         {
             var task = await GetTaskAsync(taskId);
@@ -105,3 +146,4 @@ namespace lithuanian_language_learning_tool.Services
         }
     }
 }
+

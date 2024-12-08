@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
-using System.Text.Json;
-using System.Collections.Generic;
-using System.Linq;
-using lithuanian_language_learning_tool.Helpers;
-using lithuanian_language_learning_tool.Models;
-using System.Threading.Tasks;
+﻿using lithuanian_language_learning_tool.Models;
 using lithuanian_language_learning_tool.Services;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using System.Text.Json;
 
 namespace lithuanian_language_learning_tool.Components.Pages
 {
@@ -18,6 +14,9 @@ namespace lithuanian_language_learning_tool.Components.Pages
         [Inject]
         protected AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
+        [Inject]
+        protected ITaskService<TTask> TaskService { get; set; }
+
 
         protected int score = 0;
         protected int correctAnswersCount = 0;
@@ -27,9 +26,9 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected int currentTaskIndex = 0;
         protected TTask currentTask;
 
-        
-        
-        
+
+
+
         //-----
         protected string? feedbackMessage;
         protected string feedbackClass = "";
@@ -45,9 +44,18 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected bool showFlash = false;
         protected bool _lastAnswerCorrect = false;
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            GenerateDefaultTasks();
+            await LoadTasksFromDatabase();
+        }
+        protected async Task LoadTasksFromDatabase()
+        {
+            //tasks = await TaskService.GetAllTasksAsync();
+            tasks = await TaskService.GetRandomTasksAsync(5);
+            if (tasks == null || tasks.Count == 0)
+            {
+                tasks = new List<TTask>();
+            }
         }
 
         protected void InitTasks()
@@ -80,7 +88,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
          * Be carful as this selectedAnswer arguement is only optional due to different implentation in Spelling and Punctuation but is actually necessary.
          */
         protected abstract bool IsAnswerCorrect(string selectedAnswer);
-        protected async Task CheckAnswer(string selectedAnswer="")
+        protected async Task CheckAnswer(string selectedAnswer = "")
         {
             showFeedback = true;
             currentTask.TaskStatus = IsAnswerCorrect(selectedAnswer);
@@ -93,6 +101,9 @@ namespace lithuanian_language_learning_tool.Components.Pages
             currentTask.TaskStatus = currentTask.TaskStatus;
 
             _lastAnswerCorrect = currentTask.TaskStatus;
+
+
+            await NextTask();
             showFlash = true;
             await Task.Delay(300);
             showFlash = false;
@@ -100,8 +111,9 @@ namespace lithuanian_language_learning_tool.Components.Pages
             score += currentTask.CalculateScore(currentTask.TaskStatus, multiplier: 2); // simple scoring system - needs improvement (time based score)
             StateHasChanged();
 
-            await NextTask();
+
         }
+
 
         protected void StartWithDefaultTasks()
         {
@@ -111,9 +123,15 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
         protected abstract List<TTask> GenerateDefaultTasks();
 
-        protected virtual void StartExercise()
+        protected virtual async Task StartExercise(bool refetchNewTasks = false)
         {
             startTime = DateTime.Now;
+
+            if (refetchNewTasks)
+            {
+                await LoadTasksFromDatabase();  
+            }
+
             score = 0;
             currentTaskIndex = 0;
             correctAnswersCount = 0;
@@ -122,19 +140,22 @@ namespace lithuanian_language_learning_tool.Components.Pages
             showFeedback = false;
             reviewMode = false;
             startExercise = true;
+
             if (tasks.Count > 0)
             {
                 currentTask = tasks[currentTaskIndex];
                 currentTask.UserText = currentTask.Sentence;
-                InitTasks();
+                InitTasks();  
             }
-            RestartTasks();
 
+            RestartTasks(); 
+            StateHasChanged();  
         }
+
 
         protected void RestartTasks()
         {
-            
+
             currentTask.TaskStatus = false;
             foreach (var task in tasks)
             {
@@ -159,11 +180,11 @@ namespace lithuanian_language_learning_tool.Components.Pages
             }
         }
 
-        protected async void  TimerOut()
+        protected async Task  TimerOut()
         {
             await EndExercise();
         }
-        protected async void SkipTask()
+        protected async Task SkipTask()
         {
             await NextTask();
         }
@@ -180,6 +201,8 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 feedbackMessage = null;
                 showFeedback = false;
                 currentTask.TaskStatus = false;
+                
+                StateHasChanged();
 
             }
             else
@@ -196,7 +219,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
             if(currentUser != null &&!currentUser.IsGuest)
             {
-                await UpdateUserHighScore(currentUser);
+                await UpdateUserStats(currentUser);
                 PracticeSession practiceSession = new PracticeSession();
                 practiceSession.SessionDate = DateTime.Now;
                 practiceSession.Duration = DateTime.Now - startTime;
@@ -205,22 +228,32 @@ namespace lithuanian_language_learning_tool.Components.Pages
                 practiceSession.CorrectAnswers = correctAnswersCount;
                 practiceSession.TotalQuestions = tasks.Count;
                 practiceSession.UserId = currentUser.Id; // Assuming User has an Id property
-
                 await UserService.RecordPracticeSession(currentUser, practiceSession);
+            }
+       
+            StateHasChanged();
+        }
+        protected async Task UpdateUserStats(User currentUser)
+        {
+            if (currentUser != null)
+            {
+               UpdateUserHighScore(currentUser);
+               currentUser.TotalLessonsCompleted += tasks.Count;
+               await UserService.UpdateUserAsync(currentUser);
+
             }
         }
 
-        protected async Task UpdateUserHighScore(User currentUser)
+        protected void UpdateUserHighScore(User currentUser)
         {
             if (currentUser != null)
             {
                 if (score > currentUser.HighScore)
                 {
                     currentUser.HighScore = score;
-                    await UserService.UpdateUserAsync(currentUser);
                 }
             }
-        }
+        } 
 
 
     }
