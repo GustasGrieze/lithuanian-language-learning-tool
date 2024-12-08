@@ -49,7 +49,8 @@ namespace lithuanian_language_learning_tool.Components.Pages
         }
         protected async Task LoadTasksFromDatabase()
         {
-            tasks = await TaskService.GetAllTasksAsync();
+            //tasks = await TaskService.GetAllTasksAsync();
+            tasks = await TaskService.GetRandomTasksAsync(5);
             if (tasks == null || tasks.Count == 0)
             {
                 tasks = new List<TTask>();
@@ -121,8 +122,13 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
         protected abstract List<TTask> GenerateDefaultTasks();
 
-        protected virtual void StartExercise()
+        protected virtual async Task StartExercise(bool refetchNewTasks = false)
         {
+            if (refetchNewTasks)
+            {
+                await LoadTasksFromDatabase();  
+            }
+
             score = 0;
             currentTaskIndex = 0;
             correctAnswersCount = 0;
@@ -131,15 +137,18 @@ namespace lithuanian_language_learning_tool.Components.Pages
             showFeedback = false;
             reviewMode = false;
             startExercise = true;
+
             if (tasks.Count > 0)
             {
                 currentTask = tasks[currentTaskIndex];
                 currentTask.UserText = currentTask.Sentence;
-                InitTasks();
+                InitTasks();  
             }
-            RestartTasks();
 
+            RestartTasks(); 
+            StateHasChanged();  
         }
+
 
         protected void RestartTasks()
         {

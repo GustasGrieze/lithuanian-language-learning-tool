@@ -9,7 +9,6 @@ namespace lithuanian_language_learning_tool.Components.Pages
             await base.OnInitializedAsync();
             if (tasks.Count > 0)
             {
-                // Initialize highlights for all tasks
                 foreach (var task in tasks)
                 {
                     task.InitializeHighlights();
@@ -17,9 +16,9 @@ namespace lithuanian_language_learning_tool.Components.Pages
             }
         }
 
-        protected override void StartExercise()
+        protected virtual void StartExercise(bool refetchNewTasks = false)
         {
-            base.StartExercise();
+            base.StartExercise(refetchNewTasks);
             currentTask.InitializeHighlights();
 
         }
@@ -70,74 +69,32 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
         protected void ToggleHighlight(int spaceIndex)
         {
-            if (currentTask?.Highlights == null) return;
-
-            for (var i = 0; i < currentTask.Highlights.Count; i++)
-            {
-                var highlight = currentTask.Highlights[i];
-                highlight.IsSelected = highlight.SpaceIndex == spaceIndex;
-                currentTask.Highlights[i] = highlight;
-            }
-
+            currentTask?.ToggleHighlight(spaceIndex);
             StateHasChanged();
         }
 
 
-        protected void InsertPunctuation(string punctuation)
+        protected void HandleInsertPunctuation(string punctuation)
         {
             if (currentTask == null) return;
 
-            if (string.IsNullOrEmpty(currentTask.UserText))
-            {
-                currentTask.UserText = currentTask.Sentence;
-            }
-
-            var selectedIndex = currentTask.Highlights.FindIndex(h => h.IsSelected);
-            if (selectedIndex != -1)
-            {
-                var selectedHighlight = currentTask.Highlights[selectedIndex];
-                var insertionIndex = selectedHighlight.SpaceIndex;
-
-                if (insertionIndex > 0 && char.IsPunctuation(currentTask.UserText[insertionIndex - 1]))
-                {
-                    currentTask.UserText = currentTask.UserText.Remove(insertionIndex - 1, 1)
-                                                           .Insert(insertionIndex - 1, punctuation);
-                    selectedHighlight.IsSelected = false;
-                    currentTask.Highlights[selectedIndex] = selectedHighlight;
-                }
-                else
-                {
-                    currentTask.UserText = currentTask.UserText.Insert(insertionIndex, punctuation);
-                    var punctuationLength = punctuation.Length;
-                    for (var i = 0; i < currentTask.Highlights.Count; i++)
-                    {
-                        if (currentTask.Highlights[i].SpaceIndex >= insertionIndex)
-                        {
-                            var hl = currentTask.Highlights[i];
-                            hl.SpaceIndex += punctuationLength;
-                            currentTask.Highlights[i] = hl;
-                        }
-                    }
-                    selectedHighlight.HasPunctuation = true;
-                    selectedHighlight.IsSelected = false;
-                    //currentTask.Highlights[selectedIndex] = selectedHighlight;
-                }
-
-
-            }
+            currentTask.InsertPunctuation(punctuation);
             StateHasChanged();
         }
 
+        protected void HandleDeletePunctuation()
+        {
+            if (currentTask == null) return;
 
+            currentTask.DeletePunctuation();
+            StateHasChanged();
+        }
 
         protected override bool IsAnswerCorrect(string selectedAnswer)
         {
-            return currentTask.UserText.Length == currentTask.CorrectAnswer.Length &&
-                   currentTask.CorrectAnswer
-                       .Select((ch, i) => new { Char = ch, Index = i })
-                       .Where(x => char.IsPunctuation(x.Char))
-                       .All(x => currentTask.UserText[x.Index] == x.Char);
+            return currentTask?.IsAnswerCorrect() ?? false;
         }
+
 
         ///--->>> For testing
         protected internal void SetCurrentTask(PunctuationTask task)
