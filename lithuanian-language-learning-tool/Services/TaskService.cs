@@ -1,6 +1,7 @@
 ﻿using lithuanian_language_learning_tool.Data;
 using lithuanian_language_learning_tool.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 
 namespace lithuanian_language_learning_tool.Services
@@ -13,15 +14,19 @@ namespace lithuanian_language_learning_tool.Services
         Task UpdateTaskAsync(T task);
         Task DeleteTaskAsync(int taskId);
         Task<List<string>> GetOptionsAsync(int taskId);
+
+        Task<List<T>> GetRandomTasksAsync(int count);
     }
 
     public class TaskService<T> : ITaskService<T> where T : CustomTask
     {
         private readonly AppDbContext _context;
+        private readonly Random _random;
 
         public TaskService(AppDbContext context)
         {
             _context = context;
+            _random = new Random();
         }
 
         public async Task AddTaskAsync(T task)
@@ -45,6 +50,53 @@ namespace lithuanian_language_learning_tool.Services
                 .Include(ct => ct.AnswerOptions)
                 .ToListAsync();
         }
+
+        public async Task<List<T>> GetRandomTasksAsync(int count)
+        {
+            if (count <= 0)
+                throw new ArgumentException("Count must be greater than zero.", nameof(count));
+
+            var allTaskIds = await _context.CustomTasks
+                                           .OfType<T>()
+                                           .Select(ct => ct.Id)
+                                           .ToListAsync();
+
+            if (allTaskIds.Count == 0)
+                return new List<T>(); 
+
+            int fetchCount = Math.Min(count, allTaskIds.Count);
+
+            var selectedIds = GetRandomSubset(allTaskIds, fetchCount);
+
+            var randomTasks = await _context.CustomTasks
+                                            .OfType<T>()
+                                            .Where(ct => selectedIds.Contains(ct.Id))
+                                            .Include(ct => ct.AnswerOptions) // Include related data if necessary
+                                            .AsNoTracking() 
+                                            .ToListAsync();
+
+            var orderedRandomTasks = selectedIds.Select(id => randomTasks.FirstOrDefault(t => t.Id == id))
+                                                .Where(t => t != null)
+                                                .ToList();
+
+            return orderedRandomTasks;
+        }
+
+        private List<int> GetRandomSubset(List<int> source, int count)
+        {
+            int n = source.Count;
+            for (int i = 0; i < n; i++)
+            {
+                int j = _random.Next(i, n);
+                int temp = source[i];
+                source[i] = source[j];
+                source[j] = temp;
+            }
+
+            return source.Take(count).ToList();
+        }
+
+
 
         public async Task UpdateTaskAsync(T task)
         {

@@ -6,6 +6,5 @@
         {
             return isCorrect ? 15 * multiplier : 0;
         }
-        // Maybe add specific Spelling Task implementation someday...
     }
 }
