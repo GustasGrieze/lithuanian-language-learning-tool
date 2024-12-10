@@ -102,13 +102,13 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
             _lastAnswerCorrect = currentTask.TaskStatus;
 
+            score += currentTask.CalculateScore(currentTask.TaskStatus, multiplier: 2); // simple scoring system - needs improvement (time based score)
 
             await NextTask();
             showFlash = true;
             await Task.Delay(300);
             showFlash = false;
-
-            score += currentTask.CalculateScore(currentTask.TaskStatus, multiplier: 2); // simple scoring system - needs improvement (time based score)
+            
             StateHasChanged();
 
 
@@ -194,7 +194,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
             if (currentTaskIndex < tasks.Count - 1)
             {
                 timer.Dispose();
-                await timer.ResetTimer();
+                timer.ResetTimer();
 
                 currentTaskIndex++;
                 currentTask = tasks[currentTaskIndex];
