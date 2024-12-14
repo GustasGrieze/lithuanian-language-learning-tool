@@ -1,8 +1,16 @@
-﻿@using lithuanian_language_learning_tool.Services;
-@using lithuanian_language_learning_tool.Models;
+﻿@using lithuanian_language_learning_tool.Services
+@using lithuanian_language_learning_tool.Models
 @inject IUserService UserService
 
 <h2>Lyderių lentelė</h2>
+
+<select style="  background-color: #43526e; border: 2px solid #2d3b55; color: #ffffff;" @onchange="(e) => UpdateLeaderboard(e.Value.ToString())">
+    <option value="taskai">Taškai</option>
+    <option value="streak">Dabartinis streak'as</option>
+    <option value="bestStreak">Geriausias streak'as</option>
+    <option value="totalLessons">Užduočių atlikta</option>
+</select>
+
 <div>
     @if (leaderboard != null && leaderboard.Any())
     {
@@ -11,7 +19,7 @@
                 <tr style="background-color: none; border-bottom: 2px solid #ccc;">
                     <th style="padding: 10px; width: 10%;">Vieta</th>
                     <th style="padding: 10px; width: 45%;">Vardas</th>
-                    <th style="padding: 10px; width: 45%;">Taškai</th>
+                    <th style="padding: 10px; width: 45%;">@SelectedColumnName</th>
                 </tr>
             </thead>
             <tbody>
@@ -21,7 +29,12 @@
                     <tr style="border-bottom: 1px solid #e0e0e0; background-color: @(i % 2 == 0 ? "#f9f9f9" : "#ffffff");">
                         <td style="padding: 10px; font-weight: bold;">@(i + 1)</td>
                         <td style="padding: 10px;">@user.DisplayName</td>
-                        <td style="padding: 10px;">@user.HighScore</td>
+                        <td style="padding: 10px;">
+                            @if (SelectedFilter == "taskai") { @user.HighScore }
+                            else if (SelectedFilter == "streak") { @user.CurrentStreak }
+                            else if (SelectedFilter == "bestStreak") { @user.BestStreak }
+                            else if (SelectedFilter == "totalLessons") { @user.TotalLessonsCompleted }
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -31,15 +44,37 @@
     {
         <p>Loading...</p>
     }
-
 </div>
 
-@code{
+@code {
+    private List<User>? leaderboard;
+    private string SelectedFilter = "taskai"; // Default filter
+    private string SelectedColumnName = "Taškai"; // Default column name
 
-	private List<User>? leaderboard;
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateLeaderboard("taskai"); // Default load
+    }
 
-	protected override async Task OnInitializedAsync()
-	{
-		leaderboard = await UserService.GetTopUsersAsync(10);
-	}
+    private async Task UpdateLeaderboard(string filter)
+    {
+        SelectedFilter = filter;
+        SelectedColumnName = filter switch
+        {
+            "taskai" => "Taškai",
+            "streak" => "Dabartinis streak'as",
+            "bestStreak" => "Geriausias streak'as",
+            "totalLessons" => "Užduočių atlikta",
+            _ => "Taškai"
+        };
+
+        leaderboard = filter switch
+        {
+            "taskai" => await UserService.GetTopUsersByHighScoreAsync(),
+            "streak" => await UserService.GetTopUsersByCurrentStreakAsync(),
+            "bestStreak" => await UserService.GetTopUsersByBestStreakAsync(),
+            "totalLessons" => await UserService.GetTopUsersByLessonsCompletedAsync(),
+            _ => await UserService.GetTopUsersByHighScoreAsync()
+        };
+    }
 }
