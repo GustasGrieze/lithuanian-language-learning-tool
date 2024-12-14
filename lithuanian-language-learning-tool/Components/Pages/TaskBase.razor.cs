@@ -21,6 +21,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected int score = 0;
         protected int correctAnswersCount = 0;
         protected Timer timer = new Timer();
+        protected DateTime startTime;
         protected List<TTask> tasks = new List<TTask>();
         protected int currentTaskIndex = 0;
         protected TTask currentTask;
@@ -49,7 +50,8 @@ namespace lithuanian_language_learning_tool.Components.Pages
         }
         protected async Task LoadTasksFromDatabase()
         {
-            tasks = await TaskService.GetAllTasksAsync();
+            //tasks = await TaskService.GetAllTasksAsync();
+            tasks = await TaskService.GetRandomTasksAsync(5);
             if (tasks == null || tasks.Count == 0)
             {
                 tasks = new List<TTask>();
@@ -100,13 +102,13 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
             _lastAnswerCorrect = currentTask.TaskStatus;
 
+            score += currentTask.CalculateScore(currentTask.TaskStatus, multiplier: 2); // simple scoring system - needs improvement (time based score)
 
             await NextTask();
             showFlash = true;
             await Task.Delay(300);
             showFlash = false;
-
-            score += currentTask.CalculateScore(currentTask.TaskStatus, multiplier: 2); // simple scoring system - needs improvement (time based score)
+            
             StateHasChanged();
 
 
@@ -121,8 +123,15 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
         protected abstract List<TTask> GenerateDefaultTasks();
 
-        protected virtual void StartExercise()
+        protected virtual async Task StartExercise(bool refetchNewTasks = false)
         {
+            startTime = DateTime.Now;
+
+            if (refetchNewTasks)
+            {
+                await LoadTasksFromDatabase();  
+            }
+
             score = 0;
             currentTaskIndex = 0;
             correctAnswersCount = 0;
@@ -131,15 +140,18 @@ namespace lithuanian_language_learning_tool.Components.Pages
             showFeedback = false;
             reviewMode = false;
             startExercise = true;
+
             if (tasks.Count > 0)
             {
                 currentTask = tasks[currentTaskIndex];
                 currentTask.UserText = currentTask.Sentence;
-                InitTasks();
+                InitTasks();  
             }
-            RestartTasks();
 
+            RestartTasks(); 
+            StateHasChanged();  
         }
+
 
         protected void RestartTasks()
         {
@@ -201,17 +213,24 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected virtual async Task EndExercise()
         {
             showSummary = true;
+
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             var currentUser = await UserService.GetCurrentUserAsync(authState);
 
-            if (currentUser != null && !currentUser.IsGuest)
+            if(currentUser != null &&!currentUser.IsGuest)
             {
                 await UpdateUserStats(currentUser);
-
+                PracticeSession practiceSession = new PracticeSession();
+                practiceSession.SessionDate = DateTime.Now;
+                practiceSession.Duration = DateTime.Now - startTime;
+                practiceSession.ScoreEarned = score;
+                practiceSession.LessonType = tasks[0] is PunctuationTask ? "Punctuation" : "Spelling";
+                practiceSession.CorrectAnswers = correctAnswersCount;
+                practiceSession.TotalQuestions = tasks.Count;
+                practiceSession.UserId = currentUser.Id; // Assuming User has an Id property
+                await UserService.RecordPracticeSession(currentUser, practiceSession);
             }
-                
-
-            showSummary = true;
+       
             StateHasChanged();
         }
         protected async Task UpdateUserStats(User currentUser)
