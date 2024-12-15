@@ -13,10 +13,11 @@ namespace lithuanian_language_learning_tool.Services
         User CreateGuestUser();
         Task<bool> PromoteToAdminAsync(string userId);
         Task<bool> DemoteFromAdminAsync(string userId);
-
-        Task<List<User>> GetTopUsersAsync(int topCount);
-
         Task UpdateUserAsync(User user);
+        Task<List<User>> GetTopUsersByHighScoreAsync();
+        Task<List<User>> GetTopUsersByCurrentStreakAsync();
+        Task<List<User>> GetTopUsersByBestStreakAsync();
+        Task<List<User>> GetTopUsersByLessonsCompletedAsync();
 
         Task RecordPracticeSession(User user, PracticeSession session);
 
@@ -156,7 +157,7 @@ namespace lithuanian_language_learning_tool.Services
             await context.SaveChangesAsync();
         }
 
-        public async Task<List<User>> GetTopUsersAsync(int topCount)
+        public async Task<List<User>> GetTopUsersByHighScoreAsync(int topCount)
         {
           using var context = _contextFactory.CreateDbContext();
           return await context.Users
@@ -183,6 +184,42 @@ namespace lithuanian_language_learning_tool.Services
         {
             using var context = _contextFactory.CreateDbContext();
             return await context.PracticeSessions.Where(s => s.UserId == userId).ToListAsync();
+        }
+
+        public async Task<List<User>> GetTopUsersByHighScoreAsync()
+        {
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Users
+                .OrderByDescending(u => u.HighScore)
+                .Take(10)
+                .ToListAsync();
+        }
+
+        public async Task<List<User>> GetTopUsersByCurrentStreakAsync()
+        {
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Users
+                .OrderByDescending(u => u.CurrentStreak)
+                .Take(10)
+                .ToListAsync();
+        }
+
+        public async Task<List<User>> GetTopUsersByBestStreakAsync()
+        {
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Users
+                .OrderByDescending(u => u.BestStreak)
+                .Take(10)
+                .ToListAsync();
+        }
+
+        public async Task<List<User>> GetTopUsersByLessonsCompletedAsync()
+        {
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Users
+                .OrderByDescending(u => u.TotalLessonsCompleted)
+                .Take(10)
+                .ToListAsync();
         }
 
     }

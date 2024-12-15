@@ -23,14 +23,14 @@
                                 <img class="h-24 w-24 rounded-full" src="@_user.ProfilePictureUrl" alt="Profile picture" />
                             }
                             <div>
-                                <h2 class="text-2xl font-bold">@_user.DisplayName @(@_user.Role == @UserRole.Admin ? "(" + @_user.Role + ")" : "")</h2>
+                                <h2 class="about">@_user.DisplayName @(@_user.Role == @UserRole.Admin ? "(" + @_user.Role + ")" : "")</h2>
                                 <p class="text-gray-600">@_user.Email</p>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                             <div class="border rounded-lg p-4">
-                                <h3 class="font-semibold mb-2">Statistika</h3>
+                                <h3 class="about">Statistika</h3>
                                 <p>Geriausias rezultatas: @_user.HighScore</p>
                                 <p>Užduočių atlikta: @_user.TotalLessonsCompleted</p>
                                 <p>Dabartinis streak'as: @_user.CurrentStreak days</p>

@@ -2,22 +2,20 @@
 @inject NavigationManager NavigationManager
 
 <h1>Gramatikonas</h1>
+<h2 class="about">Lietuvių kalbos mokymosi įrankis</h2>
 <div class="button-container">
-    <button class="button" @onclick="GoToSpellingTask">Rašybos užduotys</button>
-    <button class="button" @onclick="GoToPunctationTask">Skyrybos užduotys</button>
-</div>
-<div class="container">
-    <p>Pasirinkite užduočių tipą aukščiau, kad pradėtumėte mokytis.</p>
+    <button class="button" @onclick="GoToTasks">Spręsti užduotis</button>
+    <button class="button" @onclick="GoToAbout">Apie mus</button>
 </div>
 
 @code {
-    private void GoToSpellingTask()
+    private void GoToTasks()
     {
-        NavigationManager.NavigateTo("/rasybos/pasirinkimai");
+        NavigationManager.NavigateTo("/uzduotys");
     }
 
-        private void GoToPunctationTask()
+        private void GoToAbout()
     {
-        NavigationManager.NavigateTo("/skyrybos/pasirinkimai");
+        NavigationManager.NavigateTo("/apie");
     }
 }
