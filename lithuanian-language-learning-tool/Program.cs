@@ -23,6 +23,9 @@ if (builder.Environment.IsDevelopment())
 {
     builder.Configuration.AddUserSecrets<Program>();
 }
+builder.Configuration.AddEnvironmentVariables();
+
+Console.WriteLine($"Google ClientId: {builder.Configuration["Authentication:Google:ClientId"]}");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -53,6 +56,7 @@ builder.Services.AddDbContextFactory<AppDbContext>(options =>
     .EnableSensitiveDataLogging()   // Enables detailed logging
     .LogTo(Console.WriteLine));     // Outputs logs to the console;
 
+
 builder.Services.AddScoped<ITaskService<PunctuationTask>, TaskService<PunctuationTask>>();
 builder.Services.AddScoped<ITaskService<SpellingTask>, TaskService<SpellingTask>>();
 builder.Services.AddScoped<IUploadService, UploadService>();
@@ -61,11 +65,18 @@ var app = builder.Build();
 
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate(); // This ensures migrations are applied
+}
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
+
 
 app.MapGet("/trigger-exception", () =>
 {
