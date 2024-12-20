@@ -7,7 +7,7 @@ namespace lithuanian_language_learning_tool.Services
 {
     public interface IUploadService
     {
-        Task ValidateAndUploadAsync(string jsonContent, string taskType);
+        Task ValidateAndUploadAsync(string jsonContent, string taskType, string selectedTopic);
         void LogException(Exception ex);
     }
 
@@ -27,14 +27,14 @@ namespace lithuanian_language_learning_tool.Services
             _spellingTaskService = spellingTaskService;
         }
 
-        public async Task ValidateAndUploadAsync(string jsonContent, string taskType)
+        public async Task ValidateAndUploadAsync(string jsonContent, string taskType, string selectedTopic)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(jsonContent))
                     throw new TaskUploadException("Failas yra tuščias.");
 
-                List<Dictionary<string, object>> tasks = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(jsonContent);
+                var tasks = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(jsonContent);
 
                 if (tasks == null || !tasks.Any())
                     throw new TaskUploadException("Failas neturi užduočių arba yra tuščias.");
@@ -58,6 +58,7 @@ namespace lithuanian_language_learning_tool.Services
                     foreach (var punctuationTask in punctuationTasks)
                     {
                         punctuationTask.UserText = punctuationTask.Sentence;
+                        punctuationTask.Topic = selectedTopic; // Set the selected topic
                         await _punctuationTaskService.AddTaskAsync(punctuationTask);
                     }
                 }
@@ -74,6 +75,7 @@ namespace lithuanian_language_learning_tool.Services
                     foreach (var spellingTask in spellingTasks)
                     {
                         spellingTask.UserText = spellingTask.Sentence;
+                        spellingTask.Topic = selectedTopic; // Set the selected topic
                         await _spellingTaskService.AddTaskAsync(spellingTask);
                     }
                 }
@@ -93,6 +95,7 @@ namespace lithuanian_language_learning_tool.Services
                 throw new TaskUploadException($"Klaida įkeliant užduotis: {ex.Message}", ex);
             }
         }
+
 
         private void ValidateTaskStructure(Dictionary<string, object> task, string taskType)
         {
@@ -116,9 +119,10 @@ namespace lithuanian_language_learning_tool.Services
             }
             else if (taskType.Equals("spelling", StringComparison.OrdinalIgnoreCase))
             {
-                if (!options.All(opt => opt.Length <= 3 && opt.All(char.IsLetter)))
-                    throw new TaskUploadException("Netinkama Options struktūra: rašybos užduotyse leidžiamos tik raidės ir ilgis iki 3 simbolių.");
+                if (!options.All(opt => opt.All(c => char.IsLetter(c) || char.IsWhiteSpace(c))))
+                    throw new TaskUploadException("Netinkama Options struktūra: rašybos užduotyse leidžiamos tik raidės arba tarpai.");
             }
+
         }
 
         public void LogException(Exception ex)

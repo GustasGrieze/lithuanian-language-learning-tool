@@ -4,17 +4,17 @@
 <h1>Skyrybos užduotys</h1>
 
 <div class="button-container">
-    <button class="button" @onclick="NavigateToTask">Vienarūšės sakinio dalys</button>
-    <button class="button" @onclick="NavigateToTask">Pažyminiai</button>
-    <button class="button" @onclick="NavigateToTask">Sudėtiniai sakiniai</button>
-    <button class="button" @onclick="NavigateToTask">Priedėliai</button>
-    <button class="button" @onclick="NavigateToTask">Įterpiniai</button>
+    <button class="button" @onclick="@(() => NavigateToTask("Vienarūšės sakinio dalys"))">Vienarūšės sakinio dalys</button>
+    <button class="button" @onclick="@(() => NavigateToTask("Pažyminiai"))">Pažyminiai</button>
+    <button class="button" @onclick="@(() => NavigateToTask("Sudėtiniai sakiniai"))">Sudėtiniai sakiniai</button>
+    <button class="button" @onclick="@(() => NavigateToTask("Priedėliai"))">Priedėliai</button>
+    <button class="button" @onclick="@(() => NavigateToTask("Įterpiniai"))">Įterpiniai</button>
 </div>
 
 @code {
-    private void NavigateToTask()
+    private void NavigateToTask(string topic)
     {
-        NavigationManager.NavigateTo("/skyrybos/uzduotys");
+        string encodedTopic = Uri.EscapeDataString(topic);
+        NavigationManager.NavigateTo($"/skyrybos/uzduotys?topic={encodedTopic}");
     }
-
 }
