@@ -1,4 +1,5 @@
-﻿@using System.Text.Json
+﻿@page "/upload"
+@using System.Text.Json
 @using lithuanian_language_learning_tool.Models
 @using lithuanian_language_learning_tool.Services
 @using Microsoft.AspNetCore.Components
@@ -14,13 +15,28 @@
 
         <div class="mb-4">
             <label class="block text-gray-700">Užduoties Tipas:</label>
-            <InputSelect @bind-Value="uploadModel.TaskType" class="mt-1 block w-full">
+            <InputSelect @bind-Value="uploadModel.TaskType" class="mt-1 block w-full" @onchange="OnTaskTypeChanged">
                 <option value="">Pasirinkite Tipą</option>
                 <option value="punctuation">Skyrybos</option>
                 <option value="spelling">Rašyba</option>
             </InputSelect>
             <ValidationMessage For="@(() => uploadModel.TaskType)" />
         </div>
+
+        @if (!string.IsNullOrEmpty(uploadModel.TaskType))
+        {
+            <div class="mb-4">
+                <label class="block text-gray-700">Tema:</label>
+                <InputSelect @bind-Value="uploadModel.SelectedTopic" class="mt-1 block w-full">
+                    <option value="">Pasirinkite Temą</option>
+                    @foreach (var topic in GetTopicsForSelectedType(uploadModel.TaskType))
+                    {
+                        <option value="@topic">@topic</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => uploadModel.SelectedTopic)" />
+            </div>
+        }
 
         <div class="mb-4">
             <label class="block text-gray-700">Užduočių Failas (JSON):</label>
@@ -57,6 +73,28 @@
     private string errorMessage = "";
     private string successMessage = "";
 
+    // Lists of topics
+    private readonly List<string> punctuationTopics = new()
+    {
+        "Vienarūšės sakinio dalys",
+        "Pažyminiai",
+        "Sudėtiniai sakiniai",
+        "Priedėliai",
+        "Įterpiniai"
+    };
+
+    private readonly List<string> spellingTopics = new()
+    {
+        "Nosinės",
+        "Žodžių rašyba, kartu ir atskirai",
+        "Įrašyk praleistas raides"
+    };
+
+    private IEnumerable<string> GetTopicsForSelectedType(string taskType)
+    {
+        return taskType == "punctuation" ? punctuationTopics : spellingTopics;
+    }
+
     private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
         var file = e.File;
@@ -77,7 +115,7 @@
 
         try
         {
-            await UploadService.ValidateAndUploadAsync(uploadModel.FileContent, uploadModel.TaskType);
+            await UploadService.ValidateAndUploadAsync(uploadModel.FileContent, uploadModel.TaskType, uploadModel.SelectedTopic);
             successMessage = $"Užduotys sėkmingai įkeltos.";
             uploadModel = new UploadModel(); // Reset the form
         }
@@ -93,10 +131,18 @@
         }
     }
 
+    private void OnTaskTypeChanged(ChangeEventArgs e)
+    {
+        uploadModel.SelectedTopic = string.Empty; // Reset the selected topic when task type changes
+    }
+
     public class UploadModel
     {
         [Required(ErrorMessage = "Prašome pasirinkti užduoties tipą.")]
         public string TaskType { get; set; } = "";
+
+        [Required(ErrorMessage = "Prašome pasirinkti temą.")]
+        public string SelectedTopic { get; set; } = "";
 
         public string FileName { get; set; } = "";
 
