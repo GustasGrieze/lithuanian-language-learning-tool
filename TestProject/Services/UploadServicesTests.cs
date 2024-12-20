@@ -1,103 +1,272 @@
-﻿// File: UploadServiceTests.cs
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
 using lithuanian_language_learning_tool.Exceptions;
 using lithuanian_language_learning_tool.Models;
 using lithuanian_language_learning_tool.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Xunit;
 
-namespace TestProject.Services.Tests
+namespace TestProject.Services
 {
     public class UploadServiceTests
     {
-        private readonly Mock<ILogger<UploadService>> _loggerMock;
-        private readonly Mock<ITaskService<PunctuationTask>> _punctuationTaskServiceMock;
-        private readonly Mock<ITaskService<SpellingTask>> _spellingTaskServiceMock;
+        private readonly Mock<ILogger<UploadService>> _mockLogger;
+        private readonly Mock<ITaskService<PunctuationTask>> _mockPunctuationTaskService;
+        private readonly Mock<ITaskService<SpellingTask>> _mockSpellingTaskService;
         private readonly UploadService _uploadService;
 
         public UploadServiceTests()
         {
-            _loggerMock = new Mock<ILogger<UploadService>>();
-            _punctuationTaskServiceMock = new Mock<ITaskService<PunctuationTask>>();
-            _spellingTaskServiceMock = new Mock<ITaskService<SpellingTask>>();
-
+            _mockLogger = new Mock<ILogger<UploadService>>();
+            _mockPunctuationTaskService = new Mock<ITaskService<PunctuationTask>>();
+            _mockSpellingTaskService = new Mock<ITaskService<SpellingTask>>();
             _uploadService = new UploadService(
-                _loggerMock.Object,
-                _punctuationTaskServiceMock.Object,
-                _spellingTaskServiceMock.Object);
+                _mockLogger.Object,
+                _mockPunctuationTaskService.Object,
+                _mockSpellingTaskService.Object);
         }
 
-        #region ValidateAndUploadAsync Tests
-
-        [Theory]
-        [InlineData("punctuation", "[{\"Sentence\":\"Test sentence.\",\"Options\":[\".\",\",\"],\"CorrectAnswer\":\".\",\"Explanation\":\"End punctuation.\"}]")]
-        [InlineData("spelling", "[{\"Sentence\":\"Test sentence\",\"Options\":[\"a\",\"b\"],\"CorrectAnswer\":\"a\",\"Explanation\":\"Correct letter.\"}]")]
-        public async Task ValidateAndUploadAsync_ValidJson_DoesNotThrow(string taskType, string jsonContent)
+        [Fact]
+        public async Task ValidateAndUploadAsync_ValidPunctuationTasks_Success()
         {
             // Arrange
-            if (taskType.Equals("punctuation", StringComparison.OrdinalIgnoreCase))
+            var jsonContent = JsonSerializer.Serialize(new List<Dictionary<string, object>>
             {
-                _punctuationTaskServiceMock
-                    .Setup(s => s.AddTaskAsync(It.IsAny<PunctuationTask>()))
-                    .Returns(Task.CompletedTask);
-            }
-            else if (taskType.Equals("spelling", StringComparison.OrdinalIgnoreCase))
+                new Dictionary<string, object>
+                {
+                    { "Sentence", "This is a test sentence" },
+                    { "Options", new List<string> { ".", ",", "!" } },
+                    { "CorrectAnswer", "." },
+                    { "Explanation", "Explanation here" }
+                }
+            });
+
+            var punctuationTasksJson = JsonSerializer.Serialize(new List<PunctuationTask>
             {
-                _spellingTaskServiceMock
-                    .Setup(s => s.AddTaskAsync(It.IsAny<SpellingTask>()))
-                    .Returns(Task.CompletedTask);
-            }
+                new PunctuationTask
+                {
+                    Sentence = "This is a test sentence",
+                    Options = new List<string> { ".", ",", "!" },
+                    CorrectAnswer = ".",
+                    Explanation = "Explanation here",
+                    UserText = "This is a test sentence",
+                    Topic = "TestTopic"
+                }
+            });
 
             // Act
-            var exception = await Record.ExceptionAsync(() => _uploadService.ValidateAndUploadAsync(jsonContent, taskType));
+            await _uploadService.ValidateAndUploadAsync(jsonContent, "punctuation", "TestTopic");
 
             // Assert
-            Assert.Null(exception);
-
-            // Verify that AddTaskAsync was called the correct number of times
-            if (taskType.Equals("punctuation", StringComparison.OrdinalIgnoreCase))
-            {
-                var punctuationTasks = JsonSerializer.Deserialize<List<PunctuationTask>>(jsonContent, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-                _punctuationTaskServiceMock.Verify(s => s.AddTaskAsync(It.IsAny<PunctuationTask>()), Times.Exactly(punctuationTasks.Count));
-            }
-            else if (taskType.Equals("spelling", StringComparison.OrdinalIgnoreCase))
-            {
-                var spellingTasks = JsonSerializer.Deserialize<List<SpellingTask>>(jsonContent, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-                _spellingTaskServiceMock.Verify(s => s.AddTaskAsync(It.IsAny<SpellingTask>()), Times.Exactly(spellingTasks.Count));
-            }
+            _mockPunctuationTaskService.Verify(s => s.AddTaskAsync(It.Is<PunctuationTask>(t =>
+                t.Sentence == "This is a test sentence" &&
+                t.Options.SequenceEqual(new List<string> { ".", ",", "!" }) &&
+                t.CorrectAnswer == "." &&
+                t.Explanation == "Explanation here" &&
+                t.UserText == "This is a test sentence" &&
+                t.Topic == "TestTopic"
+            )), Times.Once);
         }
 
-        [Theory]
-        [InlineData("punctuation", "[]", "Failas neturi užduočių arba yra tuščias.")]
-        [InlineData("spelling", "[{\"Sentence\":\"Test sentence\",\"Options\":[],\"CorrectAnswer\":\"a\",\"Explanation\":\"Correct letter.\"}]", "Options laukelis yra tuščias arba netinkamas.")]
-        [InlineData("punctuation", "[{\"Sentence\":\"Test sentence\",\"Options\":[\"a\",\"b\"],\"CorrectAnswer\":\"a\",\"Explanation\":\"Explanation.\"}]", "Netinkama Options struktūra: skyrybos užduotyse leidžiami tik skyrybos ženklai.")]
-        [InlineData("spelling", "[{\"Sentence\":\"Test sentence\",\"Options\":[\".\",\",\"],\"CorrectAnswer\":\".\",\"Explanation\":\"Explanation.\"}]", "Netinkama Options struktūra: rašybos užduotyse leidžiamos tik raidės ir ilgis iki 3 simbolių.")]
-        [InlineData("punctuation", "[{\"Sentence\":\"Test sentence\",\"Options\":[\".\",\"invalid\"],\"CorrectAnswer\":\".\",\"Explanation\":\"Explanation.\"}]", "Netinkama Options struktūra: skyrybos užduotyse leidžiami tik skyrybos ženklai.")]
-        [InlineData("punctuation", "invalid json", "JSON failas yra netinkamai suformatuotas.")]
-        public async Task ValidateAndUploadAsync_InvalidJson_ThrowsTaskUploadException(string taskType, string jsonContent, string expectedMessage)
+        [Fact]
+        public async Task ValidateAndUploadAsync_ValidSpellingTasks_Success()
         {
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<TaskUploadException>(() => _uploadService.ValidateAndUploadAsync(jsonContent, taskType));
-            Assert.Equal(expectedMessage, exception.Message);
+            // Arrange
+            var jsonContent = JsonSerializer.Serialize(new List<Dictionary<string, object>>
+            {
+                new Dictionary<string, object>
+                {
+                    { "Sentence", "This is a test sentence" },
+                    { "Options", new List<string> { "test", "tset", "tost" } },
+                    { "CorrectAnswer", "test" },
+                    { "Explanation", "Explanation here" }
+                }
+            });
 
-            // Ensure that AddTaskAsync was never called due to validation failure
-            _punctuationTaskServiceMock.Verify(s => s.AddTaskAsync(It.IsAny<PunctuationTask>()), Times.Never);
-            _spellingTaskServiceMock.Verify(s => s.AddTaskAsync(It.IsAny<SpellingTask>()), Times.Never);
+            var spellingTasksJson = JsonSerializer.Serialize(new List<SpellingTask>
+            {
+                new SpellingTask
+                {
+                    Sentence = "This is a test sentence",
+                    Options = new List<string> { "test", "tset", "tost" },
+                    CorrectAnswer = "test",
+                    Explanation = "Explanation here",
+                    UserText = "This is a test sentence",
+                    Topic = "TestTopic"
+                }
+            });
+
+            // Act
+            await _uploadService.ValidateAndUploadAsync(jsonContent, "spelling", "TestTopic");
+
+            // Assert
+            _mockSpellingTaskService.Verify(s => s.AddTaskAsync(It.Is<SpellingTask>(t =>
+                t.Sentence == "This is a test sentence" &&
+                t.Options.SequenceEqual(new List<string> { "test", "tset", "tost" }) &&
+                t.CorrectAnswer == "test" &&
+                t.Explanation == "Explanation here" &&
+                t.UserText == "This is a test sentence" &&
+                t.Topic == "TestTopic"
+            )), Times.Once);
         }
 
-        #endregion
+        [Fact]
+        public async Task ValidateAndUploadAsync_EmptyJson_ThrowsTaskUploadException()
+        {
+            // Arrange
+            string jsonContent = "   ";
 
-        #region LogException Tests
+            // Act & Assert
+            var ex = await Assert.ThrowsAsync<TaskUploadException>(() =>
+                _uploadService.ValidateAndUploadAsync(jsonContent, "punctuation", "TestTopic"));
+
+            Assert.Equal("Failas yra tuščias.", ex.Message);
+        }
+
+        [Fact]
+        public async Task ValidateAndUploadAsync_InvalidJson_ThrowsTaskUploadException()
+        {
+            // Arrange
+            string jsonContent = "{ invalid json }";
+
+            // Act & Assert
+            var ex = await Assert.ThrowsAsync<TaskUploadException>(() =>
+                _uploadService.ValidateAndUploadAsync(jsonContent, "punctuation", "TestTopic"));
+
+            Assert.Equal("JSON failas yra netinkamai suformatuotas.", ex.Message);
+            VerifyLoggerError("Klaida įkeliant užduotį");
+        }
+
+        [Fact]
+        public async Task ValidateAndUploadAsync_InvalidTaskType_ThrowsTaskUploadException()
+        {
+            // Arrange
+            var jsonContent = JsonSerializer.Serialize(new List<Dictionary<string, object>>
+            {
+                new Dictionary<string, object>
+                {
+                    { "Sentence", "This is a test sentence" },
+                    { "Options", new List<string> { ".", ",", "!" } },
+                    { "CorrectAnswer", "." },
+                    { "Explanation", "Explanation here" }
+                }
+            });
+
+            // Act & Assert
+            var ex = await Assert.ThrowsAsync<TaskUploadException>(() =>
+                _uploadService.ValidateAndUploadAsync(jsonContent, "invalidType", "TestTopic"));
+
+            Assert.Equal("Neteisingas užduoties tipas.", ex.Message);
+        }
+
+        [Fact]
+        public async Task ValidateAndUploadAsync_MissingFields_ThrowsTaskUploadException()
+        {
+            // Arrange
+            var jsonContent = JsonSerializer.Serialize(new List<Dictionary<string, object>>
+            {
+                new Dictionary<string, object>
+                {
+                    // Missing "Sentence"
+                    { "Options", new List<string> { ".", ",", "!" } },
+                    { "CorrectAnswer", "." },
+                    { "Explanation", "Explanation here" }
+                }
+            });
+
+            // Act & Assert
+            var ex = await Assert.ThrowsAsync<TaskUploadException>(() =>
+                _uploadService.ValidateAndUploadAsync(jsonContent, "punctuation", "TestTopic"));
+
+            Assert.Equal("Netinkama užduoties struktūra: trūksta laukų 'Sentence'.", ex.Message);
+        }
+
+        [Fact]
+        public async Task ValidateAndUploadAsync_InvalidOptionsForPunctuation_ThrowsTaskUploadException()
+        {
+            // Arrange
+            var jsonContent = JsonSerializer.Serialize(new List<Dictionary<string, object>>
+            {
+                new Dictionary<string, object>
+                {
+                    { "Sentence", "This is a test sentence" },
+                    { "Options", new List<string> { ".", "invalidOption", "!" } },
+                    { "CorrectAnswer", "." },
+                    { "Explanation", "Explanation here" }
+                }
+            });
+
+            // Act & Assert
+            var ex = await Assert.ThrowsAsync<TaskUploadException>(() =>
+                _uploadService.ValidateAndUploadAsync(jsonContent, "punctuation", "TestTopic"));
+
+            Assert.Equal("Netinkama Options struktūra: skyrybos užduotyse leidžiami tik skyrybos ženklai.", ex.Message);
+        }
+
+        [Fact]
+        public async Task ValidateAndUploadAsync_InvalidOptionsForSpelling_ThrowsTaskUploadException()
+        {
+            // Arrange
+            var jsonContent = JsonSerializer.Serialize(new List<Dictionary<string, object>>
+            {
+                new Dictionary<string, object>
+                {
+                    { "Sentence", "This is a test sentence" },
+                    { "Options", new List<string> { "test", "tset1", "tost" } }, // "tset1" contains a digit
+                    { "CorrectAnswer", "test" },
+                    { "Explanation", "Explanation here" }
+                }
+            });
+
+            // Act & Assert
+            var ex = await Assert.ThrowsAsync<TaskUploadException>(() =>
+                _uploadService.ValidateAndUploadAsync(jsonContent, "spelling", "TestTopic"));
+
+            Assert.Equal("Netinkama Options struktūra: rašybos užduotyse leidžiamos tik raidės arba tarpai.", ex.Message);
+        }
+
+        [Fact]
+        public async Task ValidateAndUploadAsync_TasksListIsEmpty_ThrowsTaskUploadException()
+        {
+            // Arrange
+            var jsonContent = JsonSerializer.Serialize(new List<Dictionary<string, object>>());
+
+            // Act & Assert
+            var ex = await Assert.ThrowsAsync<TaskUploadException>(() =>
+                _uploadService.ValidateAndUploadAsync(jsonContent, "punctuation", "TestTopic"));
+
+            Assert.Equal("Failas neturi užduočių arba yra tuščias.", ex.Message);
+        }
+
+        [Fact]
+        public async Task ValidateAndUploadAsync_AddTaskAsyncThrowsException_ThrowsTaskUploadException()
+        {
+            // Arrange
+            var jsonContent = JsonSerializer.Serialize(new List<Dictionary<string, object>>
+            {
+                new Dictionary<string, object>
+                {
+                    { "Sentence", "This is a test sentence" },
+                    { "Options", new List<string> { ".", ",", "!" } },
+                    { "CorrectAnswer", "." },
+                    { "Explanation", "Explanation here" }
+                }
+            });
+
+            _mockPunctuationTaskService
+                .Setup(s => s.AddTaskAsync(It.IsAny<PunctuationTask>()))
+                .ThrowsAsync(new Exception("Database error"));
+
+            // Act & Assert
+            var ex = await Assert.ThrowsAsync<TaskUploadException>(() =>
+                _uploadService.ValidateAndUploadAsync(jsonContent, "punctuation", "TestTopic"));
+
+            Assert.Contains("Klaida įkeliant užduotis: Database error", ex.Message);
+            VerifyLoggerError("Klaida įkeliant užduotį");
+        }
 
         [Fact]
         public void LogException_LogsError()
@@ -109,8 +278,8 @@ namespace TestProject.Services.Tests
             _uploadService.LogException(exception);
 
             // Assert
-            _loggerMock.Verify(
-                x => x.Log(
+            _mockLogger.Verify(
+                l => l.Log(
                     LogLevel.Error,
                     It.IsAny<EventId>(),
                     It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Klaida įkeliant užduotį.")),
@@ -119,6 +288,17 @@ namespace TestProject.Services.Tests
                 Times.Once);
         }
 
-        #endregion
+
+        private void VerifyLoggerError(string expectedMessage)
+        {
+            _mockLogger.Verify(
+                x => x.Log(
+                    LogLevel.Error,
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains(expectedMessage)),
+                    It.IsAny<Exception>(),
+                    It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+                Times.Once);
+        }
     }
 }

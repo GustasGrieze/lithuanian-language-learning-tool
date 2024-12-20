@@ -168,6 +168,9 @@ namespace lithuanian_language_learning_tool.Services
 
         public async Task RecordPracticeSession(User user, PracticeSession session)
         {
+            if (session == null)
+                throw new ArgumentNullException(nameof(session));
+
             using var context = _contextFactory.CreateDbContext();
 
             user.PracticeSessions.Add(session);
@@ -179,6 +182,7 @@ namespace lithuanian_language_learning_tool.Services
             context.Users.Update(user);
             await context.SaveChangesAsync();
         }
+
 
         public async Task<List<PracticeSession>> GetPracticeSessionsForUser(string userId)
         {
