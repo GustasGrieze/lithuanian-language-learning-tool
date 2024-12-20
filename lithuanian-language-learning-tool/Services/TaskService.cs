@@ -16,6 +16,8 @@ namespace lithuanian_language_learning_tool.Services
         Task<List<string>> GetOptionsAsync(int taskId);
 
         Task<List<T>> GetRandomTasksAsync(int count);
+
+        Task<List<T>> GetRandomTasksAsync(int count, string topic);
     }
 
     public class TaskService<T> : ITaskService<T> where T : CustomTask
@@ -75,6 +77,43 @@ namespace lithuanian_language_learning_tool.Services
                                             .AsNoTracking() 
                                             .ToListAsync();
 
+            var orderedRandomTasks = selectedIds.Select(id => randomTasks.FirstOrDefault(t => t.Id == id))
+                                                .Where(t => t != null)
+                                                .ToList();
+
+            return orderedRandomTasks;
+        }
+
+        public async Task<List<T>> GetRandomTasksAsync(int count, string topic)
+        {
+            if (count <= 0)
+                throw new ArgumentException("Count must be greater than zero.", nameof(count));
+
+            if (string.IsNullOrWhiteSpace(topic))
+                throw new ArgumentException("Topic must be provided.", nameof(topic));
+
+            // Fetch task IDs filtered by topic
+            var filteredTaskIds = await _context.CustomTasks
+                                                .OfType<T>()
+                                                .Where(ct => ct.Topic == topic)
+                                                .Select(ct => ct.Id)
+                                                .ToListAsync();
+
+            if (!filteredTaskIds.Any())
+                return new List<T>(); 
+
+            int fetchCount = Math.Min(count, filteredTaskIds.Count);
+
+            var selectedIds = GetRandomSubset(filteredTaskIds, fetchCount);
+
+            var randomTasks = await _context.CustomTasks
+                                            .OfType<T>()
+                                            .Where(ct => selectedIds.Contains(ct.Id))
+                                            .Include(ct => ct.AnswerOptions)
+                                            .AsNoTracking()
+                                            .ToListAsync();
+
+            
             var orderedRandomTasks = selectedIds.Select(id => randomTasks.FirstOrDefault(t => t.Id == id))
                                                 .Where(t => t != null)
                                                 .ToList();
@@ -144,6 +183,7 @@ namespace lithuanian_language_learning_tool.Services
             var task = await GetTaskAsync(taskId);
             return task?.Options ?? new List<string>();
         }
+
     }
 }
 

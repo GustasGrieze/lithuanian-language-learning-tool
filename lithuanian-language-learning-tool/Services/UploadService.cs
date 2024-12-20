@@ -119,9 +119,10 @@ namespace lithuanian_language_learning_tool.Services
             }
             else if (taskType.Equals("spelling", StringComparison.OrdinalIgnoreCase))
             {
-                if (!options.All(opt => opt.Length <= 3 && opt.All(char.IsLetter)))
-                    throw new TaskUploadException("Netinkama Options struktūra: rašybos užduotyse leidžiamos tik raidės ir ilgis iki 3 simbolių.");
+                if (!options.All(opt => opt.All(c => char.IsLetter(c) || char.IsWhiteSpace(c))))
+                    throw new TaskUploadException("Netinkama Options struktūra: rašybos užduotyse leidžiamos tik raidės arba tarpai.");
             }
+
         }
 
         public void LogException(Exception ex)

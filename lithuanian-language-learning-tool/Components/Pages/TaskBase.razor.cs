@@ -2,6 +2,7 @@
 using lithuanian_language_learning_tool.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.WebUtilities;
 using System.Text.Json;
 
 namespace lithuanian_language_learning_tool.Components.Pages
@@ -16,6 +17,9 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
         [Inject]
         protected ITaskService<TTask> TaskService { get; set; }
+
+        [Inject]
+        protected NavigationManager NavigationManager { get; set; }
 
 
         protected int score = 0;
@@ -44,14 +48,36 @@ namespace lithuanian_language_learning_tool.Components.Pages
         protected bool showFlash = false;
         protected bool _lastAnswerCorrect = false;
 
+        protected string selectedTopic = string.Empty;
+
         protected override async Task OnInitializedAsync()
         {
-            await LoadTasksFromDatabase();
+            await LoadSelectedTopicAsync();
+            await LoadTasksFromDatabaseAsync();
         }
-        protected async Task LoadTasksFromDatabase()
+
+        protected async Task LoadSelectedTopicAsync()
         {
-            //tasks = await TaskService.GetAllTasksAsync();
-            tasks = await TaskService.GetRandomTasksAsync(5);
+            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("topic", out var topicValues))
+            {
+                selectedTopic = topicValues.FirstOrDefault();
+            }
+
+            await Task.CompletedTask;
+        }
+
+        protected async Task LoadTasksFromDatabaseAsync()
+        {
+            if (!string.IsNullOrEmpty(selectedTopic))
+            {
+                tasks = await TaskService.GetRandomTasksAsync(5, selectedTopic);
+            }
+            else
+            {
+                tasks = await TaskService.GetRandomTasksAsync(5);
+            }
+
             if (tasks == null || tasks.Count == 0)
             {
                 tasks = new List<TTask>();
@@ -129,7 +155,7 @@ namespace lithuanian_language_learning_tool.Components.Pages
 
             if (refetchNewTasks)
             {
-                await LoadTasksFromDatabase();  
+                await LoadTasksFromDatabaseAsync();  
             }
 
             score = 0;
