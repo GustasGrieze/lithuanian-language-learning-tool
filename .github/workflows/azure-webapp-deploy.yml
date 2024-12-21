@@ -14,15 +14,23 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # Restore dependencies
     - name: Restore dependencies
       run: dotnet restore
 
+    # Run tests
+    - name: Run tests
+      run: dotnet test --no-restore --verbosity normal
+
+    # Build the application
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
+    # Publish the application
     - name: Publish
       run: dotnet publish -c Release
 
+    # Deploy to Azure Web App
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
