@@ -113,7 +113,7 @@ namespace lithuanian_language_learning_tool.Services
 
             if (taskType.Equals("punctuation", StringComparison.OrdinalIgnoreCase))
             {
-                var validPunctuation = new[] { ".", ",", ";", ":", "!", "?" };
+                var validPunctuation = new[] { ".", ",", ";", ":", "!", "?", " -" };
                 if (!options.All(opt => validPunctuation.Contains(opt)))
                     throw new TaskUploadException("Netinkama Options struktūra: skyrybos užduotyse leidžiami tik skyrybos ženklai.");
             }
