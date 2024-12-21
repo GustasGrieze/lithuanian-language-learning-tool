@@ -13,7 +13,7 @@ using Respawn;
 using TestProject.Database;
 using Xunit;
 
-namespace TestProject.Services
+namespace TestProject.Database
 {
     public class UserServiceTests : IClassFixture<DatabaseFixture>, IAsyncLifetime
     {
